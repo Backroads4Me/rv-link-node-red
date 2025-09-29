@@ -2599,7 +2599,7 @@
         "z": "292e70a6ba25b323",
         "g": "9cfcca5efde78052",
         "name": "Read DGN table",
-        "filename": "/config/projects/RV-Link/rvc/dgn-summary-table.json",
+        "filename": "/config/projects/rv-link/rvc/dgn-summary-table.json",
         "filenameType": "str",
         "format": "utf8",
         "chunk": false,
