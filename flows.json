@@ -162,7 +162,9 @@
             "9dd6a98018824be9",
             "02bdfc59de71b5a5",
             "37b11a996fc2757e",
-            "45414bacecada477"
+            "45414bacecada477",
+            "5f6336442bfb9808",
+            "8f99241c9a1cfbde"
         ],
         "x": 74,
         "y": 633,
@@ -372,12 +374,13 @@
             "4e46ba83df00a31b",
             "f01db5ebc3ae2e18",
             "a2334b77d3764815",
-            "6423c433e099d2a5"
+            "6423c433e099d2a5",
+            "89f2d386ecc80a69"
         ],
         "x": 74,
         "y": 1159,
         "w": 1392,
-        "h": 142
+        "h": 182
     },
     {
         "id": "01b53bba61cb7227",
@@ -3186,7 +3189,7 @@
         "name": "HA in",
         "topic": "homeassistant/+/+/set",
         "qos": "1",
-        "datatype": "auto-detect",
+        "datatype": "json",
         "broker": "80727e60a251c36c",
         "nl": false,
         "rap": true,
@@ -3261,7 +3264,7 @@
         "z": "292e70a6ba25b323",
         "g": "f09f79586501cb0b",
         "name": "Decode RVC CAN",
-        "func": "// RVC CAN Message Parser\n// Decodes a raw RVC CAN message string into a structured object.\n// Input: msg.payload (string) - e.g., \"19FEDA8C#3AFF00FDFF2100FF\"\n// Output: msg.payload (object) with decoded CAN message components\n\nconst originalMessage = msg.payload;\n\n// 1. Validate input\nif (!originalMessage || typeof originalMessage !== 'string') {\n    node.warn(\"Invalid message payload: expected string, got \" + typeof originalMessage);\n    return null;\n}\n\nconst dgnMap = global.get('dgnMap');\nif (!dgnMap) {\n    node.error(\"dgnMap not found in global context. Ensure the map is initialized.\");\n    return null;\n}\n\n// 2. Parse CAN message format: CANID#PAYLOAD\nconst parts = originalMessage.split('#');\nif (parts.length !== 2) {\n    node.warn(\"Invalid CAN message format: \" + originalMessage);\n    return null;\n}\n\nconst canIdHex = parts[0];\nconst dataPayload = parts[1];\n\nconst canIdNum = parseInt(canIdHex, 16);\nif (isNaN(canIdNum) || canIdHex.length > 8) {\n    node.warn(\"Invalid CAN ID: \" + canIdHex);\n    return null;\n}\n\n// 3. Extract CAN ID fields and determine DGN\nconst priority = (canIdNum >> 26) & 0x7;\nconst sourceAddress = (canIdNum & 0xFF).toString(16).toUpperCase().padStart(2, '0');\n\n// Extract the 17-bit DGN value\nlet dgn = ((canIdNum >> 8) & 0x1FFFF).toString(16).toUpperCase();\n\n// Look up the DGN name\nlet dgnName = dgnMap.get(dgn);\n\n// *** NEW LOGIC STARTS HERE ***\n// If the DGN is UNKNOWN and 4 characters long, try prepending a '1'\n// This handles cases where a standard RV-C message might have an incorrect Data Page bit (e.g., \"FECA\" instead of \"1FECA\").\nif (!dgnName && dgn.length === 4) {\n    const alternateDgn = '1' + dgn;\n    const alternateName = dgnMap.get(alternateDgn);\n    \n    if (alternateName) {\n        // The alternate lookup was successful, so we'll use these corrected values.\n        dgn = alternateDgn;\n        dgnName = alternateName;\n    }\n}\n// *** NEW LOGIC ENDS HERE ***\n\n// If it's still not found after the second try, set it to UNKNOWN\nif (!dgnName) {\n    dgnName = \"UNKNOWN\";\n}\n\n\n// 4. Create structured output\nmsg.payload = {\n    originalMessage: originalMessage,\n    dgn: dgn,\n    dgnName: dgnName,\n    sourceAddress: sourceAddress,\n    priority: priority,\n    dataPayload: dataPayload,\n    canIdHex: canIdHex,\n    canIdDecimal: canIdNum,\n    dataLength: dataPayload.length / 2\n};\n\nreturn msg;",
+        "func": "// RVC CAN Message Parser\n// Decodes a raw RVC CAN message string into a structured object.\n// Input: msg.payload (string) - e.g., \"19FEDA8C#3AFF00FDFF2100FF\"\n// Output: msg.payload (object) with decoded CAN message components\n\nconst originalMessage = msg.payload;\n\n// 1. Validate input\nif (!originalMessage || typeof originalMessage !== 'string') {\n    node.warn(\"Invalid message payload: expected string, got \" + typeof originalMessage);\n    return null;\n}\n\nconst dgnMap = global.get('dgnMap');\nif (!dgnMap) {\n    node.error(\"dgnMap not found in global context. Ensure the map is initialized.\");\n    return null;\n}\n\n// 2. Parse CAN message format: CANID#PAYLOAD\nconst parts = originalMessage.split('#');\nif (parts.length !== 2) {\n    node.warn(\"Invalid CAN message format: \" + originalMessage);\n    return null;\n}\n\nconst canIdHex = parts[0];\nconst dataPayload = parts[1];\n\nconst canIdNum = parseInt(canIdHex, 16);\nif (isNaN(canIdNum) || canIdHex.length > 8) {\n    node.warn(\"Invalid CAN ID: \" + canIdHex);\n    return null;\n}\n\n// 3. Extract CAN ID fields and determine DGN\nconst priority = (canIdNum >> 26) & 0x7;\nconst sourceAddress = (canIdNum & 0xFF).toString(16).toUpperCase().padStart(2, '0');\n\nlet dgn = ((canIdNum >> 8) & 0x1FFFF).toString(16).toUpperCase();\nlet dgnName = dgnMap.get(dgn);\n\n// If the lookup fails and the DGN is 4 characters, try prepending a '1'\nif (!dgnName && dgn.length === 4) {\n    const alternateDgn = '1' + dgn;\n    const alternateName = dgnMap.get(alternateDgn);\n\n    if (alternateName) {\n        dgn = alternateDgn;\n        dgnName = alternateName;\n    }\n}\n\n// *** NEW LOGIC STARTS HERE ***\n// If still not found, check for specific proprietary overrides or the general proprietary range\nif (!dgnName) {\n    if (dgn === 'EF64') {\n        dgnName = \"AQUAHOT\";\n    } else if (dgn.startsWith('EF')) {\n        dgnName = \"PROPRIETARY\";\n    }\n}\n// *** NEW LOGIC ENDS HERE ***\n\n// If it's still not found after all checks, set it to UNKNOWN\nif (!dgnName) {\n    dgnName = \"UNKNOWN\";\n}\n\n// 4. Create structured output\nmsg.payload = {\n    originalMessage: originalMessage,\n    dgn: dgn,\n    dgnName: dgnName,\n    sourceAddress: sourceAddress,\n    priority: priority,\n    dataPayload: dataPayload,\n    canIdHex: canIdHex,\n    canIdDecimal: canIdNum,\n    dataLength: dataPayload.length / 2\n};\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -3438,7 +3441,7 @@
         "rules": [
             {
                 "t": "eq",
-                "v": "DM_RV",
+                "v": "DM-RV",
                 "vt": "str"
             },
             {
@@ -3467,12 +3470,22 @@
                 "vt": "str"
             },
             {
+                "t": "eq",
+                "v": "AQUAHOT",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "PROPRIETARY",
+                "vt": "str"
+            },
+            {
                 "t": "else"
             }
         ],
         "checkall": "false",
         "repair": false,
-        "outputs": 7,
+        "outputs": 9,
         "x": 890,
         "y": 860,
         "wires": [
@@ -3489,6 +3502,12 @@
             ],
             [
                 "45414bacecada477"
+            ],
+            [
+                "8f99241c9a1cfbde"
+            ],
+            [
+                "5f6336442bfb9808"
             ],
             [
                 "d0150fd6556514e6"
@@ -3530,12 +3549,12 @@
         ],
         "repeat": "",
         "crontab": "",
-        "once": true,
+        "once": false,
         "onceDelay": 0.1,
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 1420,
+        "x": 1410,
         "y": 960,
         "wires": [
             [
@@ -3812,7 +3831,7 @@
         "payload": "",
         "payloadType": "date",
         "x": 200,
-        "y": 1200,
+        "y": 1240,
         "wires": [
             [
                 "b846bc1605dae821"
@@ -3825,7 +3844,7 @@
         "z": "292e70a6ba25b323",
         "g": "8ef86a1c4b59d8e1",
         "name": "Address claim request",
-        "func": "// RV-C Address Claim - Send Initial Claim\n// Broadcasts ADDRESS_CLAIMED message (DGN EE00h) to claim an address\n// Reference: RV-C Spec Section 3.3.2 - Source Address Claiming\n\n// Starting address for External Interface devices (per Table 7.2)\n// DSA 143: External Interface - Dynamic Range 208-223 (Appliances and Bridges)\n// Start at highest address (223) and work down per RV-C spec\nconst STARTING_ADDRESS = 223;\n\n// Device NAME (8-byte identifier per RV-C Spec 3.3.3)\n// This is used as the tie-breaker in address conflicts\n// Lower numerical NAME wins the address\n// Format: [Arbitrary Address Capable:1][Industry Group:3][Device Class Instance:4][Device Class:7]\n//         [Reserved:1][Device Function:8][Device Function Instance:5][Manufacturer Code:11][Identity Number:21]\n// Using a generic identifier for an External Interface/Node-RED controller\nconst DEVICE_NAME = \"C3A1F00700000000\"; // Generic diagnostic device identifier\n\n// Get list of addresses already in use from scan\nconst usedAddresses = new Set(flow.get(\"used_addresses\") || []);\n\n// Initialize or retrieve current address attempt from context\nlet addressToTry = context.get(\"address_attempt\") || STARTING_ADDRESS;\n\n// Skip addresses we know are already in use\nwhile (usedAddresses.has(addressToTry) && addressToTry > 0) {\n    addressToTry--;\n    node.warn(`Address ${addressToTry + 1} already seen in use, skipping to ${addressToTry}`);\n}\n\n// Check if we received a retry command from the monitor function\nif (msg.topic === \"address_claim_retry\") {\n    // Decrement address and try again\n    addressToTry--;\n\n    // Handle address wraparound per RV-C spec\n    if (addressToTry < 208) {\n        node.error(\"Exhausted all addresses in External Interface range (208-223)\");\n        return null;\n    }\n\n    node.warn(`Lost address conflict at ${addressToTry + 1}. Trying address ${addressToTry}`);\n}\n\n// Store current attempt\ncontext.set(\"address_attempt\", addressToTry);\n\n// Build ADDRESS_CLAIMED message (DGN EE00h)\nconst DGN = \"EE00\";\nconst priority = 6; // Standard priority for address claiming\nconst dgnInt = parseInt(DGN, 16);\n\n// Construct CAN ID with the address we're claiming as the source address\nconst priorityBits = (priority << 26) >>> 0;\nconst dgnBits = (dgnInt << 8) >>> 0;\nconst sourceAddressBits = addressToTry; // CRITICAL: Use the address we want to claim\n\nconst canId = (priorityBits | dgnBits | sourceAddressBits) >>> 0;\nconst canIdHex = canId.toString(16).padStart(8, '0').toUpperCase();\n\n// Data payload: Our device's 8-byte NAME\nconst dataPayload = DEVICE_NAME;\n\n// Construct CAN message in format: CANID#PAYLOAD\nconst canMessage = `${canIdHex}#${dataPayload}`;\n\n// Store metadata for monitor function\nflow.set(\"claiming_address\", addressToTry);\nflow.set(\"claim_in_progress\", true);\nflow.set(\"our_device_name\", DEVICE_NAME);\n\n// Prepare output message for MQTT\nmsg.payload = canMessage;\nmsg.topic = \"can/send\";\nmsg.claiming_address = addressToTry; // Pass to delay/timer for validation\n\n//node.warn(`Claiming address ${addressToTry} (0x${addressToTry.toString(16).toUpperCase()})`);\n\nreturn msg;",
+        "func": "// RV-C Address Claim - Send Initial Claim\n// Generates a persistent unique ID, selects an address, and broadcasts the\n// ADDRESS_CLAIMED message (DGN EE00h) to claim the address.\n\n// --- Step 1: Handle Manual Reset Command (if triggered) ---\nif (msg.topic === \"reset_device_id\") {\n  // Clear the saved unique ID from persistent storage\n  global.set(\"my_persistent_rvc_id\", null);\n  // Reset the address attempt counter to start fresh\n  context.set(\"address_attempt\", null);\n  node.warn(\"Persistent DEVICE_NAME cleared. Generating a new one and starting claim...\");\n  // By not returning, we allow the script to continue and generate a new ID immediately.\n}\n\n\n// --- Configuration ---\nconst STARTING_ADDRESS = 223;\nconst MIN_ADDRESS = 208;\n\n\n// --- Step 2: Create or Retrieve a Persistent Unique DEVICE_NAME ---\nlet uniqueId = global.get(\"my_persistent_rvc_id\");\n\nif (!uniqueId) {\n  // No ID found, so generate a new one.\n  const randomSerial = Math.floor(Math.random() * 0x1FFFFF);\n  const randomSerialHex = randomSerial.toString(16).padStart(6, '0').toUpperCase();\n  uniqueId = \"8000000000\" + randomSerialHex;\n\n  // Save this new ID to the global context for future use.\n  global.set(\"my_persistent_rvc_id\", uniqueId);\n  //node.warn(\"Generated and saved a new persistent DEVICE_NAME: \" + uniqueId);\n}\nconst DEVICE_NAME = uniqueId;\n\n\n// --- Step 3: Select an Address to Claim ---\nconst usedAddresses = new Set(flow.get(\"used_addresses\") || []);\nlet addressToTry = context.get(\"address_attempt\") || STARTING_ADDRESS;\n\nif (msg.topic === \"address_claim_retry\") {\n  addressToTry--;\n  node.warn(`Lost address conflict. Trying next address: ${addressToTry}`);\n}\n\nwhile (usedAddresses.has(addressToTry) && addressToTry >= MIN_ADDRESS) {\n  addressToTry--;\n  node.warn(`Address ${addressToTry + 1} is known to be in use, skipping to ${addressToTry}`);\n}\n\nif (addressToTry < MIN_ADDRESS) {\n  node.error(`Exhausted all addresses in the valid range (${STARTING_ADDRESS}-${MIN_ADDRESS}). Address claiming failed.`);\n  flow.set(\"claim_in_progress\", false);\n  return null;\n}\n\ncontext.set(\"address_attempt\", addressToTry);\n\n\n// --- Step 4: Build and Send the Claim Message ---\nconst DGN = \"EE00\";\nconst priority = 6;\nconst canIdNum = (priority << 26) | (parseInt(DGN, 16) << 8) | addressToTry;\nconst canIdHex = canIdNum.toString(16).padStart(8, '0').toUpperCase();\nconst dataPayload = DEVICE_NAME;\nconst canMessage = `${canIdHex}#${dataPayload}`;\n\nflow.set(\"claiming_address\", addressToTry);\nflow.set(\"claim_in_progress\", true);\nflow.set(\"our_device_name\", DEVICE_NAME);\n\nmsg.payload = canMessage;\nmsg.topic = \"can/send\";\nmsg.claiming_address = addressToTry;\n\nnode.log(`Attempting to claim address ${addressToTry} (0x${addressToTry.toString(16).toUpperCase()})`);\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -3833,7 +3852,7 @@
         "finalize": "",
         "libs": [],
         "x": 700,
-        "y": 1200,
+        "y": 1240,
         "wires": [
             [
                 "55071115a3fe7c2c",
@@ -3860,7 +3879,7 @@
         "allowrate": false,
         "outputs": 1,
         "x": 930,
-        "y": 1260,
+        "y": 1300,
         "wires": [
             [
                 "6423c433e099d2a5"
@@ -3873,18 +3892,21 @@
         "z": "292e70a6ba25b323",
         "g": "8ef86a1c4b59d8e1",
         "name": "Address claim monitor",
-        "func": "// RV-C Address Claim Monitor Function\n// Monitors ADDRESS_CLAIMED messages (DGN EE00) during claiming process\n// Compares device NAMEs to determine winner in case of conflict\n// Reference: RV-C Spec Section 3.3.2 - Source Address Claiming\n\n// Check if we're currently in the claiming process\nconst claimInProgress = flow.get(\"claim_in_progress\");\nif (!claimInProgress) {\n    // Not claiming, ignore this message\n    return null;\n}\n\n// Get the address we're trying to claim and our device NAME\nconst claimingAddress = flow.get(\"claiming_address\");\nconst ourDeviceName = flow.get(\"our_device_name\");\n\n// Parse incoming ADDRESS_CLAIMED message (DGN EE00)\nconst incomingPayload = msg.payload;\n\n// Verify this is an ADDRESS_CLAIMED message\nif (incomingPayload.dgn !== \"EE00\" && incomingPayload.dgn !== \"0EE00\") {\n    // Not an ADDRESS_CLAIMED message, ignore\n    return null;\n}\n\n// Extract source address from the ADDRESS_CLAIMED message\nconst sourceAddress = incomingPayload.sourceAddress;\nconst sourceAddressInt = parseInt(sourceAddress, 16);\n\n// Check if another device is claiming the same address we want\nif (sourceAddressInt === claimingAddress) {\n    // CONFLICT DETECTED - Extract competitor's NAME from data payload\n    const competitorName = incomingPayload.dataPayload.toUpperCase();\n\n    node.warn(`Address ${claimingAddress} (0x${claimingAddress.toString(16).toUpperCase()}) conflict detected!`);\n    node.warn(`Our NAME: ${ourDeviceName}, Competitor NAME: ${competitorName}`);\n\n    // Compare NAMEs - Lower numerical value wins\n    // Convert hex strings to BigInt for comparison\n    const ourNameValue = BigInt(\"0x\" + ourDeviceName);\n    const competitorNameValue = BigInt(\"0x\" + competitorName);\n\n    if (ourNameValue < competitorNameValue) {\n        // WE WIN - Our NAME is lower, so we keep the address\n        node.warn(`We WIN the conflict (our NAME is lower). Continuing to claim address ${claimingAddress}`);\n        // Don't send retry, just ignore and let timer expire\n        return null;\n    } else {\n        // WE LOSE - Competitor's NAME is lower or equal, they get the address\n        node.warn(`We LOSE the conflict (competitor NAME is lower). Trying next address.`);\n\n        // Send retry command back to claim function\n        const retryMsg = {\n            topic: \"address_claim_retry\",\n            payload: {\n                conflict: true,\n                conflictAddress: claimingAddress,\n                competitorName: competitorName,\n                weWon: false\n            }\n        };\n\n        // Clear the claiming flag so we stop monitoring\n        flow.set(\"claim_in_progress\", false);\n\n        return retryMsg;\n    }\n}\n\n// If we reach here, the ADDRESS_CLAIMED is for a different address\n// Continue waiting for timer to expire\nreturn null;",
-        "outputs": 1,
+        "func": "// RV-C Address Claim Monitor Function\n// Assumes it ONLY receives decoded ADDRESS_CLAIMED messages (DGN EE00)\n// Compares device NAMEs to determine winner in case of conflict\n\nconst claimInProgress = flow.get(\"claim_in_progress\");\nif (!claimInProgress) {\n    return null; // Not in the claiming process\n}\n\nconst claimingAddress = flow.get(\"claiming_address\");\nconst ourDeviceName = flow.get(\"our_device_name\");\nconst competitorName = msg.payload.dataPayload.toUpperCase();\nconst sourceAddressInt = parseInt(msg.payload.sourceAddress, 16);\n\n// Check if a message is for the same address we are trying to claim\nif (sourceAddressInt === claimingAddress) {\n\n    // *** NEW CHECK ***\n    // First, verify this isn't our own message being echoed back.\n    // If the NAMEs are identical, it's our own claim. Ignore it and let the timer run.\n    if (competitorName === ourDeviceName) {\n        // This is our own message, not a real conflict.\n        return null;\n    }\n    // *** END OF NEW CHECK ***\n\n    // If we get here, it's a real conflict from a different device.\n    node.warn(`Address ${claimingAddress} conflict detected!`);\n    node.warn(`Our NAME: ${ourDeviceName}, Competitor NAME: ${competitorName}`);\n\n    // Compare NAMEs - Lower numerical value wins\n    const ourNameValue = BigInt(\"0x\" + ourDeviceName);\n    const competitorNameValue = BigInt(\"0x\" + competitorName);\n\n    if (ourNameValue < competitorNameValue) {\n        // WE WIN\n        node.warn(`We WIN the conflict. Continuing to claim address ${claimingAddress}`);\n        return null;\n    } else {\n        // WE LOSE\n        node.warn(`We LOSE the conflict. Cancelling timer and trying next address.`);\n        flow.set(\"claim_in_progress\", false);\n\n        const retryMsg = { topic: \"address_claim_retry\" };\n        const resetTimerMsg = { reset: true };\n\n        return [retryMsg, resetTimerMsg];\n    }\n}\n\n// If we reach here, it's a claim for a different address, so ignore it.\nreturn null;",
+        "outputs": 2,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
         "x": 440,
-        "y": 1260,
+        "y": 1300,
         "wires": [
             [
                 "b846bc1605dae821"
+            ],
+            [
+                "55071115a3fe7c2c"
             ]
         ]
     },
@@ -3913,7 +3935,7 @@
             "45414bacecada477"
         ],
         "x": 200,
-        "y": 1260,
+        "y": 1300,
         "wires": [
             [
                 "4e46ba83df00a31b"
@@ -3932,7 +3954,7 @@
             "f658418a7b9b4857"
         ],
         "x": 1370,
-        "y": 1200,
+        "y": 1240,
         "wires": [],
         "l": true
     },
@@ -3950,7 +3972,7 @@
         "finalize": "",
         "libs": [],
         "x": 1140,
-        "y": 1260,
+        "y": 1300,
         "wires": [
             [
                 "a2334b77d3764815"
@@ -4059,6 +4081,72 @@
         "x": 1020,
         "y": 200,
         "wires": []
+    },
+    {
+        "id": "5f6336442bfb9808",
+        "type": "debug",
+        "z": "292e70a6ba25b323",
+        "g": "f09f79586501cb0b",
+        "name": "PROPRIETARY",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1080,
+        "y": 1040,
+        "wires": []
+    },
+    {
+        "id": "8f99241c9a1cfbde",
+        "type": "debug",
+        "z": "292e70a6ba25b323",
+        "g": "f09f79586501cb0b",
+        "name": "AQUAHOT",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1070,
+        "y": 1000,
+        "wires": []
+    },
+    {
+        "id": "89f2d386ecc80a69",
+        "type": "inject",
+        "z": "292e70a6ba25b323",
+        "g": "8ef86a1c4b59d8e1",
+        "name": "Reset Device Name",
+        "props": [
+            {
+                "p": "topic",
+                "vt": "str"
+            },
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "reset_device_id",
+        "payload": "",
+        "payloadType": "date",
+        "x": 450,
+        "y": 1200,
+        "wires": [
+            [
+                "b846bc1605dae821"
+            ]
+        ]
     },
     {
         "id": "802228bc8d89d80a",
