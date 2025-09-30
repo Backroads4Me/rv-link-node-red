@@ -95,7 +95,9 @@
             "8115fa481c11dce8",
             "b011e01946374aee",
             "dca1043661f9a61d",
-            "e3c7fa28c1f3e11b"
+            "e3c7fa28c1f3e11b",
+            "0796de17a5bbcbdd",
+            "aede20744de83038"
         ],
         "x": 94,
         "y": 79,
@@ -124,12 +126,17 @@
             "32add109922d428a",
             "c6fd91cf9695813b",
             "4ad3b304d4f1e27b",
-            "d34a8c1fd2cc4320"
+            "d34a8c1fd2cc4320",
+            "a922fdb6b43bbced",
+            "4f33fad10d85b69d",
+            "51910a93d572e95c",
+            "982faa37c0038bf4",
+            "4d8ffc7896c8353f"
         ],
         "x": 74,
-        "y": 199,
-        "w": 652,
-        "h": 382
+        "y": 159,
+        "w": 1392,
+        "h": 422
     },
     {
         "id": "f09f79586501cb0b",
@@ -154,12 +161,13 @@
             "01b53bba61cb7227",
             "9dd6a98018824be9",
             "02bdfc59de71b5a5",
-            "37b11a996fc2757e"
+            "37b11a996fc2757e",
+            "45414bacecada477"
         ],
         "x": 74,
         "y": 633,
         "w": 1778,
-        "h": 434
+        "h": 454
     },
     {
         "id": "0b18891888586798",
@@ -307,12 +315,63 @@
             "a1beccb1a2803ca5",
             "44947b512cb27b5b",
             "25e6f74b216427e5",
-            "000b002344662b42"
+            "000b002344662b42",
+            "c769cda1070372b2",
+            "a0885c7cb1a0a88f",
+            "57e45f522fc50a9b"
         ],
         "x": 74,
-        "y": 519,
-        "w": 1152,
-        "h": 82
+        "y": 413,
+        "w": 1258,
+        "h": 188
+    },
+    {
+        "id": "b83700dc9a87e735",
+        "type": "group",
+        "z": "3470febb2cd6e952",
+        "name": "Switches",
+        "style": {
+            "stroke": "#ffffff",
+            "label": true
+        },
+        "nodes": [
+            "41a795b109c2b36f",
+            "0595840d92bab186",
+            "98f19ef1b785bbe6",
+            "3967fb1502d909f9",
+            "aff9e41f09dd5407",
+            "71105ed6a3681957",
+            "6377c21abc9d08b3",
+            "318270a1f3eddf69",
+            "5aa99ce2ed0b8c6d"
+        ],
+        "x": 74,
+        "y": 659,
+        "w": 1098,
+        "h": 408
+    },
+    {
+        "id": "8ef86a1c4b59d8e1",
+        "type": "group",
+        "z": "292e70a6ba25b323",
+        "name": "Claim CAN source address",
+        "style": {
+            "stroke": "#ffffff",
+            "label": true
+        },
+        "nodes": [
+            "515386b6b0d01893",
+            "b846bc1605dae821",
+            "55071115a3fe7c2c",
+            "4e46ba83df00a31b",
+            "f01db5ebc3ae2e18",
+            "a2334b77d3764815",
+            "6423c433e099d2a5"
+        ],
+        "x": 74,
+        "y": 1159,
+        "w": 1392,
+        "h": 142
     },
     {
         "id": "01b53bba61cb7227",
@@ -331,7 +390,7 @@
             "8f7381d08bf2b8a8"
         ],
         "x": 1294,
-        "y": 899,
+        "y": 919,
         "w": 492,
         "h": 142
     },
@@ -414,31 +473,6 @@
         "h": 82
     },
     {
-        "id": "b83700dc9a87e735",
-        "type": "group",
-        "z": "3470febb2cd6e952",
-        "name": "Switches",
-        "style": {
-            "stroke": "#ffffff",
-            "label": true
-        },
-        "nodes": [
-            "41a795b109c2b36f",
-            "0595840d92bab186",
-            "98f19ef1b785bbe6",
-            "3967fb1502d909f9",
-            "aff9e41f09dd5407",
-            "71105ed6a3681957",
-            "6377c21abc9d08b3",
-            "318270a1f3eddf69",
-            "5aa99ce2ed0b8c6d"
-        ],
-        "x": 74,
-        "y": 659,
-        "w": 1098,
-        "h": 408
-    },
-    {
         "id": "3967fb1502d909f9",
         "type": "group",
         "z": "3470febb2cd6e952",
@@ -454,6 +488,25 @@
         ],
         "x": 674,
         "y": 959,
+        "w": 472,
+        "h": 82
+    },
+    {
+        "id": "a0885c7cb1a0a88f",
+        "type": "group",
+        "z": "3470febb2cd6e952",
+        "g": "852597de52df1703",
+        "name": "Rest unique light list",
+        "style": {
+            "stroke": "#ffffff",
+            "label": true
+        },
+        "nodes": [
+            "0474640b44c5d2a9",
+            "d137fb1314cb498b"
+        ],
+        "x": 834,
+        "y": 439,
         "w": 472,
         "h": 82
     },
@@ -531,7 +584,8 @@
         "y": 260,
         "wires": [
             [
-                "4ed779099168c76a"
+                "4ed779099168c76a",
+                "0796de17a5bbcbdd"
             ]
         ]
     },
@@ -643,7 +697,7 @@
         "z": "b3d80c5dc947ec88",
         "g": "aea9d97e0563bd83",
         "name": "switch",
-        "func": "// Encodes any HA switch command to an RV-C DC_DIMMER_COMMAND_2 \"Toggle\"\n// Outputs in standard CAN bus format for a 'can/send' topic.\n\n// --- Configuration ---\nconst RVC_COMMAND = 0x05; // 0x05 is the \"Toggle\" command\nconst SOURCE_ADDRESS = global.get(\"rvc_source_address\") || 254; // Use claimed address or Null as fallback\nconst PRIORITY = 6;\nconst DGN = \"1FEDB\";\n\n// 1. Parse the instance number from the topic\nconst topicParts = msg.topic.split('/');\nconst entityId = topicParts[2] || \"\";\nconst match = entityId.match(/_(\\d+)$/);\n\nif (!match) {\n    node.warn(`Could not parse instance number from topic: ${msg.topic}`);\n    return null;\n}\n\nconst instance = parseInt(match[1], 10);\nif (isNaN(instance) || instance < 1 || instance > 250) {\n    node.warn(`Parsed instance number \"${instance}\" is invalid.`);\n    return null;\n}\n\n// 2. Build the 8-byte data payload to match the physical switch\nconst dataBytes = new Array(8).fill(0xFF);\n\ndataBytes[0] = instance;            // Instance Number\ndataBytes[1] = 0xFF;                // Group (Non-group command)\ndataBytes[2] = 0xFA;                // Desired Level (Dimmed Memory)\ndataBytes[3] = RVC_COMMAND;         // Command (Toggle)\ndataBytes[4] = 0xFF;                // Delay/Duration (Not Available)\ndataBytes[5] = 0x00;                // Interlock (No Interlock)\ndataBytes[6] = 0xFF;                // Ramp Time (Not Available)\ndataBytes[7] = 0xFF;                // Padding\n\nconst dataHex = dataBytes.map(byte => byte.toString(16).padStart(2, '0')).join('');\n\n// 3. Construct the CAN ID\nconst dgnInt = parseInt(DGN, 16);\nconst canIdInt = (PRIORITY << 26) | (dgnInt << 8) | SOURCE_ADDRESS;\nconst canIdHex = canIdInt.toString(16).padStart(8, '0');\n\n// 4. Construct the final output message in CAN bus format\nmsg.topic = \"can/send\";\nmsg.payload = `${canIdHex.toUpperCase()}#${dataHex.toUpperCase()}`;\n\nreturn msg;",
+        "func": "// Encodes any HA switch command to an RV-C DC_DIMMER_COMMAND_2 \"Toggle\"\n// Outputs in standard CAN bus format for a 'can/send' topic.\n\n// --- Configuration ---\nconst RVC_COMMAND = 0x05; // 0x05 = \"Toggle\" command type\nconst DESIRED_LEVEL = 200; // 200 = 100% brightness (toggle between 0% and 100%)\nconst SOURCE_ADDRESS = global.get(\"rvc_source_address\") || 254; // Use claimed address or Null as fallback\nconst PRIORITY = 6;\nconst DGN = \"1FEDB\";\n\n// 1. Parse the instance number from the topic\nconst topicParts = msg.topic.split('/');\nconst entityId = topicParts[2] || \"\";\nconst match = entityId.match(/_(\\d+)$/);\n\nif (!match) {\n    node.warn(`Could not parse instance number from topic: ${msg.topic}`);\n    return null;\n}\n\nconst instance = parseInt(match[1], 10);\nif (isNaN(instance) || instance < 1 || instance > 250) {\n    node.warn(`Parsed instance number \"${instance}\" is invalid.`);\n    return null;\n}\n\n// 2. Build the 8-byte data payload to match the physical switch\nconst dataBytes = new Array(8).fill(0xFF);\n\ndataBytes[0] = instance;            // Instance Number\ndataBytes[1] = 0xFF;                // Group (Non-group command)\ndataBytes[2] = DESIRED_LEVEL;       // Desired Level = 200 = 100% (toggles between 0% and 100%)\ndataBytes[3] = RVC_COMMAND;         // Command = Toggle\ndataBytes[4] = 0xFF;                // Delay/Duration (Not Available)\ndataBytes[5] = 0x00;                // Interlock (No Interlock)\ndataBytes[6] = 0x00;                // Ramp Time (Not Available)\ndataBytes[7] = 0xFF;                // Padding\n\nconst dataHex = dataBytes.map(byte => byte.toString(16).padStart(2, '0')).join('');\n\n// 3. Construct the CAN ID\nconst dgnInt = parseInt(DGN, 16);\nconst canIdInt = (PRIORITY << 26) | (dgnInt << 8) | SOURCE_ADDRESS;\nconst canIdHex = canIdInt.toString(16).padStart(8, '0');\n\n// 4. Construct the final output message in CAN bus format\nmsg.topic = \"can/send\";\nmsg.payload = `${canIdHex.toUpperCase()}#${dataHex.toUpperCase()}`;\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -654,7 +708,8 @@
         "y": 160,
         "wires": [
             [
-                "6aa079d768e1571c"
+                "6aa079d768e1571c",
+                "aede20744de83038"
             ]
         ]
     },
@@ -776,6 +831,40 @@
         "wires": []
     },
     {
+        "id": "0796de17a5bbcbdd",
+        "type": "debug",
+        "z": "b3d80c5dc947ec88",
+        "g": "aea9d97e0563bd83",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 510,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "aede20744de83038",
+        "type": "debug",
+        "z": "b3d80c5dc947ec88",
+        "g": "aea9d97e0563bd83",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 890,
+        "y": 120,
+        "wires": []
+    },
+    {
         "id": "d3a13b531babee66",
         "type": "link out",
         "z": "3470febb2cd6e952",
@@ -797,7 +886,6 @@
         "g": "e2dc4d711cc9dc94",
         "name": "switch_types",
         "links": [
-            "2f9602cc8a3d1649",
             "7af7fb2178a714cf"
         ],
         "x": 150,
@@ -970,7 +1058,6 @@
         "id": "a1beccb1a2803ca5",
         "type": "function",
         "z": "3470febb2cd6e952",
-        "d": true,
         "g": "852597de52df1703",
         "name": "Decode DC_DIMMER_COMMAND_2",
         "func": "// === Main Decode Function (Updated for July 31, 2025 Spec) ===\nfunction decodeDcDimmerCommand2Message(dgn, data) {\n    const result = {};\n    if (data.length < 7) return { error: \"Invalid data length for DGN 1FEDBh\" };\n\n    // Byte 0: Instance\n    result.instance = data[0]; // [cite: 269]\n\n    // Byte 1: Group (bitmap)\n    const groupDetails = getGroupDetails(data[1]); // [cite: 269]\n    result.group_description = groupDetails.description;\n    \n    // Byte 2: Desired Level\n    result.desired_level = decodeDesiredLevel(data[2]); // [cite: 269]\n    \n    // Byte 3: Command\n    result.command = decodeCommand(data[3]); // [cite: 269]\n    \n    // --- UPDATED SECTION ---\n    \n    // Byte 4: Delay/Duration\n    result.delay_duration = decodeDelayDuration(data[4]); // \n    \n    // Byte 5: Interlock\n    const interlockValue = decodeBits(data[5], 0, 1); // \n    const interlocks = { 0: \"No Interlock active\", 1: \"Interlock A\", 2: \"Interlock B\" };\n    result.interlock = interlocks[interlockValue] || \"Invalid\";\n\n    // Byte 6: Ramp Time\n    result.ramp_time = decodeRampTime(data[6]); // \n    \n    // --- END UPDATED SECTION ---\n    \n    return result;\n}\n\n// === Full Node-RED Function (with all helpers) ===\n\n// Helper Functions (assumed to be correct from previous versions)\nfunction decodeBits(value, startBit, endBit) {\n    const mask = ((1 << (endBit - startBit + 1)) - 1) << startBit;\n    return (value & mask) >> startBit;\n}\nfunction decodeRampTime(value) {\n    if (value === 0) return 0;\n    if (value >= 1 && value <= 250) return parseFloat((value * 0.1).toFixed(1));\n    if (value === 255) return \"Not Available\";\n    return \"Invalid\";\n}\nfunction decodeDesiredLevel(value) {\n    if (value >= 0 && value <= 200) return parseFloat((value * 0.5).toFixed(1));\n    if (value >= 230 && value <= 249) return `Scene ${value - 229}`;\n    if (value === 250) return \"Dimmed Memory\";\n    if (value === 251) return \"Master Memory\";\n    if (value === 255) return \"Not Available\";\n    return \"Invalid\";\n}\nfunction getGroupDetails(value) {\n    if (value === 0xFF) return { type: 'special', description: 'No data' };\n    if (value & 0x80) return { type: 'non-group', description: 'Non-group or Node Group command' };\n    if (value === 0x00) return { type: 'special', description: 'Member of all groups' };\n    const groups = []; const groupBits = value & 0x7F;\n    for (let bit = 0; bit < 7; bit++) { if (!(groupBits & (1 << bit))) { groups.push(bit + 1); } }\n    return { type: 'standard', groups: groups, description: groups.length > 0 ? `Groups: ${groups.join(', ')}` : \"No group membership\"};\n}\nfunction decodeDelayDuration(value) {\n    if (value >= 0 && value <= 240) return `${value} seconds`;\n    if (value >= 241 && value <= 250) return `${value - 236} minutes`;\n    if (value === 255) return \"Continuous\";\n    return \"Invalid\";\n}\nfunction decodeCommand(value) {\n    const commands = { 0: \"Set Level (Delay)\", 1: \"On (Duration)\", 2: \"On (Delay)\", 3: \"Off (Delay)\", 4: \"Stop\", 5: \"Toggle\", 6: \"Memory Off\", 7: \"Save Scene\", 11: \"Ramp Brightness\", 12: \"Ramp Toggle\", 13: \"Ramp Up\", 14: \"Ramp Down\", 15: \"Ramp Up/Down\", 16: \"Ramp Up/Down Toggle\", 21: \"Lock\", 22: \"Unlock\", 31: \"Flash\", 32: \"Flash Momentary\" };\n    return commands[value] || `unknown command: ${value}`;\n}\n\n// Main Decode Function (Updated for July 31, 2025 Spec)\nfunction decodeDcDimmerCommand2Message(dgn, data) {\n    const result = {};\n    if (data.length < 7) return { error: \"Invalid data length for DGN 1FEDBh\" };\n    result.instance = data[0]; // [cite: 269]\n    const groupDetails = getGroupDetails(data[1]); // [cite: 269]\n    result.group_description = groupDetails.description;\n    result.desired_level = decodeDesiredLevel(data[2]); // [cite: 269]\n    result.command = decodeCommand(data[3]); // [cite: 269]\n    result.delay_duration = decodeDelayDuration(data[4]); // \n    const interlockValue = decodeBits(data[5], 0, 1); // \n    const interlocks = { 0: \"No Interlock active\", 1: \"Interlock A\", 2: \"Interlock B\" };\n    result.interlock = interlocks[interlockValue] || \"Invalid\";\n    result.ramp_time = decodeRampTime(data[6]); // \n    return result;\n}\n\n// === Main Logic ===\nconst incomingPayload = msg.payload;\nconst { dgn, dataPayload } = incomingPayload;\nconst dataBytes = [];\nfor (let i = 0; i < dataPayload.length; i += 2) {\n    dataBytes.push(parseInt(dataPayload.substring(i, i + 2), 16));\n}\n\nlet decodedData;\nif (dgn === '1FEDB') {\n    decodedData = decodeDcDimmerCommand2Message(dgn, dataBytes);\n} else {\n    decodedData = { error: `Decoder for DGN ${dgn} is not implemented.` };\n}\n\nmsg.payload = { ...incomingPayload, ...decodedData };\ndelete msg.payload.dataPayload;\nreturn msg;",
@@ -992,7 +1079,6 @@
         "id": "44947b512cb27b5b",
         "type": "link in",
         "z": "3470febb2cd6e952",
-        "d": true,
         "g": "852597de52df1703",
         "name": "DC_DIMMER_COMMAND_2",
         "links": [
@@ -1002,7 +1088,8 @@
         "y": 560,
         "wires": [
             [
-                "a1beccb1a2803ca5"
+                "a1beccb1a2803ca5",
+                "c769cda1070372b2"
             ]
         ],
         "l": true
@@ -1072,7 +1159,6 @@
         "g": "b83700dc9a87e735",
         "name": "DC_DIMMER_STATUS",
         "links": [
-            "2f9602cc8a3d1649",
             "7af7fb2178a714cf"
         ],
         "x": 200,
@@ -1299,6 +1385,94 @@
         "statusType": "auto",
         "x": 290,
         "y": 280,
+        "wires": []
+    },
+    {
+        "id": "c769cda1070372b2",
+        "type": "function",
+        "z": "3470febb2cd6e952",
+        "g": "852597de52df1703",
+        "name": "Unique command",
+        "func": "// Retrieve existing messages from flow context, or initialize as empty array\nlet uniqueCommands = flow.get(\"uniqueCommands\") || [];\n\nlet newMsgStr = JSON.stringify(msg.payload.tank_type);\n\n// Check if it's a new unique message\nif (!uniqueCommands.includes(newMsgStr)) {\n    uniqueCommands.push(newMsgStr);\n    flow.set(\"uniqueCommands\", uniqueCommands);\n\n    // Create a new msg with only payload\n    return { payload: msg.payload.tank_type };\n}\n\n// Return nothing if duplicate\nreturn null;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 480,
+        "wires": [
+            [
+                "57e45f522fc50a9b"
+            ]
+        ]
+    },
+    {
+        "id": "0474640b44c5d2a9",
+        "type": "inject",
+        "z": "3470febb2cd6e952",
+        "g": "a0885c7cb1a0a88f",
+        "name": "Reset unique",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 950,
+        "y": 480,
+        "wires": [
+            [
+                "d137fb1314cb498b"
+            ]
+        ]
+    },
+    {
+        "id": "d137fb1314cb498b",
+        "type": "function",
+        "z": "3470febb2cd6e952",
+        "g": "a0885c7cb1a0a88f",
+        "name": "Reset function",
+        "func": "flow.set(\"uniqueCommands\", []);\nreturn null;  // Nothing needs to go downstream\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1200,
+        "y": 480,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "57e45f522fc50a9b",
+        "type": "debug",
+        "z": "3470febb2cd6e952",
+        "g": "852597de52df1703",
+        "name": "command",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 740,
+        "y": 480,
         "wires": []
     },
     {
@@ -1762,12 +1936,17 @@
                 "vt": "str"
             },
             {
+                "t": "eq",
+                "v": "SOLAR_EQUALIZATION_CONFIGURATION_STATUS",
+                "vt": "str"
+            },
+            {
                 "t": "else"
             }
         ],
         "checkall": "false",
         "repair": false,
-        "outputs": 23,
+        "outputs": 24,
         "x": 420,
         "y": 220,
         "wires": [
@@ -1834,6 +2013,9 @@
             ],
             [
                 "a0357de00b26b002"
+            ],
+            [
+                "0ecfccb41b17f21b"
             ],
             [
                 "b797e5a52b6db5b4"
@@ -2681,6 +2863,23 @@
         "l": true
     },
     {
+        "id": "0ecfccb41b17f21b",
+        "type": "debug",
+        "z": "3e5f038a4f5a8b9a",
+        "name": "SOLAR_EQUALIZATION_CONFIGURATION_STATUS",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 960,
+        "y": 1300,
+        "wires": []
+    },
+    {
         "id": "7e609140970f546c",
         "type": "inject",
         "z": "292e70a6ba25b323",
@@ -2851,7 +3050,8 @@
             "d3a13b531babee66",
             "ea29386f9f8682bc",
             "d38c75bc1474be23",
-            "41a795b109c2b36f"
+            "41a795b109c2b36f",
+            "a2334b77d3764815"
         ],
         "x": 160,
         "y": 480,
@@ -2919,7 +3119,8 @@
         "wires": [
             [
                 "32add109922d428a",
-                "4ad3b304d4f1e27b"
+                "4ad3b304d4f1e27b",
+                "a922fdb6b43bbced"
             ]
         ]
     },
@@ -2943,15 +3144,15 @@
         "type": "function",
         "z": "292e70a6ba25b323",
         "g": "f09f79586501cb0b",
-        "name": "CAN decode",
-        "func": "// RVC CAN Message Parser\n// Decodes a raw RVC CAN message string into a structured object.\n// Input: msg.payload (string) - e.g., \"19FEDA8C#3AFF00FDFF2100FF\"\n// Output: msg.payload (object) with decoded CAN message components\n\nconst originalMessage = msg.payload;\n\n// Validate input\nif (!originalMessage || typeof originalMessage !== 'string') {\n    node.warn(\"Invalid message payload: expected string, got \" + typeof originalMessage);\n    return null;\n}\n\n// Retrieve the DGN map from global context\nconst dgnMap = global.get('dgnMap');\nif (!dgnMap) {\n    node.error(\"dgnMap not found in global context. Ensure the map is initialized before this node receives messages.\");\n    return null;\n}\n\n// Parse CAN message format: CANID#PAYLOAD\nconst parts = originalMessage.split('#');\nif (parts.length !== 2) {\n    node.warn(\"Invalid CAN message format received: \" + originalMessage + \". Expected format: CANID#PAYLOAD\");\n    return null;\n}\n\nconst canId = parts[0];\nconst dataPayload = parts[1];\n\n// Validate CAN ID length (should be 8 hex characters for 29-bit CAN ID)\nif (canId.length < 3 || canId.length > 8) {\n    node.warn(\"Invalid CAN ID length: \" + canId + \". Expected 3-8 hex characters.\");\n    return null;\n}\n\n// Validate CAN ID is valid hexadecimal\nconst canIdNum = parseInt(canId, 16);\nif (isNaN(canIdNum)) {\n    node.warn(\"Invalid CAN ID format: \" + canId + \". Must be hexadecimal.\");\n    return null;\n}\n\n// Validate data payload is even length (hex bytes)\nif (dataPayload.length % 2 !== 0) {\n    node.warn(\"Invalid data payload length: \" + dataPayload + \". Must be even number of hex characters.\");\n    return null;\n}\n\n// Extract CAN ID fields using proper bitwise operations for 29-bit CAN ID\n// CAN ID structure: [Priority:3][Reserved:1][Data Page:1][PDU Format:8][PDU Specific:8][Source Address:8]\n\n// Extract Priority (top 3 bits of the 29-bit ID)\nconst priority = (canIdNum >> 26) & 0x7;\n\n// Extract Source Address (lowest 8 bits)\nconst sourceAddress = (canIdNum & 0xFF).toString(16).toUpperCase().padStart(2, '0');\n\n// Extract DGN (Parameter Group Number - 17 bits: bits 8-24)\nconst dgnRaw = (canIdNum >> 8) & 0x1FFFF;\nconst dgn = dgnRaw.toString(16).toUpperCase();\n\n// Look up DGN name directly (no padding to match JSON format exactly)\nlet dgnName = dgnMap.get(dgn) || \"UNKNOWN\";\n\n// Manufacturer-specific DGN overrides\nif (dgn === \"EF64\") {\n    dgnName = \"AQUAHOT\";\n} else if (dgn === \"FECA\") {\n    dgnName = \"DM-RV\";\n} else if (dgn === \"FEFC\") {\n    dgnName = \"FLOOR_HEAT_STATUS\";\n} else if (dgn === \"FEAE\") {\n    dgnName = \"SOLAR_EQUALIZATION_CONFIGURATION_STATUS\";\n}\n\n// Create structured output\nmsg.payload = {\n    originalMessage: originalMessage,\n    dgn: dgn,\n    dgnName: dgnName,\n    sourceAddress: sourceAddress,\n    priority: priority,\n    dataPayload: dataPayload,\n    // Additional fields for debugging/analysis\n    canIdHex: canId,\n    canIdDecimal: canIdNum,\n    dataLength: dataPayload.length / 2 // Number of data bytes\n};\n\nreturn msg;",
+        "name": "Decode RVC CAN",
+        "func": "// RVC CAN Message Parser\n// Decodes a raw RVC CAN message string into a structured object.\n// Input: msg.payload (string) - e.g., \"19FEDA8C#3AFF00FDFF2100FF\"\n// Output: msg.payload (object) with decoded CAN message components\n\nconst originalMessage = msg.payload;\n\n// Validate input\nif (!originalMessage || typeof originalMessage !== 'string') {\n    node.warn(\"Invalid message payload: expected string, got \" + typeof originalMessage);\n    return null;\n}\n\n// Retrieve the DGN map from global context\nconst dgnMap = global.get('dgnMap');\nif (!dgnMap) {\n    node.error(\"dgnMap not found in global context. Ensure the map is initialized before this node receives messages.\");\n    return null;\n}\n\n// Parse CAN message format: CANID#PAYLOAD\nconst parts = originalMessage.split('#');\nif (parts.length !== 2) {\n    node.warn(\"Invalid CAN message format received: \" + originalMessage + \". Expected format: CANID#PAYLOAD\");\n    return null;\n}\n\nconst canId = parts[0];\nconst dataPayload = parts[1];\n\n// Validate CAN ID length (should be 8 hex characters for 29-bit CAN ID)\nif (canId.length < 3 || canId.length > 8) {\n    node.warn(\"Invalid CAN ID length: \" + canId + \". Expected 3-8 hex characters.\");\n    return null;\n}\n\n// Validate CAN ID is valid hexadecimal\nconst canIdNum = parseInt(canId, 16);\nif (isNaN(canIdNum)) {\n    node.warn(\"Invalid CAN ID format: \" + canId + \". Must be hexadecimal.\");\n    return null;\n}\n\n// Validate data payload is even length (hex bytes)\nif (dataPayload.length % 2 !== 0) {\n    node.warn(\"Invalid data payload length: \" + dataPayload + \". Must be even number of hex characters.\");\n    return null;\n}\n\n// Extract CAN ID fields using proper bitwise operations for 29-bit CAN ID\n// CAN ID structure: [Priority:3][Reserved:1][Data Page:1][PDU Format:8][PDU Specific:8][Source Address:8]\n\n// Extract Priority (top 3 bits of the 29-bit ID)\nconst priority = (canIdNum >> 26) & 0x7;\n\n// Extract Source Address (lowest 8 bits)\nconst sourceAddress = (canIdNum & 0xFF).toString(16).toUpperCase().padStart(2, '0');\n\n// Extract DGN (Parameter Group Number - 17 bits: bits 8-24)\nconst dgnRaw = (canIdNum >> 8) & 0x1FFFF;\nconst dgn = dgnRaw.toString(16).toUpperCase();\n\n// Fix 4-character DGNs: All should start with '1' except GPS_POSITION (FEF3)\n// This is the only 4-character DGN in the RV-C spec; all others are 5 characters\nlet lookupDgn = dgn;\nif (dgn.length === 4 && dgn !== 'FEF3') {\n    lookupDgn = '1' + dgn;  // Prepend missing '1' to correct parsing error\n}\n\n// Look up DGN name using corrected value\nlet dgnName = dgnMap.get(lookupDgn) || \"UNKNOWN\";\n\n// Manufacturer-specific DGN overrides\nif (dgn === \"EF64\") {\n    dgnName = \"AQUAHOT\";\n}\n\n// Create structured output\nmsg.payload = {\n    originalMessage: originalMessage,\n    dgn: dgn,\n    dgnName: dgnName,\n    sourceAddress: sourceAddress,\n    priority: priority,\n    dataPayload: dataPayload,\n    // Additional fields for debugging/analysis\n    canIdHex: canId,\n    canIdDecimal: canIdNum,\n    dataLength: dataPayload.length / 2 // Number of data bytes\n};\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 370,
+        "x": 390,
         "y": 860,
         "wires": [
             [
@@ -3121,7 +3322,7 @@
         "rules": [
             {
                 "t": "eq",
-                "v": "DM-RV",
+                "v": "DM_RV",
                 "vt": "str"
             },
             {
@@ -3145,12 +3346,17 @@
                 "vt": "str"
             },
             {
+                "t": "eq",
+                "v": "ADDRESS_CLAIMED",
+                "vt": "str"
+            },
+            {
                 "t": "else"
             }
         ],
         "checkall": "false",
         "repair": false,
-        "outputs": 6,
+        "outputs": 7,
         "x": 890,
         "y": 860,
         "wires": [
@@ -3164,6 +3370,9 @@
             ],
             [
                 "37b11a996fc2757e"
+            ],
+            [
+                "45414bacecada477"
             ],
             [
                 "d0150fd6556514e6"
@@ -3211,7 +3420,7 @@
         "payload": "",
         "payloadType": "date",
         "x": 1420,
-        "y": 940,
+        "y": 960,
         "wires": [
             [
                 "38606e245b70b98e"
@@ -3232,7 +3441,7 @@
         "finalize": "",
         "libs": [],
         "x": 1680,
-        "y": 940,
+        "y": 960,
         "wires": [
             []
         ]
@@ -3251,7 +3460,7 @@
         "finalize": "",
         "libs": [],
         "x": 1440,
-        "y": 1000,
+        "y": 1020,
         "wires": [
             [
                 "8f7381d08bf2b8a8"
@@ -3273,7 +3482,7 @@
         "statusVal": "",
         "statusType": "auto",
         "x": 1670,
-        "y": 1000,
+        "y": 1020,
         "wires": []
     },
     {
@@ -3293,7 +3502,7 @@
         ],
         "repeat": "",
         "crontab": "",
-        "once": true,
+        "once": false,
         "onceDelay": 0.1,
         "topic": "",
         "payload": "",
@@ -3463,6 +3672,277 @@
         "y": 840,
         "wires": [],
         "l": true
+    },
+    {
+        "id": "515386b6b0d01893",
+        "type": "inject",
+        "z": "292e70a6ba25b323",
+        "g": "8ef86a1c4b59d8e1",
+        "name": "Load on Start",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 200,
+        "y": 1200,
+        "wires": [
+            [
+                "b846bc1605dae821"
+            ]
+        ]
+    },
+    {
+        "id": "b846bc1605dae821",
+        "type": "function",
+        "z": "292e70a6ba25b323",
+        "g": "8ef86a1c4b59d8e1",
+        "name": "Address claim request",
+        "func": "// RV-C Address Claim - Send Initial Claim\n// Broadcasts ADDRESS_CLAIMED message (DGN EE00h) to claim an address\n// Reference: RV-C Spec Section 3.3.2 - Source Address Claiming\n\n// Starting address for External Interface devices (per Table 7.2)\n// DSA 143: External Interface - Dynamic Range 208-223 (Appliances and Bridges)\n// Start at highest address (223) and work down per RV-C spec\nconst STARTING_ADDRESS = 223;\n\n// Device NAME (8-byte identifier per RV-C Spec 3.3.3)\n// This is used as the tie-breaker in address conflicts\n// Lower numerical NAME wins the address\n// Format: [Arbitrary Address Capable:1][Industry Group:3][Device Class Instance:4][Device Class:7]\n//         [Reserved:1][Device Function:8][Device Function Instance:5][Manufacturer Code:11][Identity Number:21]\n// Using a generic identifier for an External Interface/Node-RED controller\nconst DEVICE_NAME = \"C3A1F00700000000\"; // Generic diagnostic device identifier\n\n// Get list of addresses already in use from scan\nconst usedAddresses = new Set(flow.get(\"used_addresses\") || []);\n\n// Initialize or retrieve current address attempt from context\nlet addressToTry = context.get(\"address_attempt\") || STARTING_ADDRESS;\n\n// Skip addresses we know are already in use\nwhile (usedAddresses.has(addressToTry) && addressToTry > 0) {\n    addressToTry--;\n    node.warn(`Address ${addressToTry + 1} already seen in use, skipping to ${addressToTry}`);\n}\n\n// Check if we received a retry command from the monitor function\nif (msg.topic === \"address_claim_retry\") {\n    // Decrement address and try again\n    addressToTry--;\n\n    // Handle address wraparound per RV-C spec\n    if (addressToTry < 208) {\n        node.error(\"Exhausted all addresses in External Interface range (208-223)\");\n        return null;\n    }\n\n    node.warn(`Lost address conflict at ${addressToTry + 1}. Trying address ${addressToTry}`);\n}\n\n// Store current attempt\ncontext.set(\"address_attempt\", addressToTry);\n\n// Build ADDRESS_CLAIMED message (DGN EE00h)\nconst DGN = \"EE00\";\nconst priority = 6; // Standard priority for address claiming\nconst dgnInt = parseInt(DGN, 16);\n\n// Construct CAN ID with the address we're claiming as the source address\nconst priorityBits = (priority << 26) >>> 0;\nconst dgnBits = (dgnInt << 8) >>> 0;\nconst sourceAddressBits = addressToTry; // CRITICAL: Use the address we want to claim\n\nconst canId = (priorityBits | dgnBits | sourceAddressBits) >>> 0;\nconst canIdHex = canId.toString(16).padStart(8, '0').toUpperCase();\n\n// Data payload: Our device's 8-byte NAME\nconst dataPayload = DEVICE_NAME;\n\n// Construct CAN message in format: CANID#PAYLOAD\nconst canMessage = `${canIdHex}#${dataPayload}`;\n\n// Store metadata for monitor function\nflow.set(\"claiming_address\", addressToTry);\nflow.set(\"claim_in_progress\", true);\nflow.set(\"our_device_name\", DEVICE_NAME);\n\n// Prepare output message for MQTT\nmsg.payload = canMessage;\nmsg.topic = \"can/send\";\nmsg.claiming_address = addressToTry; // Pass to delay/timer for validation\n\n//node.warn(`Claiming address ${addressToTry} (0x${addressToTry.toString(16).toUpperCase()})`);\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 1200,
+        "wires": [
+            [
+                "55071115a3fe7c2c",
+                "a2334b77d3764815"
+            ]
+        ]
+    },
+    {
+        "id": "55071115a3fe7c2c",
+        "type": "delay",
+        "z": "292e70a6ba25b323",
+        "g": "8ef86a1c4b59d8e1",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "250",
+        "timeoutUnits": "milliseconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 930,
+        "y": 1260,
+        "wires": [
+            [
+                "6423c433e099d2a5"
+            ]
+        ]
+    },
+    {
+        "id": "4e46ba83df00a31b",
+        "type": "function",
+        "z": "292e70a6ba25b323",
+        "g": "8ef86a1c4b59d8e1",
+        "name": "Address claim monitor",
+        "func": "// RV-C Address Claim Monitor Function\n// Monitors ADDRESS_CLAIMED messages (DGN EE00) during claiming process\n// Compares device NAMEs to determine winner in case of conflict\n// Reference: RV-C Spec Section 3.3.2 - Source Address Claiming\n\n// Check if we're currently in the claiming process\nconst claimInProgress = flow.get(\"claim_in_progress\");\nif (!claimInProgress) {\n    // Not claiming, ignore this message\n    return null;\n}\n\n// Get the address we're trying to claim and our device NAME\nconst claimingAddress = flow.get(\"claiming_address\");\nconst ourDeviceName = flow.get(\"our_device_name\");\n\n// Parse incoming ADDRESS_CLAIMED message (DGN EE00)\nconst incomingPayload = msg.payload;\n\n// Verify this is an ADDRESS_CLAIMED message\nif (incomingPayload.dgn !== \"EE00\" && incomingPayload.dgn !== \"0EE00\") {\n    // Not an ADDRESS_CLAIMED message, ignore\n    return null;\n}\n\n// Extract source address from the ADDRESS_CLAIMED message\nconst sourceAddress = incomingPayload.sourceAddress;\nconst sourceAddressInt = parseInt(sourceAddress, 16);\n\n// Check if another device is claiming the same address we want\nif (sourceAddressInt === claimingAddress) {\n    // CONFLICT DETECTED - Extract competitor's NAME from data payload\n    const competitorName = incomingPayload.dataPayload.toUpperCase();\n\n    node.warn(`Address ${claimingAddress} (0x${claimingAddress.toString(16).toUpperCase()}) conflict detected!`);\n    node.warn(`Our NAME: ${ourDeviceName}, Competitor NAME: ${competitorName}`);\n\n    // Compare NAMEs - Lower numerical value wins\n    // Convert hex strings to BigInt for comparison\n    const ourNameValue = BigInt(\"0x\" + ourDeviceName);\n    const competitorNameValue = BigInt(\"0x\" + competitorName);\n\n    if (ourNameValue < competitorNameValue) {\n        // WE WIN - Our NAME is lower, so we keep the address\n        node.warn(`We WIN the conflict (our NAME is lower). Continuing to claim address ${claimingAddress}`);\n        // Don't send retry, just ignore and let timer expire\n        return null;\n    } else {\n        // WE LOSE - Competitor's NAME is lower or equal, they get the address\n        node.warn(`We LOSE the conflict (competitor NAME is lower). Trying next address.`);\n\n        // Send retry command back to claim function\n        const retryMsg = {\n            topic: \"address_claim_retry\",\n            payload: {\n                conflict: true,\n                conflictAddress: claimingAddress,\n                competitorName: competitorName,\n                weWon: false\n            }\n        };\n\n        // Clear the claiming flag so we stop monitoring\n        flow.set(\"claim_in_progress\", false);\n\n        return retryMsg;\n    }\n}\n\n// If we reach here, the ADDRESS_CLAIMED is for a different address\n// Continue waiting for timer to expire\nreturn null;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 440,
+        "y": 1260,
+        "wires": [
+            [
+                "b846bc1605dae821"
+            ]
+        ]
+    },
+    {
+        "id": "45414bacecada477",
+        "type": "link out",
+        "z": "292e70a6ba25b323",
+        "g": "f09f79586501cb0b",
+        "name": "ADDRESS_CLAIMED",
+        "mode": "link",
+        "links": [
+            "f01db5ebc3ae2e18"
+        ],
+        "x": 1400,
+        "y": 880,
+        "wires": [],
+        "l": true
+    },
+    {
+        "id": "f01db5ebc3ae2e18",
+        "type": "link in",
+        "z": "292e70a6ba25b323",
+        "g": "8ef86a1c4b59d8e1",
+        "name": "ADDRESS_CLAIMED",
+        "links": [
+            "45414bacecada477"
+        ],
+        "x": 200,
+        "y": 1260,
+        "wires": [
+            [
+                "4e46ba83df00a31b"
+            ]
+        ],
+        "l": true
+    },
+    {
+        "id": "a2334b77d3764815",
+        "type": "link out",
+        "z": "292e70a6ba25b323",
+        "g": "8ef86a1c4b59d8e1",
+        "name": "MQTT Out",
+        "mode": "link",
+        "links": [
+            "f658418a7b9b4857"
+        ],
+        "x": 1370,
+        "y": 1200,
+        "wires": [],
+        "l": true
+    },
+    {
+        "id": "6423c433e099d2a5",
+        "type": "function",
+        "z": "292e70a6ba25b323",
+        "g": "8ef86a1c4b59d8e1",
+        "name": "Address claim success",
+        "func": "// RV-C Address Claim Success Function\n// Called after 250ms timer expires - finalizes address claim if no conflict lost\n// Reference: RV-C Spec Section 3.3.2 - Source Address Claiming\n//\n// IMPORTANT: This does NOT send a second ADDRESS_CLAIMED message.\n// We already sent ADDRESS_CLAIMED at the start of the process.\n// Success = 250ms timer expires without losing a conflict.\n\n// Get the address we were trying to claim when this timer started\nconst claimedAddress = msg.claiming_address;\n\nif (claimedAddress === undefined || claimedAddress === null) {\n    node.error(\"No address to claim - timer message missing claiming_address\");\n    return null;\n}\n\n// Check if this timer is still valid (claim hasn't been cancelled by monitor)\nconst claimInProgress = flow.get(\"claim_in_progress\");\nif (!claimInProgress) {\n    // Claim was cancelled during the 250ms window (we lost a conflict)\n    node.warn(`Timer expired for address ${claimedAddress}, but claim was cancelled - ignoring`);\n    return null;\n}\n\n// Verify we're still trying to claim the same address\nconst currentClaimingAddress = flow.get(\"claiming_address\");\nif (currentClaimingAddress !== claimedAddress) {\n    node.warn(`Timer expired for address ${claimedAddress}, but we're now trying ${currentClaimingAddress} - ignoring stale timer`);\n    return null;\n}\n\n// SUCCESS! No conflict detected during the 250ms monitoring window\n// Store the claimed address to global context\nglobal.set(\"rvc_source_address\", claimedAddress);\n\n// Clear claiming flags\nflow.set(\"claim_in_progress\", false);\nflow.set(\"claiming_address\", null);\nflow.set(\"our_device_name\", null);\n\n//node.warn(`Successfully claimed address ${claimedAddress} (0x${claimedAddress.toString(16).toUpperCase()})`);\n//node.warn(`Address stored to global.rvc_source_address: ${claimedAddress}`);\n\n// Return null - No CAN message to send\n// We already broadcast ADDRESS_CLAIMED at the beginning of the process\nreturn null;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1140,
+        "y": 1260,
+        "wires": [
+            [
+                "a2334b77d3764815"
+            ]
+        ]
+    },
+    {
+        "id": "a922fdb6b43bbced",
+        "type": "function",
+        "z": "292e70a6ba25b323",
+        "d": true,
+        "g": "3c819b7900145438",
+        "name": "function 1",
+        "func": "// Filters raw incoming CAN messages to ONLY pass messages sent by this HA system\n// Shows ALL messages transmitted by HA regardless of DGN type\n// Input: msg.payload (string) - raw CAN message e.g., \"19FEDB8C#03FFC805FF00FFFF\"\n// Output: null (block) or original msg (pass through)\n\nconst originalMessage = msg.payload;\n\n// Validate input\nif (!originalMessage || typeof originalMessage !== 'string') {\n    return null;\n}\n\n// Parse CAN message format: CANID#PAYLOAD\nconst parts = originalMessage.split('#');\nif (parts.length !== 2) {\n    return null;\n}\n\nconst canId = parts[0];\n\n// Parse CAN ID as hexadecimal\nconst canIdNum = parseInt(canId, 16);\nif (isNaN(canIdNum)) {\n    return null;\n}\n\n// Extract Source Address (lowest 8 bits of CAN ID)\nconst sourceAddress = canIdNum & 0xFF;\n\n// Get the RVC source address claimed by this HA system\nconst ourSourceAddress = global.get(\"rvc_source_address\");\n\n// ONLY allow messages from our claimed source address\nif (sourceAddress === ourSourceAddress) {\n    return msg;\n}\n\n// Block all other messages\nreturn null;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 820,
+        "y": 260,
+        "wires": [
+            [
+                "982faa37c0038bf4",
+                "4d8ffc7896c8353f"
+            ]
+        ]
+    },
+    {
+        "id": "4f33fad10d85b69d",
+        "type": "function",
+        "z": "292e70a6ba25b323",
+        "d": true,
+        "g": "3c819b7900145438",
+        "name": "Decode DC_DIMMER_COMMAND_2",
+        "func": "// === Main Decode Function (Updated for July 31, 2025 Spec) ===\nfunction decodeDcDimmerCommand2Message(dgn, data) {\n    const result = {};\n    if (data.length < 7) return { error: \"Invalid data length for DGN 1FEDBh\" };\n\n    // Byte 0: Instance\n    result.instance = data[0]; // [cite: 269]\n\n    // Byte 1: Group (bitmap)\n    const groupDetails = getGroupDetails(data[1]); // [cite: 269]\n    result.group_description = groupDetails.description;\n    \n    // Byte 2: Desired Level\n    result.desired_level = decodeDesiredLevel(data[2]); // [cite: 269]\n    \n    // Byte 3: Command\n    result.command = decodeCommand(data[3]); // [cite: 269]\n    \n    // --- UPDATED SECTION ---\n    \n    // Byte 4: Delay/Duration\n    result.delay_duration = decodeDelayDuration(data[4]); // \n    \n    // Byte 5: Interlock\n    const interlockValue = decodeBits(data[5], 0, 1); // \n    const interlocks = { 0: \"No Interlock active\", 1: \"Interlock A\", 2: \"Interlock B\" };\n    result.interlock = interlocks[interlockValue] || \"Invalid\";\n\n    // Byte 6: Ramp Time\n    result.ramp_time = decodeRampTime(data[6]); // \n    \n    // --- END UPDATED SECTION ---\n    \n    return result;\n}\n\n// === Full Node-RED Function (with all helpers) ===\n\n// Helper Functions (assumed to be correct from previous versions)\nfunction decodeBits(value, startBit, endBit) {\n    const mask = ((1 << (endBit - startBit + 1)) - 1) << startBit;\n    return (value & mask) >> startBit;\n}\nfunction decodeRampTime(value) {\n    if (value === 0) return 0;\n    if (value >= 1 && value <= 250) return parseFloat((value * 0.1).toFixed(1));\n    if (value === 255) return \"Not Available\";\n    return \"Invalid\";\n}\nfunction decodeDesiredLevel(value) {\n    if (value >= 0 && value <= 200) return parseFloat((value * 0.5).toFixed(1));\n    if (value >= 230 && value <= 249) return `Scene ${value - 229}`;\n    if (value === 250) return \"Dimmed Memory\";\n    if (value === 251) return \"Master Memory\";\n    if (value === 255) return \"Not Available\";\n    return \"Invalid\";\n}\nfunction getGroupDetails(value) {\n    if (value === 0xFF) return { type: 'special', description: 'No data' };\n    if (value & 0x80) return { type: 'non-group', description: 'Non-group or Node Group command' };\n    if (value === 0x00) return { type: 'special', description: 'Member of all groups' };\n    const groups = []; const groupBits = value & 0x7F;\n    for (let bit = 0; bit < 7; bit++) { if (!(groupBits & (1 << bit))) { groups.push(bit + 1); } }\n    return { type: 'standard', groups: groups, description: groups.length > 0 ? `Groups: ${groups.join(', ')}` : \"No group membership\"};\n}\nfunction decodeDelayDuration(value) {\n    if (value >= 0 && value <= 240) return `${value} seconds`;\n    if (value >= 241 && value <= 250) return `${value - 236} minutes`;\n    if (value === 255) return \"Continuous\";\n    return \"Invalid\";\n}\nfunction decodeCommand(value) {\n    const commands = { 0: \"Set Level (Delay)\", 1: \"On (Duration)\", 2: \"On (Delay)\", 3: \"Off (Delay)\", 4: \"Stop\", 5: \"Toggle\", 6: \"Memory Off\", 7: \"Save Scene\", 11: \"Ramp Brightness\", 12: \"Ramp Toggle\", 13: \"Ramp Up\", 14: \"Ramp Down\", 15: \"Ramp Up/Down\", 16: \"Ramp Up/Down Toggle\", 21: \"Lock\", 22: \"Unlock\", 31: \"Flash\", 32: \"Flash Momentary\" };\n    return commands[value] || `unknown command: ${value}`;\n}\n\n// Main Decode Function (Updated for July 31, 2025 Spec)\nfunction decodeDcDimmerCommand2Message(dgn, data) {\n    const result = {};\n    if (data.length < 7) return { error: \"Invalid data length for DGN 1FEDBh\" };\n    result.instance = data[0]; // [cite: 269]\n    const groupDetails = getGroupDetails(data[1]); // [cite: 269]\n    result.group_description = groupDetails.description;\n    result.desired_level = decodeDesiredLevel(data[2]); // [cite: 269]\n    result.command = decodeCommand(data[3]); // [cite: 269]\n    result.delay_duration = decodeDelayDuration(data[4]); // \n    const interlockValue = decodeBits(data[5], 0, 1); // \n    const interlocks = { 0: \"No Interlock active\", 1: \"Interlock A\", 2: \"Interlock B\" };\n    result.interlock = interlocks[interlockValue] || \"Invalid\";\n    result.ramp_time = decodeRampTime(data[6]); // \n    return result;\n}\n\n// === Main Logic ===\nconst incomingPayload = msg.payload;\nconst { dgn, dataPayload } = incomingPayload;\nconst dataBytes = [];\nfor (let i = 0; i < dataPayload.length; i += 2) {\n    dataBytes.push(parseInt(dataPayload.substring(i, i + 2), 16));\n}\n\nlet decodedData;\nif (dgn === '1FEDB') {\n    decodedData = decodeDcDimmerCommand2Message(dgn, dataBytes);\n} else {\n    decodedData = { error: `Decoder for DGN ${dgn} is not implemented.` };\n}\n\nmsg.payload = { ...incomingPayload, ...decodedData };\ndelete msg.payload.dataPayload;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1110,
+        "y": 320,
+        "wires": [
+            [
+                "51910a93d572e95c"
+            ]
+        ]
+    },
+    {
+        "id": "51910a93d572e95c",
+        "type": "debug",
+        "z": "292e70a6ba25b323",
+        "d": true,
+        "g": "3c819b7900145438",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1360,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "982faa37c0038bf4",
+        "type": "function",
+        "z": "292e70a6ba25b323",
+        "d": true,
+        "g": "3c819b7900145438",
+        "name": "Decode RVC CAN",
+        "func": "// RVC CAN Message Parser\n// Decodes a raw RVC CAN message string into a structured object.\n// Input: msg.payload (string) - e.g., \"19FEDA8C#3AFF00FDFF2100FF\"\n// Output: msg.payload (object) with decoded CAN message components\n\nconst originalMessage = msg.payload;\n\n// Validate input\nif (!originalMessage || typeof originalMessage !== 'string') {\n    node.warn(\"Invalid message payload: expected string, got \" + typeof originalMessage);\n    return null;\n}\n\n// Retrieve the DGN map from global context\nconst dgnMap = global.get('dgnMap');\nif (!dgnMap) {\n    node.error(\"dgnMap not found in global context. Ensure the map is initialized before this node receives messages.\");\n    return null;\n}\n\n// Parse CAN message format: CANID#PAYLOAD\nconst parts = originalMessage.split('#');\nif (parts.length !== 2) {\n    node.warn(\"Invalid CAN message format received: \" + originalMessage + \". Expected format: CANID#PAYLOAD\");\n    return null;\n}\n\nconst canId = parts[0];\nconst dataPayload = parts[1];\n\n// Validate CAN ID length (should be 8 hex characters for 29-bit CAN ID)\nif (canId.length < 3 || canId.length > 8) {\n    node.warn(\"Invalid CAN ID length: \" + canId + \". Expected 3-8 hex characters.\");\n    return null;\n}\n\n// Validate CAN ID is valid hexadecimal\nconst canIdNum = parseInt(canId, 16);\nif (isNaN(canIdNum)) {\n    node.warn(\"Invalid CAN ID format: \" + canId + \". Must be hexadecimal.\");\n    return null;\n}\n\n// Validate data payload is even length (hex bytes)\nif (dataPayload.length % 2 !== 0) {\n    node.warn(\"Invalid data payload length: \" + dataPayload + \". Must be even number of hex characters.\");\n    return null;\n}\n\n// Extract CAN ID fields using proper bitwise operations for 29-bit CAN ID\n// CAN ID structure: [Priority:3][Reserved:1][Data Page:1][PDU Format:8][PDU Specific:8][Source Address:8]\n\n// Extract Priority (top 3 bits of the 29-bit ID)\nconst priority = (canIdNum >> 26) & 0x7;\n\n// Extract Source Address (lowest 8 bits)\nconst sourceAddress = (canIdNum & 0xFF).toString(16).toUpperCase().padStart(2, '0');\n\n// Extract DGN (Parameter Group Number - 17 bits: bits 8-24)\nconst dgnRaw = (canIdNum >> 8) & 0x1FFFF;\nconst dgn = dgnRaw.toString(16).toUpperCase();\n\n// Fix 4-character DGNs: All should start with '1' except GPS_POSITION (FEF3)\n// This is the only 4-character DGN in the RV-C spec; all others are 5 characters\nlet lookupDgn = dgn;\nif (dgn.length === 4 && dgn !== 'FEF3') {\n    lookupDgn = '1' + dgn;  // Prepend missing '1' to correct parsing error\n}\n\n// Look up DGN name using corrected value\nlet dgnName = dgnMap.get(lookupDgn) || \"UNKNOWN\";\n\n// Manufacturer-specific DGN overrides\nif (dgn === \"EF64\") {\n    dgnName = \"AQUAHOT\";\n}\n\n// Create structured output\nmsg.payload = {\n    originalMessage: originalMessage,\n    dgn: dgn,\n    dgnName: dgnName,\n    sourceAddress: sourceAddress,\n    priority: priority,\n    dataPayload: dataPayload,\n    // Additional fields for debugging/analysis\n    canIdHex: canId,\n    canIdDecimal: canIdNum,\n    dataLength: dataPayload.length / 2 // Number of data bytes\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1050,
+        "y": 260,
+        "wires": [
+            [
+                "4f33fad10d85b69d"
+            ]
+        ]
+    },
+    {
+        "id": "4d8ffc7896c8353f",
+        "type": "debug",
+        "z": "292e70a6ba25b323",
+        "d": true,
+        "g": "3c819b7900145438",
+        "name": "debug 5",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1020,
+        "y": 200,
+        "wires": []
     },
     {
         "id": "802228bc8d89d80a",
@@ -3862,9 +4342,7 @@
         "g": "0b18891888586798",
         "name": "RVC In",
         "links": [
-            "6aa079d768e1571c",
-            "7dc76fed7cb91e49",
-            "3748374835f41e60"
+            "6aa079d768e1571c"
         ],
         "x": 500,
         "y": 320,
