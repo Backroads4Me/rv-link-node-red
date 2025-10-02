@@ -348,6 +348,28 @@
         "h": 328
     },
     {
+        "id": "da39e5020d511fa6",
+        "type": "group",
+        "z": "3470febb2cd6e952",
+        "name": "Shades",
+        "style": {
+            "stroke": "#ffffff",
+            "label": true
+        },
+        "nodes": [
+            "05ad1b190633010c",
+            "ad388870b71549ef",
+            "f9a04003db7d8e4a",
+            "fa9fcf7b64a31948",
+            "927340668e7942e4",
+            "ac41981e9754eca5"
+        ],
+        "x": 54,
+        "y": 879,
+        "w": 1078,
+        "h": 328
+    },
+    {
         "id": "9dd6a98018824be9",
         "type": "group",
         "z": "292e70a6ba25b323",
@@ -468,28 +490,6 @@
         "y": 599,
         "w": 472,
         "h": 142
-    },
-    {
-        "id": "da39e5020d511fa6",
-        "type": "group",
-        "z": "3470febb2cd6e952",
-        "name": "Shades",
-        "style": {
-            "stroke": "#ffffff",
-            "label": true
-        },
-        "nodes": [
-            "05ad1b190633010c",
-            "ad388870b71549ef",
-            "f9a04003db7d8e4a",
-            "fa9fcf7b64a31948",
-            "927340668e7942e4",
-            "ac41981e9754eca5"
-        ],
-        "x": 54,
-        "y": 879,
-        "w": 1078,
-        "h": 328
     },
     {
         "id": "05ad1b190633010c",
@@ -893,7 +893,7 @@
         "z": "3470febb2cd6e952",
         "g": "e2dc4d711cc9dc94",
         "name": "Unified STATUS",
-        "func": "/***********************************************************\n * Unified HA Status Updater\n * Handles all switch-type devices: lights, pumps, autofill, shades\n * Routes to appropriate HA switch entities with different prefixes\n *\n * Expects input msg.payload to be an object with:\n * - msg.payload.instance (Number): The device instance ID\n * - msg.payload.dgn_name (String): DGN type for device type detection\n * - Status field varies by device type:\n *   - DC_DIMMER_STATUS: msg.payload.load_status\n *   - WATER_PUMP_STATUS: msg.payload.operating_state\n *   - AUTOFILL_STATUS: msg.payload.operating_status\n *   - WINDOW_SHADE_CONTROL_STATUS: msg.payload.operating_status or forward_status/reverse_status\n ***********************************************************/\n\n// Validate basic input structure\nif (!msg.payload || typeof msg.payload !== 'object') {\n    node.error(\"Input payload must be an object.\", msg);\n    return null;\n}\n\nconst instance = msg.payload.instance;\nconst dgnName = msg.payload.dgn_name;\n\n// Validate required fields\nif (typeof instance !== 'number') {\n    node.error(\"Input missing 'instance' (number).\", msg);\n    return null;\n}\n\nif (typeof dgnName !== 'string') {\n    node.error(\"Input missing 'dgn_name' (string).\", msg);\n    return null;\n}\n\n// Device type mapping and status field extraction\nlet devicePrefix;\nlet statusValue;\nlet haStatus = \"OFF\"; // Default\n\nswitch (dgnName) {\n    case \"DC_DIMMER_STATUS_1\":\n        devicePrefix = \"switch1\";\n        statusValue = msg.payload.load_status;\n\n        if (typeof statusValue !== 'string') {\n            node.error(`${dgnName} missing 'load_status' (string).`, msg);\n            return null;\n        }\n\n        // DC Dimmer: Check if load_status contains \"Off\"\n        haStatus = statusValue.includes(\"Off\") ? \"OFF\" : \"ON\";\n        break;\n\n    case \"DC_DIMMER_STATUS_2\":\n        devicePrefix = \"switch2\";\n        statusValue = msg.payload.load_status;\n\n        if (typeof statusValue !== 'string') {\n            node.error(`${dgnName} missing 'load_status' (string).`, msg);\n            return null;\n        }\n\n        // DC Dimmer: Check if load_status contains \"Off\"\n        haStatus = statusValue.includes(\"Off\") ? \"OFF\" : \"ON\";\n        break;\n\n    case \"DC_DIMMER_STATUS_3\":\n        devicePrefix = \"switch\";\n        statusValue = msg.payload.load_status;\n\n        if (typeof statusValue !== 'string') {\n            node.error(`${dgnName} missing 'load_status' (string).`, msg);\n            return null;\n        }\n\n        // DC Dimmer: Check if load_status contains \"Off\"\n        haStatus = statusValue.includes(\"Off\") ? \"OFF\" : \"ON\";\n        break;\n\n    case \"WATER_PUMP_STATUS\":\n        devicePrefix = \"pump\";\n        statusValue = msg.payload.operating_state;\n\n        if (typeof statusValue !== 'string') {\n            node.error(\"WATER_PUMP_STATUS missing 'operating_state' (string).\", msg);\n            return null;\n        }\n\n        // Water Pump: Check for active states\n        if (statusValue.includes(\"Running\") ||\n            statusValue.includes(\"On\") ||\n            statusValue.includes(\"Priming\") ||\n            statusValue === \"Self Test\") {\n            haStatus = \"ON\";\n        } else if (statusValue.includes(\"Off\") ||\n            statusValue.includes(\"Stop\") ||\n            statusValue === \"Standby\") {\n            haStatus = \"OFF\";\n        } else {\n            // Fault states default to OFF\n            haStatus = \"OFF\";\n        }\n        break;\n\n    case \"AUTOFILL_STATUS\":\n        devicePrefix = \"autofill\";\n        statusValue = msg.payload.operating_status;\n\n        if (typeof statusValue !== 'string') {\n            node.error(\"AUTOFILL_STATUS missing 'operating_status' (string).\", msg);\n            return null;\n        }\n\n        // Autofill: Check for active states (case insensitive)\n        const lowerStatus = statusValue.toLowerCase();\n        if (lowerStatus.includes(\"on\") || lowerStatus.includes(\"auto\")) {\n            haStatus = \"ON\";\n        } else if (lowerStatus.includes(\"off\")) {\n            haStatus = \"OFF\";\n        } else {\n            haStatus = \"OFF\";\n        }\n        break;\n\n    case \"WINDOW_SHADE_CONTROL_STATUS\":\n        devicePrefix = \"shade\";\n\n        // Shade: ON = Up/Open, OFF = Down/Closed\n        // Check operating_status (0-200 representing 0-100%)\n        if (typeof msg.payload.operating_status === 'number') {\n            // Consider shade \"ON\" (up) if position > 50%\n            haStatus = msg.payload.operating_status > 100 ? \"ON\" : \"OFF\";\n        }\n        // Fallback: Check motor direction\n        else if (msg.payload.forward_status) {\n            // Forward = raising/opening\n            const forwardStatus = msg.payload.forward_status;\n            haStatus = (forwardStatus.includes(\"on\") || forwardStatus.includes(\"Forward\")) ? \"ON\" : \"OFF\";\n        }\n        // Default to OFF if no clear status\n        else {\n            haStatus = \"OFF\";\n        }\n        break;\n\n    default:\n        node.error(`Unsupported dgn_name: ${dgnName}`, msg);\n        return null;\n}\n\n// Construct the MQTT topic with appropriate prefix\nconst stateTopic = `homeassistant/switch/${devicePrefix}_${instance}/state`;\n\n// Prepare the final message\nmsg.topic = stateTopic;\nmsg.payload = haStatus; // The payload is just the string \"ON\" or \"OFF\"\nmsg.retain = true; // Retain the status so HA shows the correct state after a restart\n\nreturn msg;",
+        "func": "/***********************************************************\n * Unified HA Status Updater\n * Handles all switch-type devices: lights, pumps, autofill\n * Routes to appropriate HA switch entities with different prefixes\n *\n * Expects input msg.payload to be an object with:\n * - msg.payload.instance (Number): The device instance ID\n * - msg.payload.dgn_name (String): DGN type for device type detection\n * - Status field varies by device type:\n *   - DC_DIMMER_STATUS: msg.payload.load_status\n *   - WATER_PUMP_STATUS: msg.payload.operating_state\n *   - AUTOFILL_STATUS: msg.payload.operating_status\n ***********************************************************/\n\n// Validate basic input structure\nif (!msg.payload || typeof msg.payload !== 'object') {\n    node.error(\"Input payload must be an object.\", msg);\n    return null;\n}\n\nconst instance = msg.payload.instance;\nconst dgnName = msg.payload.dgn_name;\n\n// Validate required fields\nif (typeof instance !== 'number') {\n    node.error(\"Input missing 'instance' (number).\", msg);\n    return null;\n}\n\nif (typeof dgnName !== 'string') {\n    node.error(\"Input missing 'dgn_name' (string).\", msg);\n    return null;\n}\n\n// Device type mapping and status field extraction\nlet devicePrefix;\nlet statusValue;\nlet haStatus = \"OFF\"; // Default\n\nswitch (dgnName) {\n    case \"DC_DIMMER_STATUS_1\":\n        devicePrefix = \"switch1\";\n        statusValue = msg.payload.load_status;\n\n        if (typeof statusValue !== 'string') {\n            node.error(`${dgnName} missing 'load_status' (string).`, msg);\n            return null;\n        }\n\n        // DC Dimmer: Check if load_status contains \"Off\"\n        haStatus = statusValue.includes(\"Off\") ? \"OFF\" : \"ON\";\n        break;\n\n    case \"DC_DIMMER_STATUS_2\":\n        devicePrefix = \"switch2\";\n        statusValue = msg.payload.load_status;\n\n        if (typeof statusValue !== 'string') {\n            node.error(`${dgnName} missing 'load_status' (string).`, msg);\n            return null;\n        }\n\n        // DC Dimmer: Check if load_status contains \"Off\"\n        haStatus = statusValue.includes(\"Off\") ? \"OFF\" : \"ON\";\n        break;\n\n    case \"DC_DIMMER_STATUS_3\":\n        devicePrefix = \"switch\";\n        statusValue = msg.payload.load_status;\n\n        if (typeof statusValue !== 'string') {\n            node.error(`${dgnName} missing 'load_status' (string).`, msg);\n            return null;\n        }\n\n        // DC Dimmer: Check if load_status contains \"Off\"\n        haStatus = statusValue.includes(\"Off\") ? \"OFF\" : \"ON\";\n        break;\n\n    case \"WATER_PUMP_STATUS\":\n        devicePrefix = \"pump\";\n        statusValue = msg.payload.operating_state;\n\n        if (typeof statusValue !== 'string') {\n            node.error(\"WATER_PUMP_STATUS missing 'operating_state' (string).\", msg);\n            return null;\n        }\n\n        // Water Pump: Check for active states\n        if (statusValue.includes(\"Running\") ||\n            statusValue.includes(\"On\") ||\n            statusValue.includes(\"Priming\") ||\n            statusValue === \"Self Test\") {\n            haStatus = \"ON\";\n        } else if (statusValue.includes(\"Off\") ||\n            statusValue.includes(\"Stop\") ||\n            statusValue === \"Standby\") {\n            haStatus = \"OFF\";\n        } else {\n            // Fault states default to OFF\n            haStatus = \"OFF\";\n        }\n        break;\n\n    case \"AUTOFILL_STATUS\":\n        devicePrefix = \"autofill\";\n        statusValue = msg.payload.operating_status;\n\n        if (typeof statusValue !== 'string') {\n            node.error(\"AUTOFILL_STATUS missing 'operating_status' (string).\", msg);\n            return null;\n        }\n\n        // Autofill: Check for active states (case insensitive)\n        const lowerStatus = statusValue.toLowerCase();\n        if (lowerStatus.includes(\"on\") || lowerStatus.includes(\"auto\")) {\n            haStatus = \"ON\";\n        } else if (lowerStatus.includes(\"off\")) {\n            haStatus = \"OFF\";\n        } else {\n            haStatus = \"OFF\";\n        }\n        break;\n\n    default:\n        node.error(`Unsupported dgn_name: ${dgnName}`, msg);\n        return null;\n}\n\n// Construct the MQTT topic with appropriate prefix\nconst stateTopic = `homeassistant/switch/${devicePrefix}_${instance}/state`;\n\n// Prepare the final message\nmsg.topic = stateTopic;\nmsg.payload = haStatus; // The payload is just the string \"ON\" or \"OFF\"\nmsg.retain = true; // Retain the status so HA shows the correct state after a restart\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -1045,8 +1045,7 @@
         "g": "97615854748deb3d",
         "name": "LOCK_STATUS",
         "links": [
-            "f00adfe38f0e26b5",
-            "4ab29d3dd1da32a5"
+            "f00adfe38f0e26b5"
         ],
         "x": 160,
         "y": 480,
@@ -1274,7 +1273,7 @@
         "z": "3470febb2cd6e952",
         "g": "da39e5020d511fa6",
         "name": "Unique shade",
-        "func": "let uniqueShades = flow.get(\"uniqueShades\") || [];\n\n// Track by numeric instance ID for true uniqueness\nlet instanceId = msg.payload.instance;\n\n// Check if this instance ID has been seen before\nif (!uniqueShades.includes(instanceId)) {\n    uniqueShades.push(instanceId);\n    flow.set(\"uniqueShades\", uniqueShades);\n\n    // Pass to create_lock.js in unified object format\n    return {\n        payload: {\n            instance: instanceId,\n            device_type: \"lock\"\n        }\n    };\n}\n\n// Return nothing if duplicate instance\nreturn null;\n",
+        "func": "let uniqueShades = flow.get(\"uniqueShades\") || [];\n\n// Track by numeric instance ID for true uniqueness\nlet instanceId = msg.payload.instance;\n\n// Check if this instance ID has been seen before\nif (!uniqueShades.includes(instanceId)) {\n    uniqueShades.push(instanceId);\n    flow.set(\"uniqueShades\", uniqueShades);\n\n    return {\n        payload: {\n            instance: instanceId,\n            device_type: \"shade\"\n        }\n    };\n}\n\n// Return nothing if duplicate instance\nreturn null;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -2927,7 +2926,6 @@
         "name": "SHADE_STATUS",
         "mode": "link",
         "links": [
-            "1d2d33ef4e57dd39",
             "f9a04003db7d8e4a"
         ],
         "x": 1310,
