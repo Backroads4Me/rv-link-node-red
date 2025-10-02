@@ -275,12 +275,13 @@
             "f9a04003db7d8e4a",
             "fa9fcf7b64a31948",
             "927340668e7942e4",
-            "ac41981e9754eca5"
+            "ac41981e9754eca5",
+            "f134c311856f2271"
         ],
         "x": 114,
-        "y": 819,
+        "y": 799,
         "w": 1078,
-        "h": 328
+        "h": 348
     },
     {
         "id": "067069104a82b459",
@@ -509,7 +510,7 @@
         "z": "b3d80c5dc947ec88",
         "g": "aea9d97e0563bd83",
         "name": "Decode HA MQTT",
-        "func": "// Parse Home Assistant MQTT command topics\n// Expected formats:\n// - homeassistant/cover/shade_{instance}/set (for shades)\n// - homeassistant/switch/{entity_id}/set (for switches, pumps, etc.)\n// - homeassistant/button/{entity_id}/set (for buttons)\n\n// Cover entities (shades)\nconst rvcTopicMatch = msg.topic.match(/^homeassistant\\/cover\\/shade_(\\d+)\\/set$/);\nif (rvcTopicMatch) {\n    const instance = parseInt(rvcTopicMatch[1], 10);\n    const command = (typeof msg.payload === 'string') ? msg.payload.toUpperCase() : String(msg.payload).toUpperCase();\n\n    msg.routingKey = \"cover_shade\";\n    msg.instance = instance;\n    msg.command = command;\n    // These properties aren't strictly needed by the new encoder but are added for consistency\n    msg.entityType = \"cover\";\n    msg.entityId = `shade_${instance}`;\n\n    return msg;\n}\n\n//Switches\nconst topicParts = msg.topic.split('/');\nif (topicParts.length !== 4) {\n    return null; // unexpected format\n}\n\nconst entityType = topicParts[1];\nconst entityId = topicParts[2];\nconst command = (typeof msg.payload === 'string') ? msg.payload.toUpperCase() : msg.payload;\n\n// Extract entity prefix from entityId (e.g., \"pump_1\" -> \"pump\")\nconst entityIdParts = entityId.split('_');\nconst entityPrefix = entityIdParts.length > 1 ? entityIdParts[0] : entityId;\n\n// Create routing key for switch node\nlet routingKey = entityType;\n\nif (entityType === 'switch') {\n    routingKey = `${entityType}_${entityPrefix}`;  // switch_switch, switch_pump, etc.\n} else if (entityType === 'button') {\n    const action = entityIdParts[entityIdParts.length - 1];  // up, down, lock, unlock\n    const deviceType = entityIdParts[0];  // shade, lock\n\n    msg.action = action;\n    routingKey = `button_${deviceType}`;  // button_lock\n}\n\nmsg.entityType = entityType;\nmsg.entityId = entityId;\nmsg.entityPrefix = entityPrefix;\nmsg.routingKey = routingKey;\nmsg.command = command;\n\nreturn msg;",
+        "func": "// Parse Home Assistant MQTT command topics\n// Expected formats:\n// - homeassistant/cover/shade_{instance}/set (for shades)\n// - homeassistant/lock/lock_{instance}/set (for locks)\n// - homeassistant/switch/{entity_id}/set (for switches, pumps, etc.)\n\n// Cover entities (shades)\nconst rvcTopicMatch = msg.topic.match(/^homeassistant\\/cover\\/shade_(\\d+)\\/set$/);\nif (rvcTopicMatch) {\n    const instance = parseInt(rvcTopicMatch[1], 10);\n    const command = (typeof msg.payload === 'string') ? msg.payload.toUpperCase() : String(msg.payload).toUpperCase();\n\n    msg.routingKey = \"cover\";\n    msg.instance = instance;\n    msg.command = command;\n    msg.entityType = \"cover\";\n    msg.entityId = `shade_${instance}`;\n\n    return msg;\n}\n\n// Lock entities\nconst lockTopicMatch = msg.topic.match(/^homeassistant\\/lock\\/lock_(\\d+)\\/set$/);\nif (lockTopicMatch) {\n    const instance = parseInt(lockTopicMatch[1], 10);\n    const command = (typeof msg.payload === 'string') ? msg.payload.toUpperCase() : String(msg.payload).toUpperCase();\n\n    msg.routingKey = \"lock\";\n    msg.instance = instance;\n    msg.command = command;\n    msg.entityType = \"lock\";\n    msg.entityId = `lock_${instance}`;\n\n    return msg;\n}\n\n//Switches\nconst topicParts = msg.topic.split('/');\nif (topicParts.length !== 4) {\n    return null; // unexpected format\n}\n\nconst entityType = topicParts[1];\nconst entityId = topicParts[2];\nconst command = (typeof msg.payload === 'string') ? msg.payload.toUpperCase() : msg.payload;\n\n// Extract entity prefix from entityId (e.g., \"pump_1\" -> \"pump\")\nconst entityIdParts = entityId.split('_');\nconst entityPrefix = entityIdParts.length > 1 ? entityIdParts[0] : entityId;\n\n// Create routing key for switch node\nlet routingKey = entityType;\n\nif (entityType === 'switch') {\n    routingKey = `${entityType}_${entityPrefix}`;  // switch_switch, switch_pump, etc.\n}\n\nmsg.entityType = entityType;\nmsg.entityId = entityId;\nmsg.entityPrefix = entityPrefix;\nmsg.routingKey = routingKey;\nmsg.command = command;\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -600,12 +601,12 @@
             },
             {
                 "t": "eq",
-                "v": "switch_shade",
+                "v": "cover",
                 "vt": "str"
             },
             {
                 "t": "eq",
-                "v": "switch_lock",
+                "v": "lock",
                 "vt": "str"
             },
             {
@@ -689,7 +690,7 @@
         "z": "b3d80c5dc947ec88",
         "g": "aea9d97e0563bd83",
         "name": "Encode shade command",
-        "func": "// Encodes any HA shade command to an RV-C WINDOW_SHADE_CONTROL_COMMAND\n// Outputs in standard CAN bus format for a 'can/send' topic.\n\n// --- Configuration ---\nconst SOURCE_ADDRESS = global.get(\"rvc_source_address\") || 254; // Use claimed address or Null as fallback\nconst PRIORITY = 6;\nconst DGN = \"1FEDF\";\n\n// 1. Parse the instance number from the topic\nconst topicParts = msg.topic.split('/');\nconst entityId = topicParts[2] || \"\";\nconst match = entityId.match(/_(\\\\d+)$/);\n\nif (!match) {\n    node.warn(`Could not parse instance number from topic: ${msg.topic}`);\n    return null;\n}\n\nconst instance = parseInt(match[1], 10);\nif (isNaN(instance) || instance < 1 || instance > 250) {\n    node.warn(`Parsed instance number \"${instance}\" is invalid.`);\n    return null;\n}\n\n// 2. Parse the HA command\nlet command;\nlet motorDuty = 50; // Default 50% motor duty\nlet duration = 0; // Momentary command by default\n\ntry {\n    const haCommand = typeof msg.payload === 'string' ? JSON.parse(msg.payload) : msg.payload;\n\n    // Handle different HA command types\n    if (haCommand.command) {\n        switch (haCommand.command.toLowerCase()) {\n            case 'open':\n                command = 0x81; // Forward (Open Shade)\n                duration = 255; // Continuous until stopped\n                break;\n            case 'close':\n                command = 0x41; // Reverse (Close Shade)\n                duration = 255; // Continuous until stopped\n                break;\n            case 'stop':\n                command = 0x04; // Stop\n                duration = 0; // Momentary\n                break;\n            default:\n                node.warn('Unknown shade command: ' + haCommand.command);\n                return null;\n        }\n    } else if (typeof haCommand === 'string') {\n        // Direct string command\n        switch (haCommand.toLowerCase()) {\n            case 'open':\n                command = 0x81;\n                duration = 255;\n                break;\n            case 'close':\n                command = 0x41;\n                duration = 255;\n                break;\n            case 'stop':\n                command = 0x04;\n                duration = 0;\n                break;\n            default:\n                node.warn('Unknown shade command string: ' + haCommand);\n                return null;\n        }\n    } else {\n        node.warn('Invalid command format');\n        return null;\n    }\n\n    // Handle position commands if present\n    if (haCommand.position !== undefined) {\n        const position = parseInt(haCommand.position);\n        if (position >= 0 && position <= 100) {\n            // Convert position to motor duty\n            motorDuty = Math.round((position / 100) * 100);\n            if (position > 50) {\n                command = 0x81; // Open\n            } else if (position < 50) {\n                command = 0x41; // Close\n            } else {\n                command = 0x04; // Stop at middle\n            }\n        }\n    }\n\n} catch (error) {\n    node.warn('Error parsing HA command: ' + error.message);\n    return null;\n}\n\n// 3. Build the 8-byte data payload\nconst dataBytes = new Array(8).fill(0xFF);\n\ndataBytes[0] = instance;            // Instance Number\ndataBytes[1] = 0xFF;                // Group (Non-group command)\ndataBytes[2] = motorDuty;           // Motor Duty Cycle (0-100%)\ndataBytes[3] = command;             // Command\ndataBytes[4] = duration;            // Duration\ndataBytes[5] = 0x00;                // Interlock (No Interlock)\ndataBytes[6] = 0xFF;                // Byte 7 (Not Available)\ndataBytes[7] = 0xFF;                // Byte 8 (Not Available)\n\nconst dataHex = dataBytes.map(byte => byte.toString(16).padStart(2, '0')).join('');\n\n// 4. Construct the CAN ID\nconst dgnInt = parseInt(DGN, 16);\nconst canIdInt = (PRIORITY << 26) | (dgnInt << 8) | SOURCE_ADDRESS;\nconst canIdHex = canIdInt.toString(16).padStart(8, '0');\n\n// 5. Construct the final output message in CAN bus format\nmsg.topic = \"can/send\";\nmsg.payload = `${canIdHex.toUpperCase()}#${dataHex.toUpperCase()}`;\n\nreturn msg;",
+        "func": "// Encodes HA cover commands (OPEN/CLOSE/STOP) to RV-C WINDOW_SHADE_CONTROL_COMMAND\n// Outputs in standard CAN bus format for 'can/send' topic.\n\n// --- Configuration ---\nconst SOURCE_ADDRESS = global.get(\"rvc_source_address\") || 254;\nconst PRIORITY = 6;\nconst DGN = \"1FEDF\";\n\n// 1. Get pre-parsed instance and command from the decoder function\nconst instance = msg.instance;\nconst haCommand = msg.command; // Will be \"OPEN\", \"CLOSE\", or \"STOP\"\n\nif (typeof instance !== 'number' || instance < 1 || instance > 250) {\n    node.warn(`Invalid or missing instance number in msg.instance: ${instance}`);\n    return null;\n}\n\n// 2. Determine RV-C command code and parameters\nlet command;\nlet duration = 30; // 30 seconds duration (matches switch panel)\n\nswitch (haCommand) {\n    case 'OPEN':\n        command = 0x85; // Toggle Forward (Raise/Open) - if off, turn on forward; if on, toggles\n        break;\n    case 'CLOSE':\n        command = 0x45; // Toggle Reverse (Lower/Close) - if off, turn on reverse; if on, toggles\n        break;\n    case 'STOP':\n        command = 0x04; // Stop\n        duration = 0;   // Duration is ignored for STOP, but set for clarity\n        break;\n    default:\n        node.warn('Unknown shade command from cover entity: ' + haCommand);\n        return null;\n}\n\n// 3. Build the 8-byte data payload\nconst motorDuty = 200; // Use 200% motor duty (matches switch panel)\nconst dataBytes = new Array(8).fill(0xFF);\n\ndataBytes[0] = instance;            // Instance Number\ndataBytes[1] = 0xFF;                // Group (Non-group command)\ndataBytes[2] = motorDuty;           // Motor Duty Cycle\ndataBytes[3] = command;             // Command Code\ndataBytes[4] = duration;            // Duration\ndataBytes[5] = 0x00;                // Interlock (No Interlock)\ndataBytes[6] = 0xFF;                // Not Available\ndataBytes[7] = 0xFF;                // Not Available\n\nconst dataHex = dataBytes.map(byte => byte.toString(16).padStart(2, '0')).join('');\n\n// 4. Construct the CAN ID\nconst dgnInt = parseInt(DGN, 16);\nconst canIdInt = (PRIORITY << 26) | (dgnInt << 8) | SOURCE_ADDRESS;\nconst canIdHex = canIdInt.toString(16).padStart(8, '0');\n\n// 5. Construct the final output message in CAN bus format\nmsg.topic = \"can/send\";\nmsg.payload = `${canIdHex.toUpperCase()}#${dataHex.toUpperCase()}`;\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -1179,7 +1180,8 @@
         "y": 860,
         "wires": [
             [
-                "927340668e7942e4"
+                "927340668e7942e4",
+                "f134c311856f2271"
             ]
         ]
     },
@@ -1671,6 +1673,23 @@
         "statusType": "auto",
         "x": 1110,
         "y": 1720,
+        "wires": []
+    },
+    {
+        "id": "f134c311856f2271",
+        "type": "debug",
+        "z": "3470febb2cd6e952",
+        "g": "da39e5020d511fa6",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 550,
+        "y": 840,
         "wires": []
     },
     {
