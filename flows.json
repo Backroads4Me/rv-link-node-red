@@ -83,13 +83,12 @@
             "32c25c048171f507",
             "86a191e1f24d802a",
             "35cca4d6a74b4522",
-            "de1097844db8a89c",
-            "a5aea8c0bff6b19a"
+            "de1097844db8a89c"
         ],
         "x": 34,
         "y": 59,
         "w": 1372,
-        "h": 482
+        "h": 342
     },
     {
         "id": "3c819b7900145438",
@@ -145,8 +144,6 @@
             "02bdfc59de71b5a5",
             "45414bacecada477",
             "8f99241c9a1cfbde",
-            "cd0e10af5a3a5ec9",
-            "21be2ec94622a98d",
             "081183d6c363e792",
             "01b53bba61cb7227",
             "03744ec33f2e6776",
@@ -201,7 +198,9 @@
             "2d6bf3e8aa77a8c6",
             "4d7e38077918190f",
             "85dabd5afaf4b17d",
-            "9c61a141b8525561"
+            "9c61a141b8525561",
+            "bc185e54ce871b11",
+            "a9779b1f38edf18d"
         ],
         "x": 114,
         "y": -21,
@@ -619,6 +618,27 @@
         "h": 142
     },
     {
+        "id": "ca9be43aa8f1a3c0",
+        "type": "group",
+        "z": "222c995b7790b8de",
+        "name": "Entityt type override",
+        "style": {
+            "stroke": "#ffffff",
+            "label": true
+        },
+        "nodes": [
+            "a8270d966963d3b1",
+            "b2f162c2ad5b42c0",
+            "2d165c0688ac59fa",
+            "3ff895b0f410e246",
+            "91142311cd87c18b"
+        ],
+        "x": 154,
+        "y": 719,
+        "w": 592,
+        "h": 262
+    },
+    {
         "id": "80727e60a251c36c",
         "type": "mqtt-broker",
         "name": "Mosquitto",
@@ -845,7 +865,7 @@
         "z": "b3d80c5dc947ec88",
         "g": "aea9d97e0563bd83",
         "name": "Encode lock command",
-        "func": "// Encodes HA lock entity commands to RV-C LOCK_COMMAND (DGN 1FEE4)\n// Handles lock entity LOCK/UNLOCK commands only\n// Outputs in standard CAN bus format for 'can/send' topic.\n\n// --- Configuration ---\nconst SOURCE_ADDRESS = global.get(\"rvc_source_address\") || 254;\nconst PRIORITY = 6;\nconst DGN = \"1FEE4\";\n\n// 1. Get pre-parsed instance and command from the decoder function\nconst instance = msg.instance;\nconst haCommand = msg.command; // Will be \"LOCK\" or \"UNLOCK\"\n\nif (typeof instance !== 'number' || instance < 1 || instance > 250) {\n    node.warn(`Invalid or missing instance number in msg.instance: ${instance}`);\n    return null;\n}\n\n// 2. Parse command from lock entity\nlet lockCommand;\n\nswitch (haCommand) {\n    case 'UNLOCK':\n        lockCommand = 0; // Unlock\n        break;\n    case 'LOCK':\n        lockCommand = 1; // Lock\n        break;\n    default:\n        node.warn('Unknown lock command from lock entity: ' + haCommand);\n        return null;\n}\n\n// 3. Build the 8-byte data payload\nconst dataBytes = new Array(8).fill(0xFF);\n\ndataBytes[0] = instance;            // Instance Number\ndataBytes[1] = lockCommand;         // Lock Command (0=unlock, 1=lock)\ndataBytes[2] = 0;                   // Additional Command (0=no action)\ndataBytes[3] = 0xFF;                // Byte 4 (Not Available)\ndataBytes[4] = 0xFF;                // Byte 5 (Not Available)\ndataBytes[5] = 0xFF;                // Byte 6 (Not Available)\ndataBytes[6] = 0xFF;                // Byte 7 (Not Available)\ndataBytes[7] = 0xFF;                // Byte 8 (Not Available)\n\nconst dataHex = dataBytes.map(byte => byte.toString(16).padStart(2, '0')).join('');\n\n// 4. Construct the CAN ID\nconst dgnInt = parseInt(DGN, 16);\nconst canIdInt = (PRIORITY << 26) | (dgnInt << 8) | SOURCE_ADDRESS;\nconst canIdHex = canIdInt.toString(16).padStart(8, '0');\n\n// 5. Construct the final output message in CAN bus format\nmsg.topic = \"can/send\";\nmsg.payload = `${canIdHex.toUpperCase()}#${dataHex.toUpperCase()}`;\n\nreturn msg;\n",
+        "func": "// Encodes HA lock entity commands to RV-C LOCK_COMMAND (DGN 1FEE4)\n// Handles lock entity LOCK/UNLOCK commands only\n// Outputs in standard CAN bus format for 'can/send' topic.\n\n// --- Configuration ---\nconst SOURCE_ADDRESS = global.get(\"rvc_source_address\") || 254;\nconst PRIORITY = 6;\nconst DGN = \"1FEE4\";\n\n// 1. Get pre-parsed instance and command from the decoder function\nconst instance = msg.instance;\nconst haCommand = msg.command; // Will be \"LOCK\" or \"UNLOCK\"\n\n// Accept Instance 0 (broadcast to all locks) per RV-C spec section 6.40.1\nif (typeof instance !== 'number' || instance < 0 || instance > 250) {\n    node.warn(`Invalid or missing instance number in msg.instance: ${instance}`);\n    return null;\n}\n\n// 2. Parse command from lock entity\nlet lockCommand;\n\nswitch (haCommand) {\n    case 'UNLOCK':\n        lockCommand = 0; // Unlock\n        break;\n    case 'LOCK':\n        lockCommand = 1; // Lock\n        break;\n    default:\n        node.warn('Unknown lock command from lock entity: ' + haCommand);\n        return null;\n}\n\n// 3. Build the 8-byte data payload\nconst dataBytes = new Array(8).fill(0xFF);\n\ndataBytes[0] = instance;            // Instance Number\ndataBytes[1] = lockCommand;         // Lock Command (0=unlock, 1=lock)\ndataBytes[2] = 0;                   // Additional Command (0=no action)\ndataBytes[3] = 0xFF;                // Byte 4 (Not Available)\ndataBytes[4] = 0xFF;                // Byte 5 (Not Available)\ndataBytes[5] = 0xFF;                // Byte 6 (Not Available)\ndataBytes[6] = 0xFF;                // Byte 7 (Not Available)\ndataBytes[7] = 0xFF;                // Byte 8 (Not Available)\n\nconst dataHex = dataBytes.map(byte => byte.toString(16).padStart(2, '0')).join('');\n\n// 4. Construct the CAN ID\nconst dgnInt = parseInt(DGN, 16);\nconst canIdInt = (PRIORITY << 26) | (dgnInt << 8) | SOURCE_ADDRESS;\nconst canIdHex = canIdInt.toString(16).padStart(8, '0');\n\n// 5. Construct the final output message in CAN bus format\nmsg.topic = \"can/send\";\nmsg.payload = `${canIdHex.toUpperCase()}#${dataHex.toUpperCase()}`;\n\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -943,7 +963,7 @@
         "z": "b3d80c5dc947ec88",
         "g": "aea9d97e0563bd83",
         "name": "Encode dc_dimmer_command_2",
-        "func": "// Encodes HA switch commands to the specific toggle format required by the dimmer.\n\n// --- Configuration ---\nconst RVC_COMMAND = 0x05; // The specific command type for the toggle.\nconst LEVEL_ON = 250;     // The brightness level sent by the physical switch (0xFA).\nconst NON_GROUP = 0xFF;\nconst SOURCE_ADDRESS = global.get(\"rvc_source_address\") || 254;\nconst PRIORITY = 6;\nconst DGN = \"1FEDB\";\n\nconst instance = msg.instance;\nconst state = msg.command; // \"ON\" or \"OFF\"\n\nif (typeof instance !== 'number' || instance < 1 || instance > 250) {\n    node.warn(`[encode_switch_command] Invalid instance: ${instance}`);\n    return null;\n}\n\n// This is a toggle command. The payload is the same for both ON and OFF.\n// The desiredLevel is always the 'ON' level (250) sent by the physical switch.\nconst desiredLevel = LEVEL_ON;\n\n// Build the 8-byte data payload to EXACTLY match the physical switch\nconst dataBytes = new Array(8).fill(0xFF);\ndataBytes[0] = instance;\ndataBytes[1] = NON_GROUP;\ndataBytes[2] = desiredLevel;\ndataBytes[3] = RVC_COMMAND;\ndataBytes[4] = 0xFF; // Delay/Duration\ndataBytes[5] = 0x00; // Interlock\ndataBytes[6] = 0xFF; // Ramp Time\ndataBytes[7] = 0xFF; // Reserved\n\nconst dataHex = dataBytes.map(byte => byte.toString(16).padStart(2, '0')).join('');\n\n// Construct the CAN ID\nconst dgnInt = parseInt(DGN, 16);\nconst canIdInt = (PRIORITY << 26) | (dgnInt << 8) | SOURCE_ADDRESS;\nconst canIdHex = canIdInt.toString(16).padStart(8, '0');\n\n// Construct the final output message\nmsg.topic = \"can/send\";\nmsg.payload = `${canIdHex.toUpperCase()}#${dataHex.toUpperCase()}`;\n\nreturn msg;",
+        "func": "// Encodes HA switch commands to the specific toggle format required by the dimmer.\n// Implements two-message sequence: UNLOCK + TOGGLE\n// Returns null after sequential transmission\n\n// --- Configuration ---\nconst RVC_COMMAND = 0x05; // The specific command type for the toggle.\nconst CMD_UNLOCK = 0x22;  // Remove lock condition\nconst LEVEL_ON = 250;     // The brightness level sent by the physical switch (0xFA).\nconst NON_GROUP = 0xFF;\nconst SOURCE_ADDRESS = global.get(\"rvc_source_address\") || 254;\nconst PRIORITY = 6;\nconst DGN = \"1FEDB\";\n\nconst instance = msg.instance;\nconst state = msg.command; // \"ON\" or \"OFF\"\n\nif (typeof instance !== 'number' || instance < 1 || instance > 250) {\n    node.warn(`[encode_switch_command] Invalid instance: ${instance}`);\n    return null;\n}\n\n// Helper function to build CAN message\nfunction buildCanMessage(instance, desiredLevel, commandCode) {\n    // Build the 8-byte data payload to EXACTLY match the physical switch\n    const dataBytes = new Array(8).fill(0xFF);\n    dataBytes[0] = instance;\n    dataBytes[1] = NON_GROUP;\n    dataBytes[2] = desiredLevel;\n    dataBytes[3] = commandCode;\n    dataBytes[4] = 0xFF; // Delay/Duration\n    dataBytes[5] = 0x00; // Interlock\n    dataBytes[6] = 0xFF; // Ramp Time\n    dataBytes[7] = 0xFF; // Reserved\n\n    const dataHex = dataBytes.map(byte => byte.toString(16).padStart(2, '0')).join('');\n\n    // Construct the CAN ID\n    const dgnInt = parseInt(DGN, 16);\n    const canIdInt = (PRIORITY << 26) | (dgnInt << 8) | SOURCE_ADDRESS;\n    const canIdHex = canIdInt.toString(16).padStart(8, '0');\n\n    return `${canIdHex.toUpperCase()}#${dataHex.toUpperCase()}`;\n}\n\n// This is a toggle command. The payload is the same for both ON and OFF.\n// The desiredLevel is always the 'ON' level (250) sent by the physical switch.\nconst desiredLevel = LEVEL_ON;\n\n// Build Message 1: UNLOCK\nconst unlockMessage = {\n    topic: \"can/send\",\n    payload: buildCanMessage(instance, desiredLevel, CMD_UNLOCK)\n};\n\n// Build Message 2: TOGGLE\nconst toggleMessage = {\n    topic: \"can/send\",\n    payload: buildCanMessage(instance, desiredLevel, RVC_COMMAND)\n};\n\n// Send both messages sequentially using node.send()\n// This ensures both messages go to the same output port in order\nnode.send(unlockMessage);\nnode.send(toggleMessage);\n\n// Return null to prevent duplicate sending\nreturn null;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -960,40 +980,10 @@
         ]
     },
     {
-        "id": "a5aea8c0bff6b19a",
-        "type": "inject",
-        "z": "b3d80c5dc947ec88",
-        "d": true,
-        "g": "aea9d97e0563bd83",
-        "name": "unlock",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "can/send",
-        "payload": "19FEDB9D#30FFC822FF00FFFF",
-        "payloadType": "str",
-        "x": 890,
-        "y": 500,
-        "wires": [
-            [
-                "6aa079d768e1571c"
-            ]
-        ]
-    },
-    {
         "id": "35cca4d6a74b4522",
         "type": "function",
         "z": "b3d80c5dc947ec88",
+        "d": true,
         "g": "aea9d97e0563bd83",
         "name": "Encode fan command",
         "func": "// Persistent RV-C Command Function\n// Repeatedly sends UNLOCK + ACTION until a confirmation status is received or a timeout occurs.\n\n// --- Configuration ---\nconst SOURCE_ADDRESS = global.get(\"rvc_source_address\") || 254;\nconst RETRY_INTERVAL_MS = 250; // How often to resend commands (in milliseconds)\nconst TIMEOUT_MS = 5000;       // How long to try before giving up (in milliseconds)\n\n// --- Helper: Clears any running timers and state ---\nfunction stopAndClear(context) {\n    const intervalId = context.get('intervalId');\n    if (intervalId) {\n        clearInterval(intervalId);\n    }\n    const timeoutId = context.get('timeoutId');\n    if (timeoutId) {\n        clearTimeout(timeoutId);\n    }\n    context.set('activeCommand', null);\n    context.set('intervalId', null);\n    context.set('timeoutId', null);\n}\n\n// --- Helper: Builds the CAN message payload ---\nfunction buildCanMessage(instance, desiredLevel, commandCode) {\n    const PRIORITY = 6;\n    const DGN = \"1FEDB\";\n    const dataBytes = [instance, 0xFF, desiredLevel, commandCode, 0xFF, 0x00, 0xFF, 0xFF];\n    const dataHex = dataBytes.map(byte => byte.toString(16).padStart(2, '0')).join('');\n    const dgnInt = parseInt(DGN, 16);\n    const canIdInt = (PRIORITY << 26) | (dgnInt << 8) | SOURCE_ADDRESS;\n    const canIdHex = canIdInt.toString(16).padStart(8, '0');\n    return `${canIdHex.toUpperCase()}#${dataHex.toUpperCase()}`;\n}\n\n// --- Main Logic ---\n\n// Case 1: Incoming message is a new command to execute.\nif (msg.command && msg.instance !== undefined) {\n    //node.warn(`[Persistent Command] Received new command for instance ${msg.instance} to turn ${msg.command}`);\n    stopAndClear(context); // Clear any previous running commands\n\n    const activeCommand = {\n        instance: msg.instance,\n        command: msg.command\n    };\n    context.set('activeCommand', activeCommand);\n\n    // Function to send the UNLOCK + ACTION sequence\n    const sendCommandSequence = () => {\n        const unlockPayload = buildCanMessage(activeCommand.instance, 0xC8, 0x22); // UNLOCK\n        const actionPayload = buildCanMessage(activeCommand.instance, (activeCommand.command === \"ON\" ? 0xC8 : 0xFF), (activeCommand.command === \"ON\" ? 0x01 : 0x03));\n\n        // Send both messages out of the function's output\n        node.send({ topic: \"can/send\", payload: unlockPayload });\n        node.send({ topic: \"can/send\", payload: actionPayload });\n        //node.warn(`[Persistent Command] Sent UNLOCK/ACTION for instance ${activeCommand.instance}`);\n    };\n\n    // Start the retry loop\n    const intervalId = setInterval(sendCommandSequence, RETRY_INTERVAL_MS);\n    context.set('intervalId', intervalId);\n\n    // Immediately send the first command sequence without waiting for the interval\n    sendCommandSequence();\n\n    // Set a timeout to stop the loop if no confirmation is received\n    const timeoutId = setTimeout(() => {\n        node.warn(`[Persistent Command] TIMEOUT for instance ${activeCommand.instance}. State was not confirmed.`);\n        stopAndClear(context);\n    }, TIMEOUT_MS);\n    context.set('timeoutId', timeoutId);\n\n    return null; // Stop the original message from passing through\n}\n\n// Case 2: Incoming message is a status update (already filtered by switch node for DGN 1FEDA)\nelse if (msg.payload) {\n    const activeCommand = context.get('activeCommand');\n\n    // If we are not waiting for a command confirmation, ignore the status.\n    if (!activeCommand) {\n        return null;\n    }\n\n    // Extract status data from payload\n    const statusInstance = msg.payload.instance;\n    const statusOperating = msg.payload.operating_status;\n    const targetStatus = (activeCommand.command === \"ON\") ? 100 : 0;\n\n    // Check if the status message is for the instance we are controlling\n    // and if the operating status matches our desired state\n    if (statusInstance === activeCommand.instance && statusOperating === targetStatus) {\n        //node.warn(`[Persistent Command] SUCCESS for instance ${activeCommand.instance}. State confirmed (status=${statusOperating}).`);\n        stopAndClear(context);\n    }\n\n    return null; // Stop the status message from passing through\n}",
@@ -1016,6 +1006,7 @@
         "id": "de1097844db8a89c",
         "type": "link in",
         "z": "b3d80c5dc947ec88",
+        "d": true,
         "g": "aea9d97e0563bd83",
         "name": "DC_DIMMER_STATUS_3",
         "links": [
@@ -1203,7 +1194,7 @@
         "z": "3470febb2cd6e952",
         "g": "97615854748deb3d",
         "name": "Create Lock",
-        "func": "/***********************************************************\n * Lock MQTT Discovery for Home Assistant\n * Creates a lock entity for each lock instance\n * Expects input msg.payload to be an object with:\n * - msg.payload.instance (Number): The lock instance ID (1-250)\n * - msg.payload.device_type (String): Device type (\"lock\")\n ***********************************************************/\n\n// Validate input structure\nif (!msg.payload || typeof msg.payload !== 'object') {\n    node.error(\"Input payload must be an object.\", msg);\n    return null;\n}\n\nconst instance = msg.payload.instance;\nconst deviceType = msg.payload.device_type;\n\n// Validate required fields\nif (typeof instance !== 'number') {\n    node.error(\"Input missing 'instance' (number).\", msg);\n    return null;\n}\n\nif (typeof deviceType !== 'string') {\n    node.error(\"Input missing 'device_type' (string).\", msg);\n    return null;\n}\n\n// Verify device type is lock\nif (deviceType !== 'lock') {\n    node.error(`Expected device_type 'lock', got '${deviceType}'.`, msg);\n    return null;\n}\n\n// RV-C valid instance range: 1-250\n// Special values: 251=Error, 252=Not Supported, 253=Out of Range, 254=Reserved, 255=Not Available\nif (instance < 1 || instance > 250) {\n    // Silently ignore special RV-C status values - these aren't real devices\n    if (instance >= 251 && instance <= 255) {\n        return null;\n    }\n    node.warn(`Instance ${instance} is outside the valid RV-C instance range (1-250) for a lock. Entity will not be created.`);\n    return null;\n}\n\nconst prefix = \"lock\";\nconst displayPrefix = \"Lock\";\nconst componentType = \"lock\";\n\n// Generate entity identifiers\nconst entityId = `${prefix}_${instance}`;\nconst displayName = `${displayPrefix} ${instance}`;\n\n// MQTT topics\nconst discoveryTopic = `homeassistant/${componentType}/${entityId}/config`;\nconst stateTopic = `homeassistant/${componentType}/${entityId}/state`;\nconst commandTopic = `homeassistant/${componentType}/${entityId}/set`;\n\n// MQTT Discovery payload\nconst payload = {\n    // Basic entity information\n    name: displayName,\n    unique_id: entityId,\n    default_entity_id: `${componentType}.${entityId}`,\n    icon: \"mdi:lock\",\n\n    // Topics for Home Assistant to use\n    command_topic: commandTopic,\n    state_topic: stateTopic,\n\n    // Define what \"LOCK\" and \"UNLOCK\" commands look like (simple strings)\n    payload_lock: \"LOCK\",\n    payload_unlock: \"UNLOCK\",\n\n    // State values that will be received from status updates\n    state_locked: \"LOCKED\",\n    state_unlocked: \"UNLOCKED\",\n\n    // Set optimistic to false so the lock state only changes\n    // when a status message is received from the RV-C bus\n    optimistic: false\n\n};\n\n// Prepare the final message for the MQTT Out node\nmsg.topic = discoveryTopic;\nmsg.payload = payload;\nmsg.retain = true; // IMPORTANT: Ensures HA rediscovers on restart\n\n// (Optional) Add helper properties for debugging or downstream use\nmsg.stateTopic = stateTopic;\nmsg.commandTopic = commandTopic;\nmsg.entityId = entityId;\nmsg.deviceType = deviceType;\n\nreturn msg;\n",
+        "func": "/***********************************************************\n * Lock MQTT Discovery for Home Assistant\n * Creates a lock entity for each lock instance\n * Expects input msg.payload to be an object with:\n * - msg.payload.instance (Number): The lock instance ID (1-250)\n * - msg.payload.device_type (String): Device type (\"lock\")\n ***********************************************************/\n\n// Validate input structure\nif (!msg.payload || typeof msg.payload !== 'object') {\n    node.error(\"Input payload must be an object.\", msg);\n    return null;\n}\n\nconst instance = msg.payload.instance;\nconst deviceType = msg.payload.device_type;\n\n// Validate required fields\nif (typeof instance !== 'number') {\n    node.error(\"Input missing 'instance' (number).\", msg);\n    return null;\n}\n\nif (typeof deviceType !== 'string') {\n    node.error(\"Input missing 'device_type' (string).\", msg);\n    return null;\n}\n\n// Verify device type is lock\nif (deviceType !== 'lock') {\n    node.error(`Expected device_type 'lock', got '${deviceType}'.`, msg);\n    return null;\n}\n\n// RV-C valid instance range: 0-250\n// Instance 0 = \"All Locks\" broadcast entity per RV-C spec section 6.40.1\n// Instances 1-250 = Individual locks\n// Special values: 251=Error, 252=Not Supported, 253=Out of Range, 254=Reserved, 255=Not Available\nif (instance < 0 || instance > 250) {\n    // Silently ignore special RV-C status values - these aren't real devices\n    if (instance >= 251 && instance <= 255) {\n        return null;\n    }\n    node.warn(`Instance ${instance} is outside the valid RV-C instance range (0-250) for a lock. Entity will not be created.`);\n    return null;\n}\n\nconst prefix = \"lock\";\nconst displayPrefix = \"Lock\";\nconst componentType = \"lock\";\n\n// Generate entity identifiers\nconst entityId = `${prefix}_${instance}`;\n// Special name for Instance 0 (broadcast to all locks)\nconst displayName = instance === 0 ? \"All Locks\" : `${displayPrefix} ${instance}`;\n\n// MQTT topics\nconst discoveryTopic = `homeassistant/${componentType}/${entityId}/config`;\nconst stateTopic = `homeassistant/${componentType}/${entityId}/state`;\nconst commandTopic = `homeassistant/${componentType}/${entityId}/set`;\n\n// MQTT Discovery payload\nconst payload = {\n    // Basic entity information\n    name: displayName,\n    unique_id: entityId,\n    default_entity_id: `${componentType}.${entityId}`,\n    icon: \"mdi:lock\",\n\n    // Topics for Home Assistant to use\n    command_topic: commandTopic,\n    state_topic: stateTopic,\n\n    // Define what \"LOCK\" and \"UNLOCK\" commands look like (simple strings)\n    payload_lock: \"LOCK\",\n    payload_unlock: \"UNLOCK\",\n\n    // State values that will be received from status updates\n    state_locked: \"LOCKED\",\n    state_unlocked: \"UNLOCKED\",\n\n    // Instance 0 (All Locks) uses optimistic mode since it's broadcast-only (no status feedback)\n    // Instances 1-250 use non-optimistic mode to show real status from RV-C bus\n    optimistic: instance === 0\n\n};\n\n// Prepare the final message for the MQTT Out node\nmsg.topic = discoveryTopic;\nmsg.payload = payload;\nmsg.retain = true; // IMPORTANT: Ensures HA rediscovers on restart\n\n// (Optional) Add helper properties for debugging or downstream use\nmsg.stateTopic = stateTopic;\nmsg.commandTopic = commandTopic;\nmsg.entityId = entityId;\nmsg.deviceType = deviceType;\n\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -1225,7 +1216,7 @@
         "z": "3470febb2cd6e952",
         "g": "97615854748deb3d",
         "name": "Lock status",
-        "func": "/***********************************************************\n * HA Lock Status Updater\n * Takes a JSON payload as input and sends lock/unlock status\n * to the correct Home Assistant MQTT state topic for lock entities.\n * Expects input msg.payload to be an object with:\n * - msg.payload.instance (Number): The ID of the lock (1-250).\n * - msg.payload.is_locked (Boolean): Whether lock is locked.\n * - msg.payload.is_unlocked (Boolean): Whether lock is unlocked.\n * - msg.payload.lock_status (String): Lock status text.\n ***********************************************************/\n\n// Validate instance - must be a valid number (1-250)\n// Special values (0, 251-255) are decoded as strings and should be ignored\nif (typeof msg.payload.instance !== 'number') {\n    // Silently ignore messages with invalid instance values\n    return null;\n}\n\nconst instance = msg.payload.instance;\n\n// Additional validation: only process instances 1-250\nif (instance < 1 || instance > 250) {\n    return null;\n}\n\n// Determine the lock state\nlet haStatus = \"UNKNOWN\";\n\n// Check boolean flags first (most reliable)\nif (msg.payload.is_locked === true) {\n    haStatus = \"LOCKED\";\n} else if (msg.payload.is_unlocked === true) {\n    haStatus = \"UNLOCKED\";\n} else if (typeof msg.payload.lock_status === 'string') {\n    // Fall back to parsing lock_status string\n    const lockStatusLower = msg.payload.lock_status.toLowerCase();\n    if (lockStatusLower.includes(\"locked\") && !lockStatusLower.includes(\"unlocked\")) {\n        haStatus = \"LOCKED\";\n    } else if (lockStatusLower.includes(\"unlocked\")) {\n        haStatus = \"UNLOCKED\";\n    }\n}\n\n// Create the state topic for this lock instance\nconst stateTopic = `homeassistant/lock/lock_${instance}/state`;\n\nmsg.topic = stateTopic;\nmsg.payload = haStatus; // The payload is the lock state string\nmsg.retain = true; // Retain the status so HA shows the correct state after a restart\n\nreturn msg;\n",
+        "func": "/***********************************************************\n * HA Lock Status Updater\n * Takes a JSON payload as input and sends lock/unlock status\n * to the correct Home Assistant MQTT state topic for lock entities.\n * Expects input msg.payload to be an object with:\n * - msg.payload.instance (Number): The ID of the lock (1-250).\n * - msg.payload.is_locked (Boolean): Whether lock is locked.\n * - msg.payload.is_unlocked (Boolean): Whether lock is unlocked.\n * - msg.payload.lock_status (String): Lock status text.\n ***********************************************************/\n\n// Validate instance - must be a valid number (1-250)\n// Special values (0, 251-255) are decoded as strings and should be ignored\nif (typeof msg.payload.instance !== 'number') {\n    // Silently ignore messages with invalid instance values\n    return null;\n}\n\nconst instance = msg.payload.instance;\n\n// Additional validation: only process instances 0-250\n// Instance 0 is accepted but won't publish state (optimistic entity)\nif (instance < 0 || instance > 250) {\n    return null;\n}\n\n// Skip state publishing for Instance 0 (broadcast \"All Locks\" entity)\n// Instance 0 uses optimistic mode and doesn't have individual status\nif (instance === 0) {\n    return null;\n}\n\n// Determine the lock state\nlet haStatus = \"UNKNOWN\";\n\n// Check boolean flags first (most reliable)\nif (msg.payload.is_locked === true) {\n    haStatus = \"LOCKED\";\n} else if (msg.payload.is_unlocked === true) {\n    haStatus = \"UNLOCKED\";\n} else if (typeof msg.payload.lock_status === 'string') {\n    // Fall back to parsing lock_status string\n    const lockStatusLower = msg.payload.lock_status.toLowerCase();\n    if (lockStatusLower.includes(\"locked\") && !lockStatusLower.includes(\"unlocked\")) {\n        haStatus = \"LOCKED\";\n    } else if (lockStatusLower.includes(\"unlocked\")) {\n        haStatus = \"UNLOCKED\";\n    }\n}\n\n// Create the state topic for this lock instance\nconst stateTopic = `homeassistant/lock/lock_${instance}/state`;\n\nmsg.topic = stateTopic;\nmsg.payload = haStatus; // The payload is the lock state string\nmsg.retain = true; // Retain the status so HA shows the correct state after a restart\n\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -1265,7 +1256,7 @@
         "z": "3470febb2cd6e952",
         "g": "97615854748deb3d",
         "name": "Unique lock",
-        "func": "// Retrieve existing lock instances from flow context, or initialize as empty array\nlet uniqueLocks = flow.get(\"uniqueLocks\") || [];\n\n// Track by numeric instance ID for true uniqueness\nlet instanceId = msg.payload.instance;\n\n// Check if this instance ID has been seen before\nif (!uniqueLocks.includes(instanceId)) {\n    uniqueLocks.push(instanceId);\n    flow.set(\"uniqueLocks\", uniqueLocks);\n\n    // Pass the instance and device type to create_lock.js\n    return {\n        payload: {\n            instance: instanceId,\n            device_type: \"lock\"\n        }\n    };\n}\n\n// Return nothing if duplicate instance\nreturn null;\n",
+        "func": "// Retrieve existing lock instances from flow context, or initialize as empty array\nlet uniqueLocks = flow.get(\"uniqueLocks\") || [];\n\n// Track by numeric instance ID for true uniqueness\n// Instance 0 = \"All Locks\" broadcast entity (per RV-C spec 6.40.1)\n// Instances 1-250 = Individual lock entities\nlet instanceId = msg.payload.instance;\nlet messagesToSend = [];\n\n// Ensure instance 0 is always initialized on first run\nif (!uniqueLocks.includes(0)) {\n    uniqueLocks.push(0);\n    flow.set(\"uniqueLocks\", uniqueLocks);\n\n    // Send instance 0 for initialization\n    messagesToSend.push({\n        payload: {\n            instance: 0,\n            device_type: \"lock\"\n        }\n    });\n}\n\n// Check if the current instance ID has been seen before\nif (!uniqueLocks.includes(instanceId)) {\n    uniqueLocks.push(instanceId);\n    flow.set(\"uniqueLocks\", uniqueLocks);\n\n    // Add the current instance to messages to send\n    messagesToSend.push({\n        payload: {\n            instance: instanceId,\n            device_type: \"lock\"\n        }\n    });\n}\n\n// Return messages (instance 0 if needed, current instance if new)\n// Returns null if no new instances detected\n// Node-RED will send each message in the array sequentially to the next node\nreturn messagesToSend.length > 0 ? messagesToSend : null;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -2337,7 +2328,7 @@
         "type": "debug",
         "z": "3470febb2cd6e952",
         "g": "e2dc4d711cc9dc94",
-        "name": "Potty Vent",
+        "name": "Unlocked",
         "active": false,
         "tosidebar": true,
         "console": false,
@@ -2346,8 +2337,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 930,
-        "y": 40,
+        "x": 400,
+        "y": 240,
         "wires": []
     },
     {
@@ -2356,23 +2347,37 @@
         "z": "3470febb2cd6e952",
         "g": "e2dc4d711cc9dc94",
         "name": "",
-        "property": "payload.instance",
+        "property": "payload.lock_status",
         "propertyType": "msg",
         "rules": [
             {
                 "t": "eq",
-                "v": "48",
+                "v": "Unlocked",
                 "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Locked",
+                "vt": "str"
+            },
+            {
+                "t": "else"
             }
         ],
         "checkall": "true",
         "repair": false,
-        "outputs": 1,
-        "x": 470,
-        "y": 40,
+        "outputs": 3,
+        "x": 230,
+        "y": 280,
         "wires": [
             [
                 "2d6bf3e8aa77a8c6"
+            ],
+            [
+                "bc185e54ce871b11"
+            ],
+            [
+                "a9779b1f38edf18d"
             ]
         ]
     },
@@ -2418,6 +2423,41 @@
         "statusType": "auto",
         "x": 750,
         "y": 20,
+        "wires": []
+    },
+    {
+        "id": "bc185e54ce871b11",
+        "type": "debug",
+        "z": "3470febb2cd6e952",
+        "g": "e2dc4d711cc9dc94",
+        "name": "Locked",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 400,
+        "y": 280,
+        "wires": []
+    },
+    {
+        "id": "a9779b1f38edf18d",
+        "type": "debug",
+        "z": "3470febb2cd6e952",
+        "g": "e2dc4d711cc9dc94",
+        "name": "debug 1",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 400,
+        "y": 320,
         "wires": []
     },
     {
@@ -3581,7 +3621,7 @@
         "type": "function",
         "z": "3e5f038a4f5a8b9a",
         "name": "Decode LOCK_STATUS",
-        "func": "// LOCK_STATUS Decoder - Complete RV-C Implementation\n// Decodes LOCK_STATUS messages per RV-C specification Section 6.40.2\n// Handles door/window lock status, motion detection, and position information\n// Input: msg.payload with {dgn, dataPayload, ...other fields}\n// Output: msg.payload with decoded fields merged at top level\n\n// === Helper Functions ===\n\nfunction decodeBits(value, startBit, endBit) {\n    const mask = ((1 << (endBit - startBit + 1)) - 1) << startBit;\n    return (value & mask) >> startBit;\n}\n\n// === LOCK_STATUS Specific Decoders ===\n\nfunction decodeInstance(value) {\n    // Lock instance mapping per Section 6.40.1\n    if (value >= 1 && value <= 250) {\n        return value; // Direct instance number\n    } else if (value === 0) {\n        return \"Invalid\";\n    } else if (value === 251) {\n        return \"Error\";\n    } else if (value === 252) {\n        return \"Not Supported\";\n    } else if (value === 253) {\n        return \"Out of Range\";\n    } else if (value === 254) {\n        return \"Reserved\";\n    } else if (value === 255) {\n        return \"Not Available\";\n    }\n    return \"Invalid\";\n}\n\nfunction decodeLockStatus(value) {\n    // Lock status (bits 0-1)\n    const lockMap = {\n        0: \"Unlocked\",\n        1: \"Locked\"\n    };\n    return lockMap[value] || `Unknown Lock Status ${value}`;\n}\n\nfunction decodeMotion(value) {\n    // Motion status\n    const motionMap = {\n        0: \"No Motion\",\n        1: \"Opening\",\n        2: \"Closing\"\n    };\n    return motionMap[value] || `Unknown Motion ${value}`;\n}\n\nfunction decodePosition(value) {\n    // Position as percentage per Table 5.3 (100% = Fully Open)\n    if (value <= 200) {\n        return parseFloat((value * 0.5).toFixed(1)); // 0.5% per step, 0-100%\n    } else if (value === 251) {\n        return \"Error\";\n    } else if (value === 252) {\n        return \"Not Supported\";\n    } else if (value === 253) {\n        return \"Out of Range\";\n    } else if (value === 254) {\n        return \"Reserved\";\n    } else if (value === 255) {\n        return \"Not Available\";\n    }\n    return \"Invalid\";\n}\n\nfunction decodeVoltage(value) {\n    // Voltage decoding per Table 5.3 (16-bit, little-endian)\n    if (value === 65535) {\n        return \"Not Available\";\n    } else if (value === 65534) {\n        return \"Reserved\";\n    } else if (value === 65533) {\n        return \"Out of Range\";\n    } else if (value === 65532) {\n        return \"Error\";\n    } else if (value <= 65530) {\n        // Voltage in mV with 0.1V resolution\n        return parseFloat((value * 0.1).toFixed(1)); // 0.1V per step\n    }\n    return \"Invalid\";\n}\n\nfunction decodeUint16(data, startByte) {\n    // Decode 16-bit value (little-endian)\n    if (!data || startByte + 1 >= data.length) {\n        return 65535; // Not available\n    }\n    return data[startByte] | (data[startByte + 1] << 8);\n}\n\n// === Main Decode Function ===\n\nfunction decodeLockStatusMessage(dgn, data) {\n    const result = {\n        dgn: dgn,\n        dgn_name: \"LOCK_STATUS\"\n    };\n\n    if (data.length < 6) {\n        return { error: \"Invalid data length for LOCK_STATUS - expected at least 6 bytes\" };\n    }\n\n    // Byte 0: Instance\n    result.instance = data[0];\n    result.instance_name = decodeInstance(data[0]);\n\n    // Byte 1: Lock Status (bits 0-1)\n    const byte1 = data[1];\n    const lockStatusRaw = decodeBits(byte1, 0, 1);\n    result.lock_status = decodeLockStatus(lockStatusRaw);\n\n    // Byte 2: Motion\n    result.motion = decodeMotion(data[2]);\n\n    // Byte 3: Position\n    result.position = decodePosition(data[3]);\n\n    // Bytes 4-5: Voltage (16-bit, little-endian)\n    const voltageRaw = decodeUint16(data, 4);\n    result.voltage = decodeVoltage(voltageRaw);\n\n    // Raw values for debugging\n    result.raw_instance = data[0];\n    result.raw_byte1 = byte1;\n    result.raw_lock_status = lockStatusRaw;\n    result.raw_motion = data[2];\n    result.raw_position = data[3];\n    result.raw_voltage_bytes = data.length >= 6 ? [data[4], data[5]] : null;\n    result.raw_voltage = voltageRaw;\n\n    // Include additional bytes if present\n    if (data.length > 6) {\n        for (let i = 6; i < data.length; i++) {\n            result[`raw_byte${i}`] = data[i];\n        }\n    }\n\n    // Add convenience fields for Home Assistant integration\n    result.is_locked = lockStatusRaw === 1;\n    result.is_unlocked = lockStatusRaw === 0;\n    result.is_moving = data[2] === 1 || data[2] === 2;\n    result.is_opening = data[2] === 1;\n    result.is_closing = data[2] === 2;\n    result.is_stationary = data[2] === 0;\n\n    // Position status (if available)\n    if (typeof result.position === 'number') {\n        result.position_percent = result.position;\n        result.fully_open = result.position >= 99;\n        result.fully_closed = result.position <= 1;\n        result.partially_open = result.position > 1 && result.position < 99;\n    } else {\n        result.position_percent = null;\n        result.fully_open = false;\n        result.fully_closed = false;\n        result.partially_open = false;\n    }\n\n    // Voltage status (if available)\n    if (typeof result.voltage === 'number') {\n        result.voltage_volts = result.voltage;\n        result.low_voltage = result.voltage < 11.0; // Typical 12V system low voltage threshold\n        result.high_voltage = result.voltage > 15.0; // Typical 12V system high voltage threshold\n        result.normal_voltage = result.voltage >= 11.0 && result.voltage <= 15.0;\n    } else {\n        result.voltage_volts = null;\n        result.low_voltage = false;\n        result.high_voltage = false;\n        result.normal_voltage = false;\n    }\n\n    // Validate instance - Lock valid instances are 1-250\n    if (result.instance < 1 || result.instance > 250) {\n        node.warn(`Invalid lock instance: ${result.instance} (${result.instance_name}) - message ignored`);\n        return null;\n    }\n\n    // Lock and motion combination status\n    result.locked_and_closed = result.is_locked && result.fully_closed;\n    result.unlocked_and_open = result.is_unlocked && result.fully_open;\n    result.secure_status = result.locked_and_closed ? \"Secure\" : \"Not Secure\";\n\n    return result;\n}\n\n// === Main Logic ===\n\n// Validate input payload\nif (!msg.payload || typeof msg.payload !== 'object') {\n    node.warn('Invalid payload: expected object');\n    return null;\n}\n\nconst incomingPayload = msg.payload;\nconst { dgn, dataPayload } = incomingPayload;\n\nif (!dgn || !dataPayload) {\n    node.warn('Missing required fields: dgn and/or dataPayload');\n    return null;\n}\n\n// Validate and convert hex payload to byte array\nif (typeof dataPayload !== 'string' || dataPayload.length % 2 !== 0) {\n    node.warn('Invalid dataPayload: must be even-length hex string');\n    return null;\n}\n\nconst dataBytes = [];\nfor (let i = 0; i < dataPayload.length; i += 2) {\n    const hexByte = dataPayload.substring(i, i + 2);\n    const byteValue = parseInt(hexByte, 16);\n    if (isNaN(byteValue)) {\n        node.warn(`Invalid hex byte in dataPayload: ${hexByte}`);\n        return null;\n    }\n    dataBytes.push(byteValue);\n}\n\n// Decode the LOCK_STATUS message\nlet decodedData;\nif (dgn === '1FEE5') {\n    decodedData = decodeLockStatusMessage(dgn, dataBytes);\n} else {\n    decodedData = { error: `Decoder for DGN ${dgn} is not implemented.` };\n}\n\n// Handle null return (invalid instance filtered out)\nif (!decodedData) {\n    return null;\n}\n\n// Handle decode errors\nif (decodedData.error) {\n    incomingPayload.decoding_error = decodedData.error;\n    msg.payload = incomingPayload;\n    return msg;\n}\n\n// Merge the incoming payload and the decoded data into a single flat object\nmsg.payload = {\n    ...incomingPayload,\n    ...decodedData\n};\n\n// Clean up the final object by removing the raw data field\ndelete msg.payload.dataPayload;\n\nreturn msg;",
+        "func": "// LOCK_STATUS Decoder - Complete RV-C Implementation\n// Decodes LOCK_STATUS messages per RV-C specification Section 6.40.2\n// Handles door/window lock status, motion detection, and position information\n// Input: msg.payload with {dgn, dataPayload, ...other fields}\n// Output: msg.payload with decoded fields merged at top level\n\n// === Helper Functions ===\n\nfunction decodeBits(value, startBit, endBit) {\n    const mask = ((1 << (endBit - startBit + 1)) - 1) << startBit;\n    return (value & mask) >> startBit;\n}\n\n// === LOCK_STATUS Specific Decoders ===\n\nfunction decodeInstance(value) {\n    // Lock instance mapping per Section 6.40.1\n    if (value >= 1 && value <= 250) {\n        return value; // Direct instance number\n    } else if (value === 0) {\n        return \"Invalid\";\n    } else if (value === 251) {\n        return \"Error\";\n    } else if (value === 252) {\n        return \"Not Supported\";\n    } else if (value === 253) {\n        return \"Out of Range\";\n    } else if (value === 254) {\n        return \"Reserved\";\n    } else if (value === 255) {\n        return \"Not Available\";\n    }\n    return \"Invalid\";\n}\n\nfunction decodeLockStatus(value) {\n    // Lock status (bits 0-1)\n    const lockMap = {\n        0: \"Unlocked\",\n        1: \"Locked\"\n    };\n    return lockMap[value] || `Unknown Lock Status ${value}`;\n}\n\nfunction decodeMotion(value) {\n    // Motion status\n    const motionMap = {\n        0: \"No Motion\",\n        1: \"Opening\",\n        2: \"Closing\"\n    };\n    return motionMap[value] || `Unknown Motion ${value}`;\n}\n\nfunction decodePosition(value) {\n    // Position as percentage per Table 5.3 (100% = Fully Open)\n    if (value <= 200) {\n        return parseFloat((value * 0.5).toFixed(1)); // 0.5% per step, 0-100%\n    } else if (value === 251) {\n        return \"Error\";\n    } else if (value === 252) {\n        return \"Not Supported\";\n    } else if (value === 253) {\n        return \"Out of Range\";\n    } else if (value === 254) {\n        return \"Reserved\";\n    } else if (value === 255) {\n        return \"Not Available\";\n    }\n    return \"Invalid\";\n}\n\nfunction decodeVoltage(value) {\n    // Voltage decoding per Table 5.3 (16-bit, little-endian)\n    if (value === 65535) {\n        return \"Not Available\";\n    } else if (value === 65534) {\n        return \"Reserved\";\n    } else if (value === 65533) {\n        return \"Out of Range\";\n    } else if (value === 65532) {\n        return \"Error\";\n    } else if (value <= 65530) {\n        // Voltage in mV with 0.1V resolution\n        return parseFloat((value * 0.1).toFixed(1)); // 0.1V per step\n    }\n    return \"Invalid\";\n}\n\nfunction decodeUint16(data, startByte) {\n    // Decode 16-bit value (little-endian)\n    if (!data || startByte + 1 >= data.length) {\n        return 65535; // Not available\n    }\n    return data[startByte] | (data[startByte + 1] << 8);\n}\n\n// === Main Decode Function ===\n\nfunction decodeLockStatusMessage(dgn, data) {\n    const result = {\n        dgn: dgn,\n        dgn_name: \"LOCK_STATUS\"\n    };\n\n    if (data.length < 6) {\n        return { error: \"Invalid data length for LOCK_STATUS - expected at least 6 bytes\" };\n    }\n\n    // Byte 0: Instance\n    result.instance = data[0];\n    result.instance_name = decodeInstance(data[0]);\n\n    // Byte 1: Lock Status (bits 0-1)\n    const byte1 = data[1];\n    const lockStatusRaw = decodeBits(byte1, 0, 1);\n    result.lock_status = decodeLockStatus(lockStatusRaw);\n\n    // Byte 2: Motion\n    result.motion = decodeMotion(data[2]);\n\n    // Byte 3: Position\n    result.position = decodePosition(data[3]);\n\n    // Bytes 4-5: Voltage (16-bit, little-endian)\n    const voltageRaw = decodeUint16(data, 4);\n    result.voltage = decodeVoltage(voltageRaw);\n\n    // Raw values for debugging\n    result.raw_instance = data[0];\n    result.raw_byte1 = byte1;\n    result.raw_lock_status = lockStatusRaw;\n    result.raw_motion = data[2];\n    result.raw_position = data[3];\n    result.raw_voltage_bytes = data.length >= 6 ? [data[4], data[5]] : null;\n    result.raw_voltage = voltageRaw;\n\n    // Include additional bytes if present\n    if (data.length > 6) {\n        for (let i = 6; i < data.length; i++) {\n            result[`raw_byte${i}`] = data[i];\n        }\n    }\n\n    // Add convenience fields for Home Assistant integration\n    result.is_locked = lockStatusRaw === 1;\n    result.is_unlocked = lockStatusRaw === 0;\n    result.is_moving = data[2] === 1 || data[2] === 2;\n    result.is_opening = data[2] === 1;\n    result.is_closing = data[2] === 2;\n    result.is_stationary = data[2] === 0;\n\n    // Position status (if available)\n    if (typeof result.position === 'number') {\n        result.position_percent = result.position;\n        result.fully_open = result.position >= 99;\n        result.fully_closed = result.position <= 1;\n        result.partially_open = result.position > 1 && result.position < 99;\n    } else {\n        result.position_percent = null;\n        result.fully_open = false;\n        result.fully_closed = false;\n        result.partially_open = false;\n    }\n\n    // Voltage status (if available)\n    if (typeof result.voltage === 'number') {\n        result.voltage_volts = result.voltage;\n        result.low_voltage = result.voltage < 11.0; // Typical 12V system low voltage threshold\n        result.high_voltage = result.voltage > 15.0; // Typical 12V system high voltage threshold\n        result.normal_voltage = result.voltage >= 11.0 && result.voltage <= 15.0;\n    } else {\n        result.voltage_volts = null;\n        result.low_voltage = false;\n        result.high_voltage = false;\n        result.normal_voltage = false;\n    }\n\n    // Validate instance - Lock valid instances are 0-250 (0 = broadcast/all locks)\n    if (result.instance < 0 || result.instance > 250) {\n        node.warn(`Invalid lock instance: ${result.instance} (${result.instance_name}) - message ignored`);\n        return null;\n    }\n\n    // Lock and motion combination status\n    result.locked_and_closed = result.is_locked && result.fully_closed;\n    result.unlocked_and_open = result.is_unlocked && result.fully_open;\n    result.secure_status = result.locked_and_closed ? \"Secure\" : \"Not Secure\";\n\n    return result;\n}\n\n// === Main Logic ===\n\n// Validate input payload\nif (!msg.payload || typeof msg.payload !== 'object') {\n    node.warn('Invalid payload: expected object');\n    return null;\n}\n\nconst incomingPayload = msg.payload;\nconst { dgn, dataPayload } = incomingPayload;\n\nif (!dgn || !dataPayload) {\n    node.warn('Missing required fields: dgn and/or dataPayload');\n    return null;\n}\n\n// Validate and convert hex payload to byte array\nif (typeof dataPayload !== 'string' || dataPayload.length % 2 !== 0) {\n    node.warn('Invalid dataPayload: must be even-length hex string');\n    return null;\n}\n\nconst dataBytes = [];\nfor (let i = 0; i < dataPayload.length; i += 2) {\n    const hexByte = dataPayload.substring(i, i + 2);\n    const byteValue = parseInt(hexByte, 16);\n    if (isNaN(byteValue)) {\n        node.warn(`Invalid hex byte in dataPayload: ${hexByte}`);\n        return null;\n    }\n    dataBytes.push(byteValue);\n}\n\n// Decode the LOCK_STATUS message\nlet decodedData;\nif (dgn === '1FEE5') {\n    decodedData = decodeLockStatusMessage(dgn, dataBytes);\n} else {\n    decodedData = { error: `Decoder for DGN ${dgn} is not implemented.` };\n}\n\n// Handle null return (invalid instance filtered out)\nif (!decodedData) {\n    return null;\n}\n\n// Handle decode errors\nif (decodedData.error) {\n    incomingPayload.decoding_error = decodedData.error;\n    msg.payload = incomingPayload;\n    return msg;\n}\n\n// Merge the incoming payload and the decoded data into a single flat object\nmsg.payload = {\n    ...incomingPayload,\n    ...decodedData\n};\n\n// Clean up the final object by removing the raw data field\ndelete msg.payload.dataPayload;\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -4769,12 +4809,12 @@
         ],
         "repeat": "",
         "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
+        "once": true,
+        "onceDelay": "5",
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 1100,
+        "x": 1110,
         "y": 1520,
         "wires": [
             [
@@ -4785,57 +4825,6 @@
                 "d3cc901dd2fbd359",
                 "ba0c52ff61838986"
             ]
-        ]
-    },
-    {
-        "id": "cd0e10af5a3a5ec9",
-        "type": "inject",
-        "z": "292e70a6ba25b323",
-        "d": true,
-        "g": "f09f79586501cb0b",
-        "name": "Reset uniqueDecoded",
-        "props": [
-            {
-                "p": "payload"
-            },
-            {
-                "p": "topic",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "payload": "",
-        "payloadType": "date",
-        "x": 660,
-        "y": 1180,
-        "wires": [
-            [
-                "21be2ec94622a98d"
-            ]
-        ]
-    },
-    {
-        "id": "21be2ec94622a98d",
-        "type": "function",
-        "z": "292e70a6ba25b323",
-        "d": true,
-        "g": "f09f79586501cb0b",
-        "name": "Reset function",
-        "func": "flow.set(\"aquahot\", []);\nreturn null;  // Nothing needs to go downstream\n",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 900,
-        "y": 1180,
-        "wires": [
-            []
         ]
     },
     {
@@ -5109,64 +5098,6 @@
         "x": 520,
         "y": 420,
         "wires": []
-    },
-    {
-        "id": "a8270d966963d3b1",
-        "type": "mqtt in",
-        "z": "292e70a6ba25b323",
-        "name": "HA entity type change",
-        "topic": "entity",
-        "qos": "1",
-        "datatype": "json",
-        "broker": "80727e60a251c36c",
-        "nl": false,
-        "rap": true,
-        "rh": 0,
-        "inputs": 0,
-        "x": 1000,
-        "y": 220,
-        "wires": [
-            [
-                "2d165c0688ac59fa"
-            ]
-        ]
-    },
-    {
-        "id": "b2f162c2ad5b42c0",
-        "type": "debug",
-        "z": "292e70a6ba25b323",
-        "name": "HA entity type change",
-        "active": false,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 1280,
-        "y": 320,
-        "wires": []
-    },
-    {
-        "id": "2d165c0688ac59fa",
-        "type": "function",
-        "z": "292e70a6ba25b323",
-        "name": "Entity override",
-        "func": "// Check if payload exists and is an object\nif (!msg.payload || typeof msg.payload !== 'object') {\n    node.warn(\"STOPPED: msg.payload is not a valid object. Check the JSON node.\");\n    return null;\n}\n\nconst instance = msg.payload.instance;\nconst entityType = msg.payload.entity_type;\n\n// Check if the required properties have the correct data types\nif (typeof instance === 'number' && typeof entityType === 'string') {\n    const overrides = global.get('entityOverrides') || {};\n    overrides[instance] = entityType;\n    global.set('entityOverrides', overrides);\n\n} else {\n    node.warn(`STOPPED: Validation failed. Type of 'instance' is [${typeof instance}]. Type of 'entity_type' is [${typeof entityType}].`);\n}\n\nreturn null;",
-        "outputs": 1,
-        "timeout": 0,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 1260,
-        "y": 220,
-        "wires": [
-            [
-                "b2f162c2ad5b42c0"
-            ]
-        ]
     },
     {
         "id": "802228bc8d89d80a",
@@ -5450,6 +5381,121 @@
         "wires": [
             [
                 "356ca3617c50f06b"
+            ]
+        ]
+    },
+    {
+        "id": "a8270d966963d3b1",
+        "type": "mqtt in",
+        "z": "222c995b7790b8de",
+        "d": true,
+        "g": "ca9be43aa8f1a3c0",
+        "name": "HA entity type change",
+        "topic": "entity",
+        "qos": "1",
+        "datatype": "json",
+        "broker": "80727e60a251c36c",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 280,
+        "y": 840,
+        "wires": [
+            [
+                "2d165c0688ac59fa"
+            ]
+        ]
+    },
+    {
+        "id": "b2f162c2ad5b42c0",
+        "type": "debug",
+        "z": "222c995b7790b8de",
+        "d": true,
+        "g": "ca9be43aa8f1a3c0",
+        "name": "HA entity type change",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 560,
+        "y": 940,
+        "wires": []
+    },
+    {
+        "id": "2d165c0688ac59fa",
+        "type": "function",
+        "z": "222c995b7790b8de",
+        "d": true,
+        "g": "ca9be43aa8f1a3c0",
+        "name": "Entity override",
+        "func": "// Check if payload exists and is an object\nif (!msg.payload || typeof msg.payload !== 'object') {\n    node.warn(\"STOPPED: msg.payload is not a valid object. Check the JSON node.\");\n    return null;\n}\n\nconst instance = msg.payload.instance;\nconst entityType = msg.payload.entity_type;\n\n// Check if the required properties have the correct data types\nif (typeof instance === 'number' && typeof entityType === 'string') {\n    const overrides = global.get('entityOverrides') || {};\n    overrides[instance] = entityType;\n    global.set('entityOverrides', overrides);\n\n} else {\n    node.warn(`STOPPED: Validation failed. Type of 'instance' is [${typeof instance}]. Type of 'entity_type' is [${typeof entityType}].`);\n}\n\nreturn null;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 840,
+        "wires": [
+            [
+                "b2f162c2ad5b42c0"
+            ]
+        ]
+    },
+    {
+        "id": "3ff895b0f410e246",
+        "type": "function",
+        "z": "222c995b7790b8de",
+        "d": true,
+        "g": "ca9be43aa8f1a3c0",
+        "name": "Reset function",
+        "func": "flow.set(\"entityOverrides\", []);\nreturn null;  // Nothing needs to go downstream\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 640,
+        "y": 760,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "91142311cd87c18b",
+        "type": "inject",
+        "z": "222c995b7790b8de",
+        "d": true,
+        "g": "ca9be43aa8f1a3c0",
+        "name": "Reset unique",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 370,
+        "y": 760,
+        "wires": [
+            [
+                "3ff895b0f410e246"
             ]
         ]
     }
