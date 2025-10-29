@@ -55,7 +55,7 @@
             "c78420a075d43408"
         ],
         "x": 134,
-        "y": 1719,
+        "y": 1539,
         "w": 852,
         "h": 82
     },
@@ -82,12 +82,13 @@
             "1521d3d47869af7c",
             "32c25c048171f507",
             "86a191e1f24d802a",
-            "ed9920dce79a233a"
+            "ed9920dce79a233a",
+            "fe452143fd95f1d7"
         ],
         "x": 34,
         "y": 59,
         "w": 1372,
-        "h": 362
+        "h": 422
     },
     {
         "id": "3c819b7900145438",
@@ -106,16 +107,18 @@
             "64c5e5cfd4382453",
             "2110ea4d0b85f784",
             "958fed9f12301f59",
-            "32add109922d428a",
             "d34a8c1fd2cc4320",
             "74329f13cbbc528a",
             "1ac6e0fa1cbb3852",
-            "0e65ff3bc0a0795c"
+            "0e65ff3bc0a0795c",
+            "9e9b11b9441e51db",
+            "54cd7e4a8959a77c",
+            "32add109922d428a"
         ],
         "x": 134,
-        "y": 39,
+        "y": 59,
         "w": 732,
-        "h": 442
+        "h": 482
     },
     {
         "id": "f09f79586501cb0b",
@@ -150,10 +153,10 @@
             "3d5ce3e925ee2f04",
             "c4216c430d06083f"
         ],
-        "x": 134,
-        "y": 519,
+        "x": 954,
+        "y": 159,
         "w": 1738,
-        "h": 748
+        "h": 788
     },
     {
         "id": "eb51c1f2d0d389d1",
@@ -170,8 +173,8 @@
             "b797e5a52b6db5b4",
             "48e6dda2b2d9575e"
         ],
-        "x": 14,
-        "y": 619,
+        "x": 34,
+        "y": 739,
         "w": 492,
         "h": 142
     },
@@ -250,7 +253,7 @@
             "ba0c52ff61838986"
         ],
         "x": 134,
-        "y": 1299,
+        "y": 1079,
         "w": 1652,
         "h": 362
     },
@@ -394,6 +397,33 @@
         "h": 348
     },
     {
+        "id": "8da591d6205a352e",
+        "type": "group",
+        "z": "3470febb2cd6e952",
+        "name": "Floor heat",
+        "style": {
+            "stroke": "#ffffff",
+            "label": true
+        },
+        "nodes": [
+            "f0ba2779795efdae",
+            "bd2d1b59183b99bb",
+            "aa518caf7366cec9",
+            "f183a66e28426985",
+            "b3e18602b6affaf5",
+            "1f7fde87c1ab1f51",
+            "6e53b4f33db9f29c",
+            "ee5f54f521f5ecda",
+            "cd4ce201cf6c3c35",
+            "5aa079ea85cca5b0",
+            "1a10fdc6f9970a2f"
+        ],
+        "x": 1434,
+        "y": -1,
+        "w": 1092,
+        "h": 622
+    },
+    {
         "id": "9dd6a98018824be9",
         "type": "group",
         "z": "292e70a6ba25b323",
@@ -408,8 +438,8 @@
             "092c751dcdd12270",
             "eea1641469efb23f"
         ],
-        "x": 1314,
-        "y": 919,
+        "x": 2134,
+        "y": 599,
         "w": 532,
         "h": 142
     },
@@ -449,8 +479,8 @@
             "8f7381d08bf2b8a8",
             "d0150fd6556514e6"
         ],
-        "x": 1314,
-        "y": 1099,
+        "x": 2134,
+        "y": 779,
         "w": 532,
         "h": 142
     },
@@ -549,8 +579,8 @@
             "f96e5b3b013a2b8f",
             "bc59e15bf069f17d"
         ],
-        "x": 1314,
-        "y": 559,
+        "x": 2134,
+        "y": 239,
         "w": 532,
         "h": 142
     },
@@ -609,33 +639,10 @@
             "9f47dc231ecd50cd",
             "5968e8ee034f8751"
         ],
-        "x": 1314,
-        "y": 739,
+        "x": 2134,
+        "y": 419,
         "w": 512,
         "h": 142
-    },
-    {
-        "id": "8da591d6205a352e",
-        "type": "group",
-        "z": "3470febb2cd6e952",
-        "name": "Floor heat",
-        "style": {
-            "stroke": "#ffffff",
-            "label": true
-        },
-        "nodes": [
-            "f0ba2779795efdae",
-            "bd2d1b59183b99bb",
-            "aa518caf7366cec9",
-            "f183a66e28426985",
-            "b3e18602b6affaf5",
-            "1f7fde87c1ab1f51",
-            "6e53b4f33db9f29c"
-        ],
-        "x": 1434,
-        "y": 39,
-        "w": 1092,
-        "h": 348
     },
     {
         "id": "1f7fde87c1ab1f51",
@@ -656,6 +663,25 @@
         "y": 219,
         "w": 472,
         "h": 142
+    },
+    {
+        "id": "ee5f54f521f5ecda",
+        "type": "group",
+        "z": "3470febb2cd6e952",
+        "g": "8da591d6205a352e",
+        "name": "Reset floor levels (Don't do this)",
+        "style": {
+            "stroke": "#ffffff",
+            "label": true
+        },
+        "nodes": [
+            "56aa8b5c045b391d",
+            "870bf91817db9d08"
+        ],
+        "x": 1494,
+        "y": 279,
+        "w": 412,
+        "h": 82
     },
     {
         "id": "80727e60a251c36c",
@@ -694,7 +720,7 @@
         "z": "b3d80c5dc947ec88",
         "g": "aea9d97e0563bd83",
         "name": "Decode HA command",
-        "func": "// Parse Home Assistant MQTT command topics\n// Handles covers, locks, and simple switches/lights.\n\n// --- Cover entities ---\nconst rvcTopicMatch = msg.topic.match(/^homeassistant\\/cover\\/shade_(\\d+)\\/set$/);\nif (rvcTopicMatch) {\n    const instance = parseInt(rvcTopicMatch[1], 10);\n    const command = String(msg.payload).toUpperCase();\n    msg.routingKey = \"cover\";\n    msg.instance = instance;\n    msg.command = command;\n    msg.entityType = \"cover\";\n    msg.entityId = `shade_${instance}`;\n    return msg;\n}\n\n// --- Lock entities ---\nconst lockTopicMatch = msg.topic.match(/^homeassistant\\/lock\\/lock_(\\d+)\\/set$/);\nif (lockTopicMatch) {\n    const instance = parseInt(lockTopicMatch[1], 10);\n    const command = String(msg.payload).toUpperCase();\n    msg.routingKey = \"lock\";\n    msg.instance = instance;\n    msg.command = command;\n    msg.entityType = \"lock\";\n    msg.entityId = `lock_${instance}`;\n    return msg;\n}\n\n// --- Switch and Light entities ---\nconst topicParts = msg.topic.split('/');\nif (topicParts[0] !== 'homeassistant' || (topicParts[1] !== 'switch' && topicParts[1] !== 'light') || topicParts[3] !== 'set' || topicParts.length !== 4) {\n    return null; // Not a topic we handle\n}\n\nconst entityId = topicParts[2];\nconst command = String(msg.payload).toUpperCase();\n\n// === Special handling for 'water_pump' and 'autofill' ===\nif (entityId === 'water_pump' || entityId === 'autofill') {\n    msg.instance = entityId;\n    msg.routingKey = entityId;\n} else {\n    // === Generic handling for all other switches/lights ===\n    const entityIdParts = entityId.split('_');\n    const instanceStr = entityIdParts[entityIdParts.length - 1];\n    const instanceNum = parseInt(instanceStr, 10);\n\n    if (isNaN(instanceNum)) { return null; }\n\n    msg.instance = instanceNum;\n    msg.routingKey = entityIdParts.slice(0, -1).join('_');\n}\n\n// Assign final properties to the message\nmsg.entityType = topicParts[1]; // CORRECTED: Dynamically sets \"light\" or \"switch\"\nmsg.entityId = entityId;\nmsg.command = command;\n\nreturn msg;",
+        "func": "// decode_ha_command.js (Updated for 2-Entity Solution)\n//\n// Parse Home Assistant MQTT command topics\n\n// --- Cover (Shade) entities ---\nconst rvcTopicMatch = msg.topic.match(/^homeassistant\\/cover\\/shade_(\\d+)\\/set$/);\nif (rvcTopicMatch) {\n    const instance = parseInt(rvcTopicMatch[1], 10);\n    const command = String(msg.payload).toUpperCase();\n    msg.routingKey = \"cover\";\n    msg.instance = instance;\n    msg.command = command;\n    msg.entityType = \"cover\";\n    msg.entityId = `shade_${instance}`;\n    return msg;\n}\n\n// --- Lock entities ---\nconst lockTopicMatch = msg.topic.match(/^homeassistant\\/lock\\/lock_(\\d+)\\/set$/);\nif (lockTopicMatch) {\n    const instance = parseInt(lockTopicMatch[1], 10);\n    const command = String(msg.payload).toUpperCase();\n    msg.routingKey = \"lock\";\n    msg.instance = instance;\n    msg.command = command;\n    msg.entityType = \"lock\";\n    msg.entityId = `lock_${instance}`;\n    return msg;\n}\n\n// --- Floor Heat Schedule Switch ---\n// Matches 'homeassistant/switch/floor_heat_1_schedule/set'\nconst scheduleSwitchMatch = msg.topic.match(/^homeassistant\\/switch\\/floor_heat_(\\d+)_schedule\\/set$/);\nif (scheduleSwitchMatch) {\n    const instance = parseInt(scheduleSwitchMatch[1], 10);\n    msg.routingKey = \"floor_heat_schedule\"; // <-- NEW Routing Key\n    msg.instance = instance;\n    msg.command = String(msg.payload).toUpperCase(); // \"ON\" or \"OFF\"\n    msg.entityType = \"switch\";\n    msg.entityId = `floor_heat_${instance}_schedule`;\n    return msg;\n}\n\n// --- Climate (Floor Heat) Preset entities ---\nconst climatePresetMatch = msg.topic.match(/^homeassistant\\/climate\\/floor_heat_(\\d+)\\/set_preset_mode$/);\nif (climatePresetMatch) {\n    const instance = parseInt(climatePresetMatch[1], 10);\n    msg.routingKey = \"floor_heat\";\n    msg.instance = instance;\n    msg.entityType = \"climate\";\n    msg.entityId = `floor_heat_${instance}`;\n    msg.command = \"SET_PRESET\"; \n    msg.value = String(msg.payload); // e.g., \"Level 5\"\n    return msg;\n}\n\n// --- Climate (Floor Heat) Mode entities ---\nconst climateTopicMatch = msg.topic.match(/^homeassistant\\/climate\\/floor_heat_(\\d+)\\/set_mode$/);\nif (climateTopicMatch) {\n    const instance = parseInt(climateTopicMatch[1], 10);\n    msg.routingKey = \"floor_heat\";\n    msg.instance = instance;\n    msg.entityType = \"climate\";\n    msg.entityId = `floor_heat_${instance}`;\n    msg.command = String(msg.payload).toUpperCase(); // \"HEAT\" or \"OFF\"\n    return msg;\n}\n\n// --- Switch and Light entities (Fallback) ---\nconst topicParts = msg.topic.split('/');\nif (topicParts.length === 4 &&\n    topicParts[0] === 'homeassistant' &&\n    (topicParts[1] === 'switch' || topicParts[1] === 'light') &&\n    topicParts[3] === 'set') {\n\n    const entityId = topicParts[2];\n    const command = String(msg.payload).toUpperCase();\n    msg.entityType = topicParts[1];\n    msg.entityId = entityId;\n    msg.command = command;\n\n    if (entityId === 'water_pump' || entityId === 'autofill') {\n        msg.instance = entityId;\n        msg.routingKey = entityId;\n    } else {\n        const entityIdParts = entityId.split('_');\n        const instanceStr = entityIdParts[entityIdParts.length - 1];\n        const instanceNum = parseInt(instanceStr, 10);\n        if (isNaN(instanceNum)) {\n             node.warn(`Could not parse instance number from entityId: ${entityId}`);\n             return null;\n        }\n        msg.instance = instanceNum;\n        msg.routingKey = entityIdParts.slice(0, -1).join('_');\n    }\n    return msg;\n}\n\nnode.warn(`Unhandled MQTT topic: ${msg.topic}`);\nreturn null;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -784,12 +810,17 @@
                 "vt": "str"
             },
             {
+                "t": "eq",
+                "v": "floor_heat_schedule",
+                "vt": "str"
+            },
+            {
                 "t": "else"
             }
         ],
         "checkall": "true",
         "repair": false,
-        "outputs": 7,
+        "outputs": 8,
         "x": 570,
         "y": 200,
         "wires": [
@@ -810,6 +841,9 @@
             ],
             [
                 "ed9920dce79a233a"
+            ],
+            [
+                "fe452143fd95f1d7"
             ],
             [
                 "778971897d2a7fdc"
@@ -937,7 +971,7 @@
         "statusVal": "",
         "statusType": "auto",
         "x": 860,
-        "y": 380,
+        "y": 440,
         "wires": []
     },
     {
@@ -1004,7 +1038,7 @@
         "z": "b3d80c5dc947ec88",
         "g": "aea9d97e0563bd83",
         "name": "Encode floor heat command",
-        "func": "// Encodes HA climate entity commands to RV-C FLOOR_HEAT_COMMAND (DGN 1FEFBh)\n// Handles mode commands (\"off\", \"heat\") and temperature commands (numbers)\n// Outputs in standard CAN bus format for 'can/send' topic.\n\n// --- Configuration ---\nconst SOURCE_ADDRESS = global.get(\"rvc_source_address\") || 254;\nconst PRIORITY = 6;\nconst DGN = \"1FEFB\";\n\n// --- Input (assumed to be set by a prior node) ---\n// msg.instance: (Number) The instance ID, e.g., 1\n// msg.command: (String or Number) The command from HA, e.g., \"off\", \"heat\", or 72\n\nconst instance = msg.instance;\nconst command = msg.command;\n\nif (typeof instance !== 'number' || instance < 1 || instance > 250) {\n    node.warn(`[encode_floor_heat] Invalid instance: ${instance}`);\n    return null;\n}\n\n// 1. Build the 8-byte data payload (default 0xFF = no change)\nconst dataBytes = new Array(8).fill(0xFF);\ndataBytes[0] = instance; // Byte 0: Instance\n\n// 2. Parse command from HA\nif (command === 'off') {\n    // Set Desired Operating Status (bits 2-3) to 00b (Off)\n    // We also set mode to 00b (Auto) and other bits to 0\n    dataBytes[1] = 0x00; // 00000000b\n\n} else if (command === 'heat') {\n    // Set Desired Operating Status (bits 2-3) to 01b (On)\n    // And Desired Operating Mode (bits 0-1) to 00b (Automatic)\n    dataBytes[1] = 0x04; // 00000100b\n\n} else if (typeof command === 'number' || !isNaN(parseFloat(command))) {\n    // This is a temperature set point command.\n    const tempF = parseFloat(command);\n\n    // Convert F -> C -> K -> RV-C uint16 value\n    // Spec: uint16, 0.03125°C res, -273.15°C offset\n    const tempC = (tempF - 32) * 5.0 / 9.0;\n    const tempK = tempC + 273.15;\n    const rvcValue = Math.round(tempK / 0.03125);\n\n    if (rvcValue >= 0 && rvcValue <= 65530) {\n        dataBytes[2] = rvcValue & 0xFF;         // Low byte\n        dataBytes[3] = (rvcValue >> 8) & 0xFF;  // High byte\n    } else {\n        node.warn(`[encode_floor_heat] Temp ${tempF}F is out of range.`);\n        return null;\n    }\n\n} else {\n    node.warn('[encode_floor_heat] Unknown command: ' + command);\n    return null;\n}\n\n// 3. Format the final CAN message\nconst dataHex = dataBytes.map(byte => byte.toString(16).padStart(2, '0')).join('');\n\nconst dgnInt = parseInt(DGN, 16);\nconst canIdInt = (PRIORITY << 26) | (dgnInt << 8) | SOURCE_ADDRESS;\nconst canIdHex = canIdInt.toString(16).padStart(8, '0');\n\nmsg.topic = \"can/send\";\nmsg.payload = `${canIdHex.toUpperCase()}#${dataHex.toUpperCase()}`;\n\nreturn msg;",
+        "func": "// encode_floor_heat_command.js\n//\n// Reads level map and schedule state from GLOBAL context.\n// Corrected: OFF command no longer resets the schedule state.\n\n// --- Configuration ---\nconst SOURCE_ADDRESS = global.get(\"rvc_source_address\") || 254;\nconst PRIORITY = 6;\nconst DGN = \"1FEFB\";\n\n// --- Input ---\nconst instance = msg.instance;\nconst command = msg.command;\n\nif (typeof instance !== 'number') {\n    node.warn(`[encode_floor_heat] Invalid instance: ${instance}`);\n    return null;\n}\n\n// --- Get Context ---\nconst levelMap = global.get(\"floorHeatLevelMap\", \"file\");\nconst scheduleContextKey = `floorHeat_${instance}_ScheduleOn`;\nconst isScheduleOn = global.get(scheduleContextKey, \"file\") || false;\n\nif (!levelMap && command !== 'OFF') { // Allow OFF even if map isn't ready\n    node.warn(\"[encode_floor_heat] Floor heat level map not found. Levels must be discovered first.\");\n    // Only block if it's not an OFF command\n    if (command !== 'OFF') {\n        return null;\n    }\n}\n\n// 1. Build Payload\nconst dataBytes = new Array(8).fill(0xFF);\ndataBytes[0] = instance;\n\n// 2. Parse Command\nif (command === 'OFF') {\n    dataBytes[1] = 0xC0;\n    dataBytes[2] = 0x00;\n    dataBytes[3] = 0x00;\n    // *** THE FIX: Removed the line below ***\n    // global.set(scheduleContextKey, false, \"file\"); // <-- REMOVED\n\n} else if (command === 'HEAT') {\n    // Send D4 or C4 based on the *saved* schedule state\n    dataBytes[1] = isScheduleOn ? 0xD4 : 0xC4;\n\n} else if (command === 'SET_PRESET') {\n    // This check requires the levelMap, handle potential error if map still missing\n    if (!levelMap) {\n        node.error(\"[encode_floor_heat] Cannot set preset, level map is missing.\");\n        return null;\n    }\n\n    const presetName = msg.value;\n    const rawValue = levelMap[presetName];\n\n    if (typeof rawValue === 'undefined') {\n        node.warn(`[encode_floor_heat] Unknown preset name: ${presetName}`);\n        return null;\n    }\n\n    if (presetName === \"Store\") {\n        dataBytes[1] = 0xC4;\n        // When setting to Store, we DO force schedule off\n        global.set(scheduleContextKey, false, \"file\");\n    } else {\n        // For other levels, send D4 or C4 based on saved state\n        dataBytes[1] = isScheduleOn ? 0xD4 : 0xC4;\n    }\n\n    dataBytes[2] = rawValue & 0xFF;\n    dataBytes[3] = (rawValue >> 8) & 0xFF;\n\n} else {\n    node.warn('[encode_floor_heat] Unknown command: ' + command);\n    return null;\n}\n\n// 3. Format CAN message\nconst dataHex = dataBytes.map(byte => byte.toString(16).padStart(2, '0')).join('');\nconst dgnInt = parseInt(DGN, 16);\nconst canIdInt = (PRIORITY << 26) | (dgnInt << 8) | SOURCE_ADDRESS;\nconst canIdHex = canIdInt.toString(16).padStart(8, '0');\n\nmsg.topic = \"can/send\";\nmsg.payload = `${canIdHex.toUpperCase()}#${dataHex.toUpperCase()}`;\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -1015,6 +1049,29 @@
         "y": 320,
         "wires": [
             [
+                "c19a749621bffe0c",
+                "6aa079d768e1571c"
+            ]
+        ]
+    },
+    {
+        "id": "fe452143fd95f1d7",
+        "type": "function",
+        "z": "b3d80c5dc947ec88",
+        "g": "aea9d97e0563bd83",
+        "name": "Encode floor heat schedule",
+        "func": "// encode_floor_heat_schedule.js (New Node)\n//\n// Handles the \"ON\" / \"OFF\" commands from the schedule switch.\n// Sends the schedule-only CAN message and updates PERSISTENT context.\n\n// --- Configuration ---\nconst SOURCE_ADDRESS = global.get(\"rvc_source_address\") || 254;\nconst PRIORITY = 6;\nconst DGN = \"1FEFB\";\n\n// --- Input ---\nconst instance = msg.instance;\nconst command = msg.command; // \"ON\" or \"OFF\"\n\nif (typeof instance !== 'number') {\n    node.warn(`[encode_schedule] Invalid instance: ${instance}`);\n    return null;\n}\n\nconst scheduleContextKey = `floorHeat_${instance}_ScheduleOn`;\nconst dataBytes = new Array(8).fill(0xFF);\ndataBytes[0] = instance;\n\n// 2. Parse Command\nif (command === 'ON') {\n    // Use the 'Schedule On' command from your logs\n    dataBytes[1] = 0xD7;\n    global.set(scheduleContextKey, true, \"file\");\n\n} else if (command === 'OFF') {\n    // Use the 'Schedule Off' command from your logs\n    dataBytes[1] = 0xCF;\n    global.set(scheduleContextKey, false, \"file\");\n\n} else {\n    node.warn('[encode_schedule] Unknown command: ' + command);\n    return null;\n}\n\n// 3. Format CAN message\nconst dataHex = dataBytes.map(byte => byte.toString(16).padStart(2, '0')).join('');\nconst dgnInt = parseInt(DGN, 16);\nconst canIdInt = (PRIORITY << 26) | (dgnInt << 8) | SOURCE_ADDRESS;\nconst canIdHex = canIdInt.toString(16).padStart(8, '0');\n\nmsg.topic = \"can/send\";\nmsg.payload = `${canIdHex.toUpperCase()}#${dataHex.toUpperCase()}`;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 920,
+        "y": 360,
+        "wires": [
+            [
+                "6aa079d768e1571c",
                 "c19a749621bffe0c"
             ]
         ]
@@ -2487,7 +2544,8 @@
         "wires": [
             [
                 "aa518caf7366cec9",
-                "f183a66e28426985"
+                "f183a66e28426985",
+                "e3f64f273f5bdaa5"
             ]
         ],
         "l": true
@@ -2498,7 +2556,7 @@
         "z": "3470febb2cd6e952",
         "g": "8da591d6205a352e",
         "name": "Unique floor heat",
-        "func": "const uniqueKey = \"uniqueFloorHeat\";\n\n// Retrieve existing instances from flow context, or initialize as empty array\nlet uniqueList = flow.get(uniqueKey) || [];\n\n// Track by numeric instance ID for true uniqueness\nlet instanceId = msg.payload.instance;\n\n// Check if this instance ID has been seen before\nif (instanceId != null && !uniqueList.includes(instanceId)) {\n    uniqueList.push(instanceId);\n    flow.set(uniqueKey, uniqueList);\n\n    // Pass the instance ID to the next function\n    return { payload: { instance: instanceId } };\n}\n\n// Return nothing if duplicate instance\nreturn null;\n",
+        "func": "// unique_floor_heat.js\n//\n// Combines instance and level discovery into a single node.\n// 1. Tracks unique instances in session context (\"uniqueFloorHeat\").\n// 2. Tracks unique levels in PERSISTENT context (\"uniqueFloorHeatLevels\").\n\n// --- Configuration ---\nconst instanceKey = \"uniqueFloorHeat\"; // Session-only\nconst levelsKey = \"uniqueFloorHeatLevels\"; // Persistent\n\n// --- 1. Get data from payload ---\nconst instanceId = msg.payload.instance;\nconst raw_setpoint = msg.payload.raw_setpoint;\nconst schedule_mode = msg.payload.schedule_mode; // \"Enabled\" or \"Disabled\"\n\n// --- 2. Validate input ---\nif (typeof instanceId !== 'number') {\n    return null; // No instance, can't proceed\n}\n\n// We only want to discover a level if:\n// 1. The setpoint is > 1 (to filter \"Off\" and test values)\n// 2. The schedule_mode is \"Enabled\"\nconst isValidLevel = (\n    typeof raw_setpoint === 'number' &&\n    raw_setpoint > 1 &&\n    schedule_mode === \"Enabled\"\n);\n\n// --- 3. Get context lists ---\nlet instanceList = flow.get(instanceKey) || [];\nlet levelList = global.get(levelsKey, \"file\") || [];\n\nlet isNewInstance = false;\nlet isNewLevel = false;\n\n// --- 4. Process Instance ---\nif (!instanceList.includes(instanceId)) {\n    isNewInstance = true;\n    instanceList.push(instanceId);\n    flow.set(instanceKey, instanceList); // Save to session context\n}\n\n// --- 5. Process Level ---\n// This block will now ONLY run if isValidLevel is true\nif (isValidLevel && !levelList.includes(raw_setpoint)) {\n    isNewLevel = true;\n    levelList.push(raw_setpoint);\n    levelList.sort((a, b) => a - b);\n    global.set(levelsKey, levelList, \"file\"); // Save to persistent context\n    node.log(`Discovered new floor heat level: ${raw_setpoint}`);\n}\n\n// --- 6. Output Logic ---\nif (!isNewInstance && !isNewLevel) {\n    return null; // Nothing new, stop here\n}\n\nif (isNewLevel) {\n    //node.warn(`New level found. Sending config updates for all known instances: ${instanceList.join(', ')}`);\n\n    let outputs = [];\n    for (const inst of instanceList) {\n        outputs.push({ payload: { instance: inst } });\n    }\n    return outputs;\n}\n\nif (isNewInstance) {\n    return { payload: { instance: instanceId } };\n}\n\nreturn null;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -2519,7 +2577,7 @@
         "z": "3470febb2cd6e952",
         "g": "8da591d6205a352e",
         "name": "Floor heat status",
-        "func": "/***********************************************************\n * HA Floor Heat Status Updater\n * Takes decoded JSON payload and sends status\n * to the Home Assistant MQTT state topic for climate entities.\n ***********************************************************/\n\n// Validate instance - must be a valid number (1-250)\nif (typeof msg.payload.instance !== 'number') {\n    // Silently ignore messages with invalid instance values\n    return null;\n}\n\nconst instance = msg.payload.instance;\nif (instance < 1 || instance > 250) {\n    return null; // Not a valid instance\n}\n\n// Create the state topic for this climate instance\nconst stateTopic = `homeassistant/climate/floor_heat_${instance}/state`;\n\nconst haPayload = {};\n\n// 1. Determine Mode (off/heat)\n// We use 'operating_status' as the main on/off control\nif (msg.payload.operating_status === \"On\") {\n    haPayload.mode = \"heat\";\n} else if (msg.payload.operating_status === \"Off\") {\n    haPayload.mode = \"off\";\n}\n\n// 2. Determine Action (idle/heating)\n// 'heat_element_status' tells us if it's actively heating\nif (msg.payload.heat_element_status === \"On\") {\n    haPayload.action = \"heating\";\n} else {\n    // idle if off, or on but not actively heating (met setpoint)\n    haPayload.action = \"idle\";\n}\n\n// 3. Get Current Temperature\nif (typeof msg.payload.measured_temperature === 'number') {\n    haPayload.current_temperature = msg.payload.measured_temperature;\n}\n\n// 4. Get Target Temperature (Set Point)\nif (typeof msg.payload.set_point === 'number') {\n    haPayload.temperature = msg.payload.set_point;\n}\n\nmsg.topic = stateTopic;\nmsg.payload = haPayload; // Payload is a JSON object\nmsg.retain = true; // Retain the status\n\nreturn msg;",
+        "func": "// publish_floor_heat_status.js\n//\n// 1. Formats the climate status.\n// 2. Formats the schedule switch status.\n// 3. Saves the current schedule state to PERSISTENT context.\n// 4. Outputs an array of 2 messages.\n\nconst payload = msg.payload;\nconst instance = payload.instance;\nconst raw_setpoint = payload.raw_setpoint;\n\n// --- Get the Level Map ---\nconst levelMap = global.get(\"floorHeatLevelMap\", \"file\") || {};\n\n// --- 1. Prepare Climate Status ---\nconst climatePayload = {};\nclimatePayload.measured_temperature = payload.measured_temperature;\n\n// Translate raw_setpoint to preset name\nconst preset = levelMap[raw_setpoint];\nif (preset) {\n    climatePayload.preset_mode = preset;\n} else if (raw_setpoint === 0) {\n    climatePayload.preset_mode = \"Off\";\n} else {\n    climatePayload.preset_mode = \"Unknown\";\n}\n\n// --- Set Action, Mode, and Setpoint ---\nif (payload.operating_status === \"Off\") {\n    climatePayload.action = \"off\";\n    climatePayload.mode = \"off\";\n    climatePayload.set_point = null; // Hide setpoint when Off\n\n} else {\n    // Unit is On (either 'heat' or 'idle')\n    climatePayload.mode = \"heat\";\n\n    if (climatePayload.preset_mode === \"Store\") {\n        climatePayload.action = \"idle\";\n        climatePayload.set_point = null; // Hide setpoint in Store mode\n    } else {\n        // --- Handling for all other levels (Level 1, etc.) ---\n        climatePayload.set_point = payload.set_point;\n        \n        // Check the 'heating_active' property from the INPUT payload\n        if (payload.heating_active) { \n            climatePayload.action = \"heating\";\n        } else {\n            climatePayload.action = \"idle\";\n        }\n    }\n}\n\n// --- 2. Prepare Schedule Status ---\nlet scheduleStateOn = false;\nlet scheduleStatePayload = \"OFF\";\n\nif (payload.schedule_mode === \"Enabled\") {\n    scheduleStateOn = true;\n    scheduleStatePayload = \"ON\";\n}\n\n// --- 3. Save Schedule State to PERSISTENT Context ---\nconst scheduleContextKey = `floorHeat_${instance}_ScheduleOn`;\nglobal.set(scheduleContextKey, scheduleStateOn, \"file\");\n\n// --- 4. Create Output Messages ---\nconst climateEntityId = `floor_heat_${instance}`;\nconst climateStateTopic = `homeassistant/climate/${climateEntityId}/state`;\nconst climateMsg = {\n    topic: climateStateTopic,\n    payload: climatePayload\n};\n\nconst switchEntityId = `floor_heat_${instance}_schedule`;\nconst switchStateTopic = `homeassistant/switch/${switchEntityId}/state`;\nconst switchMsg = {\n    topic: switchStateTopic,\n    payload: scheduleStatePayload\n};\n\nreturn [climateMsg, switchMsg];",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -2530,7 +2588,8 @@
         "y": 80,
         "wires": [
             [
-                "f0ba2779795efdae"
+                "f0ba2779795efdae",
+                "1a10fdc6f9970a2f"
             ]
         ]
     },
@@ -2540,14 +2599,14 @@
         "z": "3470febb2cd6e952",
         "g": "8da591d6205a352e",
         "name": "Create floor heat",
-        "func": "/***********************************************************\n * Floor Heat MQTT Discovery for Home Assistant\n * Creates a climate entity for each floor heat instance\n * Expects input msg.payload to be an object with:\n * - msg.payload.instance (Number): The floor heat instance ID (1-250)\n ***********************************************************/\n\n// Validate input structure\nif (!msg.payload || typeof msg.payload !== 'object') {\n    node.error(\"Input payload must be an object.\", msg);\n    return null;\n}\n\nconst instance = msg.payload.instance;\n\n// Validate required fields\nif (typeof instance !== 'number') {\n    node.error(\"Input missing 'instance' (number).\", msg);\n    return null;\n}\n\n// RV-C valid instance range: 1-250\nif (instance < 1 || instance > 250) {\n    if (instance >= 251 && instance <= 255) {\n        return null; // Silently ignore special RV-C status values\n    }\n    node.warn(`Instance ${instance} is outside the valid RV-C instance range (1-250) for floor heat. Entity will not be created.`);\n    return null;\n}\n\nconst prefix = \"floor_heat\";\nconst displayPrefix = \"Floor Heat\";\nconst componentType = \"climate\";\n\n// Generate entity identifiers\nconst entityId = `${prefix}_${instance}`;\nconst displayName = `${displayPrefix} ${instance}`;\n\n// MQTT topics\nconst discoveryTopic = `homeassistant/${componentType}/${entityId}/config`;\nconst stateTopic = `homeassistant/${componentType}/${entityId}/state`;\nconst modeCommandTopic = `homeassistant/${componentType}/${entityId}/set_mode`;\nconst tempCommandTopic = `homeassistant/${componentType}/${entityId}/set_temp`;\n\n// MQTT Discovery payload\nconst payload = {\n    name: displayName,\n    unique_id: entityId,\n    icon: \"mdi:floor-heating\",\n\n    // State topics (all read from one JSON payload)\n    mode_state_topic: stateTopic,\n    mode_state_template: \"{{ value_json.mode }}\",\n    temperature_state_topic: stateTopic,\n    temperature_state_template: \"{{ value_json.temperature }}\", // Set point\n    current_temperature_topic: stateTopic,\n    current_temperature_template: \"{{ value_json.current_temperature }}\", // Measured\n    action_topic: stateTopic,\n    action_template: \"{{ value_json.action }}\", // e.g., \"heating\" or \"idle\"\n\n    // Command topics\n    mode_command_topic: modeCommandTopic,\n    temperature_command_topic: tempCommandTopic,\n\n    // Supported modes, based on FLOOR_HEAT_COMMAND\n    // We map \"heat\" to RV-C \"Automatic\" mode\n    modes: [\"off\", \"heat\"],\n    \n    temperature_unit: \"F\", // Assuming Fahrenheit, as per your decoder logic\n    min_temp: 50,\n    max_temp: 85,\n    precision: 0.1\n};\n\n// Prepare the final message for the MQTT Out node\nmsg.topic = discoveryTopic;\nmsg.payload = payload;\nmsg.retain = true; // IMPORTANT: Ensures HA rediscovers on restart\n\nmsg.stateTopic = stateTopic;\nmsg.entityId = entityId;\n\nreturn msg;",
+        "func": "// create_floor_heat.js\n//\n// Creates BOTH a climate entity and a schedule switch entity.\n// Outputs an array of 2 messages.\n\nconst instance = msg.payload.instance;\nif (typeof instance !== 'number') {\n    node.error(\"Input missing 'instance' (number).\", msg);\n    return null;\n}\n\n// --- Get Discovered Levels ---\nconst levelsKey = \"uniqueFloorHeatLevels\";\nconst levels = global.get(levelsKey, \"file\") || [];\n\n// --- Build Preset List and Map ---\nlet levelMap = {};\nlet presetList = [];\nlet levelCounter = 1;\n\n// The 'unique' node sorts the list, so the lowest value is always first.\n// Get the lowest level (\"Store\").\nconst lowestLevel = levels.length > 0 ? levels[0] : null;\n\nfor (const rawVal of levels) {\n    let name;\n\n    // Check if the current value is the lowest one we found\n    if (rawVal === lowestLevel) {\n        name = \"Store\"; // Dynamically assigned to the lowest value\n    } else {\n        name = `Level ${levelCounter++}`;\n    }\n\n    presetList.push(name);\n    levelMap[name] = rawVal;\n    levelMap[rawVal] = name;\n}\nglobal.set(\"floorHeatLevelMap\", levelMap, \"file\");\n\n// --- Entity 1: Climate ---\nconst climateEntityId = `floor_heat_${instance}`;\nconst climateStateTopic = `homeassistant/climate/${climateEntityId}/state`;\nconst climateDiscoveryTopic = `homeassistant/climate/${climateEntityId}/config`;\n\nconst climatePayload = {\n    name: `Floor Heat ${instance}`,\n    unique_id: climateEntityId,\n    icon: \"mdi:heating-coil\",\n\n    // --- State Reporting ---\n    action_topic: climateStateTopic,\n    action_template: \"{{ value_json.action }}\",\n    current_temperature_topic: climateStateTopic,\n    current_temperature_template: \"{{ value_json.measured_temperature }}\",\n    temperature_state_topic: climateStateTopic,\n    temperature_state_template: \"{{ value_json.set_point }}\",\n\n    mode_state_topic: climateStateTopic,\n    mode_state_template: \"{{ value_json.mode }}\",\n\n    preset_mode_state_topic: climateStateTopic,\n    preset_mode_state_template: \"{{ value_json.preset_mode }}\",\n\n    // --- Commands ---\n    mode_command_topic: `homeassistant/climate/${climateEntityId}/set_mode`,\n    modes: [\"off\", \"heat\"],\n\n    // Temperature command topic (probably not needed)\n    temperature_command_topic: `homeassistant/climate/${climateEntityId}/set_temperature`,\n\n    preset_mode_command_topic: `homeassistant/climate/${climateEntityId}/set_preset_mode`,\n    preset_modes: presetList,\n    temperature_unit: \"F\"\n};\n\n// --- Entity 2: Schedule Switch (Light) ---\nconst componentType = \"light\";\nconst switchEntityId = `floor_heat_${instance}_schedule`;\nconst switchStateTopic = `homeassistant/${componentType}/${switchEntityId}/state`;\nconst switchCommandTopic = `homeassistant/${componentType}/${switchEntityId}/set`;\nconst switchDiscoveryTopic = `homeassistant/${componentType}/${switchEntityId}/config`;\n\nconst switchPayload = {\n    name: `Floor Heat ${instance} Schedule`,\n    unique_id: switchEntityId,\n    icon: \"mdi:calendar-clock\",\n    command_topic: switchCommandTopic, // Topic HA sends commands to\n    state_topic: switchStateTopic,     // Topic HA reads state from\n    state_value_template: \"{{ value_json.state }}\",\n    payload_on: \"ON\",\n    payload_off: \"OFF\"\n};\n\n// --- Prepare Output Messages ---\nconst climateMsg = {\n    topic: climateDiscoveryTopic,\n    payload: climatePayload,\n    retain: true\n};\n\nconst switchMsg = {\n    topic: switchDiscoveryTopic,\n    payload: switchPayload,\n    retain: true\n};\n\nreturn [[climateMsg, switchMsg]];",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 2090,
+        "x": 2110,
         "y": 140,
         "wires": [
             [
@@ -2639,6 +2698,268 @@
         "statusType": "auto",
         "x": 2370,
         "y": 140,
+        "wires": []
+    },
+    {
+        "id": "56aa8b5c045b391d",
+        "type": "inject",
+        "z": "3470febb2cd6e952",
+        "g": "ee5f54f521f5ecda",
+        "name": "Reset unique",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 1610,
+        "y": 320,
+        "wires": [
+            [
+                "870bf91817db9d08"
+            ]
+        ]
+    },
+    {
+        "id": "870bf91817db9d08",
+        "type": "function",
+        "z": "3470febb2cd6e952",
+        "g": "ee5f54f521f5ecda",
+        "name": "Reset function",
+        "func": "// --- Reset persistent and in-memory context cleanly ---\n\n// Helper function to clear both stores\nfunction clearContext(key) {\n    // Remove persistent value\n    global.set(key, undefined, \"file\");\n    // Remove in-memory value\n    global.set(key, undefined);\n}\n\n// --- Clear specific global variables ---\nclearContext(\"uniqueFloorHeatLevels\");\nclearContext(\"floorHeatLevelMap\");\n\n// --- Clear specific flow variables ---\nflow.set(\"uniqueFloorHeat\", undefined, \"file\");\nflow.set(\"uniqueFloorHeat\", undefined);\nflow.set(\"floorHeatLevelMap\", undefined, \"file\");\nflow.set(\"floorHeatLevelMap\", undefined);\n\nnode.warn(\"Context cleared\");\nreturn null;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1800,
+        "y": 320,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e3f64f273f5bdaa5",
+        "type": "switch",
+        "z": "3470febb2cd6e952",
+        "name": "",
+        "property": "payload.instance",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "1",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "2",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "3",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 3,
+        "x": 1830,
+        "y": 480,
+        "wires": [
+            [
+                "74e9b3d485eb5735"
+            ],
+            [
+                "5aa079ea85cca5b0"
+            ],
+            [
+                "cd4ce201cf6c3c35"
+            ]
+        ]
+    },
+    {
+        "id": "74e9b3d485eb5735",
+        "type": "debug",
+        "z": "3470febb2cd6e952",
+        "name": "Floor Heat 1",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2040,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "da37ca2cff193df6",
+        "type": "function",
+        "z": "3470febb2cd6e952",
+        "name": "function 1",
+        "func": "// Read all your persistent context values\nconst levelList = global.get(\"uniqueFloorHeatLevels\", \"file\");\nconst levelMap = global.get(\"floorHeatLevelMap\", \"file\");\nconst instanceList = flow.get(\"uniqueFloorHeat\"); // memory\n\nmsg.payload = {\n    levelList: levelList,\n    levelMap: levelMap,\n    instanceList: instanceList\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1860,
+        "y": 840,
+        "wires": [
+            [
+                "957a1cce5fc519c4",
+                "9cdde5d38e985fcc",
+                "b4dd91b512e049fa"
+            ]
+        ]
+    },
+    {
+        "id": "f7c4163bb54a8306",
+        "type": "inject",
+        "z": "3470febb2cd6e952",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 1660,
+        "y": 840,
+        "wires": [
+            [
+                "da37ca2cff193df6"
+            ]
+        ]
+    },
+    {
+        "id": "957a1cce5fc519c4",
+        "type": "debug",
+        "z": "3470febb2cd6e952",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload.levelList",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2050,
+        "y": 780,
+        "wires": []
+    },
+    {
+        "id": "9cdde5d38e985fcc",
+        "type": "debug",
+        "z": "3470febb2cd6e952",
+        "name": "debug 5",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload.levelMap",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2030,
+        "y": 840,
+        "wires": []
+    },
+    {
+        "id": "b4dd91b512e049fa",
+        "type": "debug",
+        "z": "3470febb2cd6e952",
+        "name": "debug 6",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload.instanceList",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2020,
+        "y": 900,
+        "wires": []
+    },
+    {
+        "id": "5aa079ea85cca5b0",
+        "type": "debug",
+        "z": "3470febb2cd6e952",
+        "g": "8da591d6205a352e",
+        "name": "Floor Heat 2",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2030,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "cd4ce201cf6c3c35",
+        "type": "debug",
+        "z": "3470febb2cd6e952",
+        "g": "8da591d6205a352e",
+        "name": "Floor Heat 3",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2030,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "1a10fdc6f9970a2f",
+        "type": "debug",
+        "z": "3470febb2cd6e952",
+        "g": "8da591d6205a352e",
+        "name": "debug 7",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1990,
+        "y": 40,
         "wires": []
     },
     {
@@ -2797,7 +3118,7 @@
         "repair": false,
         "outputs": 29,
         "x": 420,
-        "y": 220,
+        "y": 260,
         "wires": [
             [],
             [
@@ -3533,7 +3854,7 @@
             "02bdfc59de71b5a5"
         ],
         "x": 220,
-        "y": 220,
+        "y": 260,
         "wires": [
             [
                 "9f88f215f3f07227"
@@ -3563,8 +3884,8 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 140,
-        "y": 660,
+        "x": 160,
+        "y": 780,
         "wires": [
             [
                 "09640adb1fd08fbb"
@@ -3584,8 +3905,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 360,
-        "y": 660,
+        "x": 380,
+        "y": 780,
         "wires": [
             []
         ]
@@ -3603,8 +3924,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 140,
-        "y": 720,
+        "x": 160,
+        "y": 840,
         "wires": [
             [
                 "48e6dda2b2d9575e"
@@ -3625,8 +3946,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 370,
-        "y": 720,
+        "x": 390,
+        "y": 840,
         "wires": []
     },
     {
@@ -3909,7 +4230,7 @@
         "payload": "",
         "payloadType": "date",
         "x": 260,
-        "y": 1760,
+        "y": 1580,
         "wires": [
             [
                 "74c7e4a6cc2508eb"
@@ -3922,14 +4243,14 @@
         "z": "292e70a6ba25b323",
         "g": "9cfcca5efde78052",
         "name": "Read DGN table",
-        "filename": "/config/projects/rv-link/rvc/dgn-summary-table.json",
+        "filename": "/config/projects/rv-link-node-red/rvc/dgn-summary-table.json",
         "filenameType": "str",
         "format": "utf8",
         "chunk": false,
         "sendError": false,
         "allProps": false,
         "x": 460,
-        "y": 1760,
+        "y": 1580,
         "wires": [
             [
                 "c78420a075d43408"
@@ -3950,7 +4271,7 @@
         "finalize": "",
         "libs": [],
         "x": 880,
-        "y": 1760,
+        "y": 1580,
         "wires": []
     },
     {
@@ -3963,7 +4284,7 @@
         "action": "",
         "pretty": false,
         "x": 670,
-        "y": 1760,
+        "y": 1580,
         "wires": [
             [
                 "cd670f6465b6374b"
@@ -3974,7 +4295,6 @@
         "id": "cacf35b859af22a9",
         "type": "mqtt out",
         "z": "292e70a6ba25b323",
-        "d": true,
         "g": "3c819b7900145438",
         "name": "MQTT Out: Retain TRUE",
         "topic": "",
@@ -3987,7 +4307,7 @@
         "expiry": "",
         "broker": "80727e60a251c36c",
         "x": 730,
-        "y": 320,
+        "y": 380,
         "wires": []
     },
     {
@@ -4005,7 +4325,7 @@
         "statusVal": "",
         "statusType": "auto",
         "x": 520,
-        "y": 360,
+        "y": 420,
         "wires": []
     },
     {
@@ -4026,7 +4346,7 @@
             "f0ba2779795efdae"
         ],
         "x": 270,
-        "y": 320,
+        "y": 380,
         "wires": [
             [
                 "cacf35b859af22a9",
@@ -4050,7 +4370,7 @@
         "rh": 0,
         "inputs": 0,
         "x": 210,
-        "y": 200,
+        "y": 180,
         "wires": [
             [
                 "64c5e5cfd4382453",
@@ -4069,7 +4389,7 @@
             "a3b957142479c075"
         ],
         "x": 670,
-        "y": 200,
+        "y": 280,
         "wires": [],
         "l": true
     },
@@ -4088,11 +4408,11 @@
         "rh": 0,
         "inputs": 0,
         "x": 210,
-        "y": 140,
+        "y": 120,
         "wires": [
             [
-                "32add109922d428a",
-                "958fed9f12301f59"
+                "958fed9f12301f59",
+                "32add109922d428a"
             ]
         ]
     },
@@ -4124,8 +4444,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 410,
-        "y": 780,
+        "x": 1230,
+        "y": 460,
         "wires": [
             [
                 "ac47ce53a9fc3f21",
@@ -4153,8 +4473,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 660,
-        "y": 900,
+        "x": 1480,
+        "y": 580,
         "wires": []
     },
     {
@@ -4171,8 +4491,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 670,
-        "y": 860,
+        "x": 1490,
+        "y": 540,
         "wires": []
     },
     {
@@ -4189,8 +4509,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 650,
-        "y": 660,
+        "x": 1470,
+        "y": 340,
         "wires": []
     },
     {
@@ -4207,8 +4527,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 660,
-        "y": 700,
+        "x": 1480,
+        "y": 380,
         "wires": []
     },
     {
@@ -4225,8 +4545,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 680,
-        "y": 620,
+        "x": 1500,
+        "y": 300,
         "wires": []
     },
     {
@@ -4243,8 +4563,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 680,
-        "y": 740,
+        "x": 1500,
+        "y": 420,
         "wires": []
     },
     {
@@ -4261,8 +4581,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 650,
-        "y": 820,
+        "x": 1470,
+        "y": 500,
         "wires": []
     },
     {
@@ -4274,8 +4594,8 @@
         "links": [
             "958fed9f12301f59"
         ],
-        "x": 210,
-        "y": 780,
+        "x": 1030,
+        "y": 460,
         "wires": [
             [
                 "8d7d5d3ea117cf79"
@@ -4344,8 +4664,8 @@
         "checkall": "false",
         "repair": false,
         "outputs": 10,
-        "x": 890,
-        "y": 780,
+        "x": 1710,
+        "y": 460,
         "wires": [
             [],
             [],
@@ -4377,24 +4697,6 @@
         ]
     },
     {
-        "id": "32add109922d428a",
-        "type": "debug",
-        "z": "292e70a6ba25b323",
-        "g": "3c819b7900145438",
-        "name": "can/raw",
-        "active": false,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "payload",
-        "targetType": "msg",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 680,
-        "y": 80,
-        "wires": []
-    },
-    {
         "id": "a4028527eb23fa04",
         "type": "inject",
         "z": "292e70a6ba25b323",
@@ -4416,8 +4718,8 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 1430,
-        "y": 960,
+        "x": 2250,
+        "y": 640,
         "wires": [
             [
                 "092c751dcdd12270"
@@ -4437,8 +4739,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1700,
-        "y": 960,
+        "x": 2520,
+        "y": 640,
         "wires": [
             []
         ]
@@ -4456,8 +4758,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1150,
-        "y": 920,
+        "x": 1970,
+        "y": 600,
         "wires": [
             [
                 "eea1641469efb23f"
@@ -4478,8 +4780,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1710,
-        "y": 1020,
+        "x": 2530,
+        "y": 700,
         "wires": []
     },
     {
@@ -4490,11 +4792,10 @@
         "name": "STATUS out",
         "mode": "link",
         "links": [
-            "fbc5efde2c447eda",
-            "2b4e3e2fa5ac1687"
+            "fbc5efde2c447eda"
         ],
-        "x": 1130,
-        "y": 620,
+        "x": 1950,
+        "y": 300,
         "wires": [],
         "l": true
     },
@@ -4513,7 +4814,7 @@
         "statusVal": "",
         "statusType": "auto",
         "x": 670,
-        "y": 260,
+        "y": 220,
         "wires": []
     },
     {
@@ -4539,7 +4840,7 @@
         "payload": "",
         "payloadType": "date",
         "x": 300,
-        "y": 1340,
+        "y": 1120,
         "wires": [
             [
                 "b846bc1605dae821"
@@ -4560,7 +4861,7 @@
         "finalize": "",
         "libs": [],
         "x": 700,
-        "y": 1340,
+        "y": 1120,
         "wires": [
             [
                 "55071115a3fe7c2c",
@@ -4587,7 +4888,7 @@
         "allowrate": false,
         "outputs": 1,
         "x": 850,
-        "y": 1420,
+        "y": 1200,
         "wires": [
             [
                 "6423c433e099d2a5"
@@ -4608,7 +4909,7 @@
         "finalize": "",
         "libs": [],
         "x": 500,
-        "y": 1420,
+        "y": 1200,
         "wires": [
             [
                 "b846bc1605dae821"
@@ -4628,8 +4929,8 @@
         "links": [
             "f01db5ebc3ae2e18"
         ],
-        "x": 1160,
-        "y": 740,
+        "x": 1980,
+        "y": 420,
         "wires": [],
         "l": true
     },
@@ -4643,7 +4944,7 @@
             "45414bacecada477"
         ],
         "x": 260,
-        "y": 1420,
+        "y": 1200,
         "wires": [
             [
                 "4e46ba83df00a31b"
@@ -4662,7 +4963,7 @@
             "74329f13cbbc528a"
         ],
         "x": 1650,
-        "y": 1340,
+        "y": 1120,
         "wires": [],
         "l": true
     },
@@ -4680,7 +4981,7 @@
         "finalize": "",
         "libs": [],
         "x": 1080,
-        "y": 1420,
+        "y": 1200,
         "wires": [
             [
                 "a2334b77d3764815",
@@ -4705,8 +5006,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1130,
-        "y": 800,
+        "x": 1950,
+        "y": 480,
         "wires": []
     },
     {
@@ -4731,8 +5032,8 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 1430,
-        "y": 1140,
+        "x": 2250,
+        "y": 820,
         "wires": [
             [
                 "38606e245b70b98e"
@@ -4752,8 +5053,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1700,
-        "y": 1140,
+        "x": 2520,
+        "y": 820,
         "wires": [
             []
         ]
@@ -4771,8 +5072,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1430,
-        "y": 1200,
+        "x": 2250,
+        "y": 880,
         "wires": [
             [
                 "8f7381d08bf2b8a8"
@@ -4785,7 +5086,7 @@
         "z": "292e70a6ba25b323",
         "g": "01b53bba61cb7227",
         "name": "New Unique Dgn",
-        "active": true,
+        "active": false,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -4793,15 +5094,14 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1710,
-        "y": 1200,
+        "x": 2530,
+        "y": 880,
         "wires": []
     },
     {
         "id": "1ac6e0fa1cbb3852",
         "type": "mqtt out",
         "z": "292e70a6ba25b323",
-        "d": true,
         "g": "3c819b7900145438",
         "name": "MQTT Out: Retain FALSE",
         "topic": "",
@@ -4814,7 +5114,7 @@
         "expiry": "",
         "broker": "80727e60a251c36c",
         "x": 730,
-        "y": 440,
+        "y": 500,
         "wires": []
     },
     {
@@ -4828,7 +5128,7 @@
             "6aa079d768e1571c"
         ],
         "x": 270,
-        "y": 440,
+        "y": 500,
         "wires": [
             [
                 "1ac6e0fa1cbb3852",
@@ -4851,7 +5151,7 @@
         "finalize": "",
         "libs": [],
         "x": 1390,
-        "y": 1420,
+        "y": 1200,
         "wires": [
             [
                 "a2334b77d3764815"
@@ -4872,7 +5172,7 @@
         "finalize": "",
         "libs": [],
         "x": 1360,
-        "y": 1460,
+        "y": 1240,
         "wires": [
             [
                 "a2334b77d3764815"
@@ -4893,7 +5193,7 @@
         "finalize": "",
         "libs": [],
         "x": 1370,
-        "y": 1500,
+        "y": 1280,
         "wires": [
             [
                 "a2334b77d3764815"
@@ -4918,7 +5218,7 @@
             "893d80d1125057e8"
         ],
         "x": 1400,
-        "y": 1620,
+        "y": 1400,
         "wires": [],
         "l": true
     },
@@ -4945,7 +5245,7 @@
         "payload": "",
         "payloadType": "date",
         "x": 1110,
-        "y": 1520,
+        "y": 1300,
         "wires": [
             [
                 "73abad3deeed31e8",
@@ -4979,8 +5279,8 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 1430,
-        "y": 600,
+        "x": 2250,
+        "y": 280,
         "wires": [
             [
                 "f96e5b3b013a2b8f"
@@ -5000,8 +5300,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1700,
-        "y": 600,
+        "x": 2520,
+        "y": 280,
         "wires": [
             []
         ]
@@ -5019,8 +5319,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1150,
-        "y": 680,
+        "x": 1970,
+        "y": 360,
         "wires": [
             [
                 "bc59e15bf069f17d"
@@ -5033,7 +5333,7 @@
         "z": "292e70a6ba25b323",
         "g": "081183d6c363e792",
         "name": "New COMMAND",
-        "active": true,
+        "active": false,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -5041,8 +5341,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1710,
-        "y": 660,
+        "x": 2530,
+        "y": 340,
         "wires": []
     },
     {
@@ -5059,8 +5359,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1120,
-        "y": 980,
+        "x": 1940,
+        "y": 660,
         "wires": []
     },
     {
@@ -5077,7 +5377,7 @@
         "finalize": "",
         "libs": [],
         "x": 1380,
-        "y": 1540,
+        "y": 1320,
         "wires": [
             [
                 "a2334b77d3764815"
@@ -5098,7 +5398,7 @@
         "finalize": "",
         "libs": [],
         "x": 1370,
-        "y": 1580,
+        "y": 1360,
         "wires": [
             [
                 "a2334b77d3764815"
@@ -5127,8 +5427,8 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 1440,
-        "y": 780,
+        "x": 2260,
+        "y": 460,
         "wires": [
             [
                 "9f47dc231ecd50cd"
@@ -5148,8 +5448,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1700,
-        "y": 780,
+        "x": 2520,
+        "y": 460,
         "wires": [
             []
         ]
@@ -5168,8 +5468,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1700,
-        "y": 840,
+        "x": 2520,
+        "y": 520,
         "wires": []
     },
     {
@@ -5185,8 +5485,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1150,
-        "y": 860,
+        "x": 1970,
+        "y": 540,
         "wires": [
             [
                 "5968e8ee034f8751"
@@ -5207,8 +5507,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1100,
-        "y": 560,
+        "x": 2000,
+        "y": 200,
         "wires": []
     },
     {
@@ -5226,7 +5526,71 @@
         "statusVal": "",
         "statusType": "auto",
         "x": 520,
-        "y": 400,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "9e9b11b9441e51db",
+        "type": "mqtt in",
+        "z": "292e70a6ba25b323",
+        "g": "3c819b7900145438",
+        "name": "HA in",
+        "topic": "homeassistant/climate/+/set_mode",
+        "qos": "1",
+        "datatype": "utf8",
+        "broker": "80727e60a251c36c",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 210,
+        "y": 240,
+        "wires": [
+            [
+                "64c5e5cfd4382453",
+                "d34a8c1fd2cc4320"
+            ]
+        ]
+    },
+    {
+        "id": "54cd7e4a8959a77c",
+        "type": "mqtt in",
+        "z": "292e70a6ba25b323",
+        "g": "3c819b7900145438",
+        "name": "HA in",
+        "topic": "homeassistant/climate/+/set_preset_mode",
+        "qos": "1",
+        "datatype": "utf8",
+        "broker": "80727e60a251c36c",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 210,
+        "y": 300,
+        "wires": [
+            [
+                "64c5e5cfd4382453",
+                "d34a8c1fd2cc4320"
+            ]
+        ]
+    },
+    {
+        "id": "32add109922d428a",
+        "type": "debug",
+        "z": "292e70a6ba25b323",
+        "g": "3c819b7900145438",
+        "name": "can/raw",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 680,
+        "y": 100,
         "wires": []
     },
     {
@@ -5340,7 +5704,7 @@
             },
             {
                 "p": "entityId",
-                "v": "switch_48",
+                "v": "floor_heat_1_schedule",
                 "vt": "str"
             }
         ],
@@ -5380,7 +5744,7 @@
         "onceDelay": 0.1,
         "topic": "",
         "x": 270,
-        "y": 420,
+        "y": 540,
         "wires": [
             [
                 "356ca3617c50f06b"
@@ -5425,19 +5789,49 @@
         "wires": []
     },
     {
-        "id": "bed6707bca15029d",
+        "id": "4c36d204a0dcb38f",
         "type": "inject",
         "z": "222c995b7790b8de",
-        "name": "Delete sensor",
+        "name": "Delete switch",
         "props": [
             {
                 "p": "type",
-                "v": "sensor",
+                "v": "light",
                 "vt": "str"
             },
             {
                 "p": "entityId",
-                "v": "gray",
+                "v": "floor_heat_2_schedule",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 270,
+        "y": 420,
+        "wires": [
+            [
+                "356ca3617c50f06b"
+            ]
+        ]
+    },
+    {
+        "id": "45cd9bd685e09007",
+        "type": "inject",
+        "z": "222c995b7790b8de",
+        "name": "Delete switch",
+        "props": [
+            {
+                "p": "type",
+                "v": "light",
+                "vt": "str"
+            },
+            {
+                "p": "entityId",
+                "v": "floor_heat_3_schedule",
                 "vt": "str"
             }
         ],
@@ -5455,19 +5849,19 @@
         ]
     },
     {
-        "id": "4d88ec01113af59e",
+        "id": "c6f1577708bfe9cd",
         "type": "inject",
         "z": "222c995b7790b8de",
         "name": "Delete switch",
         "props": [
             {
                 "p": "type",
-                "v": "light",
+                "v": "switch",
                 "vt": "str"
             },
             {
                 "p": "entityId",
-                "v": "switch_30",
+                "v": "floor_heat_3_schedule",
                 "vt": "str"
             }
         ],
@@ -5477,41 +5871,9 @@
         "onceDelay": 0.1,
         "topic": "",
         "x": 270,
-        "y": 560,
+        "y": 600,
         "wires": [
-            [
-                "356ca3617c50f06b"
-            ]
-        ]
-    },
-    {
-        "id": "9d62fba1dbc11071",
-        "type": "inject",
-        "z": "222c995b7790b8de",
-        "name": "Delete sensor",
-        "props": [
-            {
-                "p": "type",
-                "v": "fan",
-                "vt": "str"
-            },
-            {
-                "p": "entityId",
-                "v": "switch_30",
-                "vt": "str"
-            }
-        ],
-        "repeat": "",
-        "crontab": "",
-        "once": false,
-        "onceDelay": 0.1,
-        "topic": "",
-        "x": 270,
-        "y": 620,
-        "wires": [
-            [
-                "356ca3617c50f06b"
-            ]
+            []
         ]
     }
 ]
