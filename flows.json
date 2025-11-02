@@ -246,12 +246,13 @@
             "1e244bad0304bb74",
             "07b8bcce03f19e8f",
             "d3cc901dd2fbd359",
-            "ba0c52ff61838986"
+            "ba0c52ff61838986",
+            "922f2738c2000150"
         ],
         "x": 134,
-        "y": 1079,
+        "y": 1019,
         "w": 1652,
-        "h": 362
+        "h": 402
     },
     {
         "id": "97615854748deb3d",
@@ -415,6 +416,39 @@
         "y": 39,
         "w": 1092,
         "h": 348
+    },
+    {
+        "id": "9c7621e8a8850053",
+        "type": "group",
+        "z": "3470febb2cd6e952",
+        "name": "Aqua-Hot",
+        "style": {
+            "stroke": "#ffffff",
+            "label": true
+        },
+        "nodes": [
+            "1c1403c14b577fb4",
+            "2ee0ed60af1beb40",
+            "6841e5cff3b5e0e1",
+            "43cd836c21f66b26",
+            "2a97f79a308ff4fd",
+            "54e6abd033b704f2",
+            "08d4c674d7359aee",
+            "8e14c79fdeec919c",
+            "97e39646a29a8c55",
+            "555850888ece5c2e",
+            "f8f8ab87f8e56976",
+            "1a54fd912ec1457b",
+            "200991401297fc91",
+            "e85f1a65658e35b8",
+            "bde0564e43c0c68f",
+            "fd53207a07863f6c",
+            "13bcd21ae463ef4b"
+        ],
+        "x": 114,
+        "y": 1939,
+        "w": 1092,
+        "h": 422
     },
     {
         "id": "9dd6a98018824be9",
@@ -657,29 +691,6 @@
         "y": 279,
         "w": 412,
         "h": 82
-    },
-    {
-        "id": "9c7621e8a8850053",
-        "type": "group",
-        "z": "3470febb2cd6e952",
-        "name": "Aqua-Hot",
-        "style": {
-            "stroke": "#ffffff",
-            "label": true
-        },
-        "nodes": [
-            "1c1403c14b577fb4",
-            "2ee0ed60af1beb40",
-            "6841e5cff3b5e0e1",
-            "43cd836c21f66b26",
-            "2a97f79a308ff4fd",
-            "54e6abd033b704f2",
-            "08d4c674d7359aee"
-        ],
-        "x": 114,
-        "y": 1939,
-        "w": 1092,
-        "h": 348
     },
     {
         "id": "54e6abd033b704f2",
@@ -1077,7 +1088,7 @@
         "z": "b3d80c5dc947ec88",
         "g": "aea9d97e0563bd83",
         "name": "Encode floor heat command",
-        "func": "// encode_floor_heat_command.js\n//\n// Reads level map and schedule state from GLOBAL context.\n\n// --- Configuration ---\nconst SOURCE_ADDRESS = global.get(\"rvc_source_address\") || 254;\nconst PRIORITY = 6;\nconst DGN = \"1FEFB\";\n\n// --- Input ---\nconst instance = msg.instance;\nconst command = msg.command;\n\nif (typeof instance !== 'number') {\n    node.warn(`[encode_floor_heat] Invalid instance: ${instance}`);\n    return null;\n}\n\n// --- Get Context ---\nconst levelMap = global.get(\"floorHeatLevelMap\", \"file\");\nconst scheduleContextKey = `floorHeat_${instance}_ScheduleOn`;\nconst isScheduleOn = global.get(scheduleContextKey, \"file\") || false;\n\n// Store and retrieve the last used non-store preset's rawValue\nconst lastPresetKey = `floorHeat_${instance}_LastRawSetpoint`;\nconst lastRawSetpoint = global.get(lastPresetKey, \"file\") || 0;\n\n// Get the currently active preset name from the status flow\nconst currentPresetKey = `floorHeat_${instance}_CurrentPreset`;\nconst currentPresetName = global.get(currentPresetKey, \"file\") || \"level_1\";\n// 0x4820 is the RVC raw value for 50°F / 10°C (a safe default)\nconst defaultRawValue = levelMap[\"level_1\"] ? levelMap[\"level_1\"].rawValue : (lastRawSetpoint || 0x4820);\n\n\nif (!levelMap && command !== 'OFF') {\n    node.warn(\"[encode_floor_heat] Floor heat level map not found. Levels must be discovered first.\");\n    if (command !== 'OFF') {\n        return null;\n    }\n}\n\n// Determine the raw value to send during mode changes (HEAT/AUTO)\nlet rawValueToSend;\nconst storeLevelInfo = levelMap[\"store\"];\n\nif (currentPresetName === \"store\" && storeLevelInfo) {\n    // If system is currently in 'store', use the 'store' raw value for mode change\n    rawValueToSend = storeLevelInfo.rawValue;\n} else {\n    // Otherwise, use the last non-store setpoint (or default)\n    rawValueToSend = lastRawSetpoint > 0 ? lastRawSetpoint : defaultRawValue;\n}\n\n\n// 1. Build Payload\nconst dataBytes = new Array(8).fill(0xFF);\ndataBytes[0] = instance;\n\n// 2. Parse Command\nif (command === 'OFF') {\n    // Command 0xC0: Off\n    dataBytes[1] = 0xC0;\n    dataBytes[2] = 0x00;\n    dataBytes[3] = 0x00;\n    global.set(scheduleContextKey, false, \"file\");\n\n} else if (command === 'HEAT') {\n    // HEAT command must explicitly force Schedule OFF (Manual Mode)\n\n    // Command byte C4: Turn system ON, and explicitly force Schedule OFF (Manual Mode)\n    dataBytes[1] = 0xC4;\n\n    dataBytes[2] = rawValueToSend & 0xFF; // Use the determined raw value\n    dataBytes[3] = (rawValueToSend >> 8) & 0xFF;\n\n    global.set(scheduleContextKey, false, \"file\");\n\n} else if (command === 'AUTO') {\n    // AUTO command must explicitly force Schedule ON (Automatic Mode)\n\n    // Command 0xD7: Turn system ON, and explicitly force Schedule ON (Automatic Mode)\n    dataBytes[1] = 0xD7;\n\n    dataBytes[2] = rawValueToSend & 0xFF; // Use the determined raw value\n    dataBytes[3] = (rawValueToSend >> 8) & 0xFF;\n\n    global.set(scheduleContextKey, true, \"file\");\n\n} else if (command === 'SET_PRESET') {\n    if (!levelMap) {\n        node.error(\"[encode_floor_heat] Cannot set preset, level map is missing.\");\n        return null;\n    }\n\n    const presetName = msg.value;\n\n    // Normalize \"none\" to \"store\" for processing\n    const normalizedPresetName = (presetName === \"none\" || !presetName) ? \"store\" : presetName;\n\n    const levelInfo = levelMap[normalizedPresetName];\n\n    if (!levelInfo || typeof levelInfo.rawValue === 'undefined') {\n        node.warn(`[encode_floor_heat] Unknown preset name: ${presetName}`);\n        return null;\n    }\n\n    const rawValue = levelInfo.rawValue;\n\n    // Command byte: D4 (ON + Schedule ON) or C4 (ON + Schedule OFF)\n    dataBytes[1] = isScheduleOn ? 0xD4 : 0xC4;\n\n    // Update the last used non-store setpoint, unless it's the 'store' preset\n    if (normalizedPresetName !== \"store\") {\n        global.set(lastPresetKey, rawValue, \"file\");\n    }\n\n    // Set the setpoint bytes for the RVC command\n    dataBytes[2] = rawValue & 0xFF;\n    dataBytes[3] = (rawValue >> 8) & 0xFF;\n\n} else {\n    node.warn('[encode_floor_heat] Unknown command: ' + command);\n    return null;\n}\n\n// 3. Format CAN message\nconst dataHex = dataBytes.map(byte => byte.toString(16).padStart(2, '0')).join('');\nconst dgnInt = parseInt(DGN, 16);\nconst canIdInt = (PRIORITY << 26) | (dgnInt << 8) | SOURCE_ADDRESS;\nconst canIdHex = canIdInt.toString(16).padStart(8, '0');\n\nmsg.topic = \"can/send\";\nmsg.payload = `${canIdHex.toUpperCase()}#${dataHex.toUpperCase()}`;\n\nreturn msg;",
+        "func": "// encode_aquahot.js\n// Encodes HA ON/OFF commands to proprietary Aqua-Hot CAN messages (PGN EF64)\n\n// --- Configuration ---\nconst SOURCE_ADDRESS = global.get(\"rvc_source_address\") || 254; // FE (Default)\nconst DESTINATION_ADDRESS = 0x9F; // Aqua-Hot Module\nconst PGN = \"EF64\";\nconst PGN_INT = parseInt(PGN, 16);\nconst CONTROL_BYTE = 0xAB; // First data byte for all commands\n\n// --- Command Mapping (PGN EF64) ---\nconst COMMAND_MAP = {\n    // Diesel Burner Control\n    'burner': {\n        'ON': 0xFD,\n        'OFF': 0xFC\n    },\n    // AC Element 1 Control\n    'ac_1': {\n        'ON': 0xC7,\n        'OFF': 0xC3\n    },\n    // AC Element 2 Control\n    'ac_2': {\n        'ON': 0xCB,\n        'OFF': 0xC3\n    },\n    // Engine Pre-heat Control\n    'engine': {\n        'ON': 0x7F,\n        'OFF': 0x3F\n    }\n};\n\n// 1. Get instance and command from the input message\nconst instance = msg.instance; // Expects \"burner\", \"ac_1\", \"ac_2\", or \"engine\"\nconst command = msg.command;   // Expects \"ON\" or \"OFF\"\n\n// 2. Determine the byte value based on instance and command\nconst dataByte2 = COMMAND_MAP[instance][command];\n\n// 3. Build the 8-byte data payload\nconst dataBytes = new Array(8).fill(0xFF);\ndataBytes[0] = CONTROL_BYTE; // AB\ndataBytes[1] = dataByte2;    // The specific command byte\n\nconst dataHex = dataBytes.map(byte => byte.toString(16).padStart(2, '0')).join('');\n\n// 4. Construct the CAN ID using hardcoded string components\n// The confirmed working ID is 1AEF649F (Prio 6 | PGN EF64 | DA 9F)\nconst PGN_HEX = PGN.toUpperCase().padStart(4, '0'); // EF64\nconst DA_HEX = DESTINATION_ADDRESS.toString(16).toUpperCase().padStart(2, '0'); // 9F\n\n// Result: 1A + EF64 + 9F\nconst canIdHex = \"1A\" + PGN_HEX + DA_HEX;\n\n// 5. Construct the final output message\nmsg.topic = \"can/send\";\nmsg.payload = `${canIdHex.toUpperCase()}#${dataHex.toUpperCase()}`;\n\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -1099,7 +1110,7 @@
         "z": "b3d80c5dc947ec88",
         "g": "aea9d97e0563bd83",
         "name": "Encode Aqua-Hot command",
-        "func": "// encode_aquahot.js\n// Encodes HA ON/OFF commands to proprietary Aqua-Hot CAN messages (PGN EF64)\n\n// --- Configuration ---\nconst SOURCE_ADDRESS = global.get(\"rvc_source_address\") || 254; // FE (Default)\nconst DESTINATION_ADDRESS = 0x9F; // Aqua-Hot Module\nconst PRIORITY = 6;\nconst PGN = \"EF64\";\nconst PGN_INT = parseInt(PGN, 16);\nconst CONTROL_BYTE = 0xAB; // First data byte for all commands\n\n// --- Command Mapping (PGN EF64) ---\nconst COMMAND_MAP = {\n    // Diesel Burner Control\n    'burner': {\n        'ON': 0xFD,\n        'OFF': 0xFC\n    },\n    // AC Element 1 Control\n    'ac_1': {\n        'ON': 0xC7,\n        'OFF': 0xC3\n    },\n    // AC Element 2 Control\n    'ac_2': {\n        'ON': 0xCB,\n        'OFF': 0xC3\n    },\n    // Engine Pre-heat Control\n    'engine': {\n        'ON': 0x7F,\n        'OFF': 0x3F\n    }\n};\n\n// 1. Get instance and command from the input message\nconst instance = msg.instance; // Expects \"burner\", \"ac_1\", \"ac_2\", or \"engine\"\nconst command = msg.command;   // Expects \"ON\" or \"OFF\"\n\n// Validate instance\nif (typeof instance !== 'string' || !COMMAND_MAP[instance]) {\n    node.warn(`[encode_aquahot] Invalid instance: ${instance}`);\n    return null;\n}\n\n// Validate command\nif (typeof command !== 'string' || !COMMAND_MAP[instance][command]) {\n    node.warn(`[encode_aquahot] Invalid command \"${command}\" for instance \"${instance}\"`);\n    return null;\n}\n\n// 2. Determine the byte value based on instance and command\nconst dataByte2 = COMMAND_MAP[instance][command];\n\n// 3. Build the 8-byte data payload\nconst dataBytes = new Array(8).fill(0xFF);\ndataBytes[0] = CONTROL_BYTE; // AB\ndataBytes[1] = dataByte2;    // The specific command byte\n\nconst dataHex = dataBytes.map(byte => byte.toString(16).padStart(2, '0')).join('');\n\n// 4. Construct the CAN ID\n// PGN EF64 is a PDU1 format (PF < 240) so the destination address (0x9F) is used in the CAN ID\nconst canIdInt = (PRIORITY << 26) | (PGN_INT << 8) | DESTINATION_ADDRESS;\nconst canIdHex = canIdInt.toString(16).padStart(8, '0');\n\n// 5. Construct the final output message\nmsg.topic = \"can/send\";\nmsg.payload = `${canIdHex.toUpperCase()}#${dataHex.toUpperCase()}`;\n\nreturn msg;",
+        "func": "// encode_aquahot.js\n// Encodes HA ON/OFF commands to proprietary Aqua-Hot CAN messages (PGN EF64)\n\n// --- Configuration ---\nconst SOURCE_ADDRESS = global.get(\"rvc_source_address\") || 254; // FE (Default) - Not used in PDU1 CAN ID\nconst DESTINATION_ADDRESS = 0x9F; // Aqua-Hot Module\nconst PRIORITY = 6; // Confirmed priority for Aqua-Hot control\nconst PGN = \"EF64\";\nconst PGN_INT = parseInt(PGN, 16);\nconst CONTROL_BYTE = 0xAB; // First data byte for all commands\n\n// --- Command Mapping (PGN EF64) ---\nconst COMMAND_MAP = {\n    // Diesel Burner Control\n    'burner': {\n        'ON': 0xFD,\n        'OFF': 0xFC\n    },\n    // AC Element 1 Control\n    'ac_1': {\n        'ON': 0xC7,\n        'OFF': 0xC3\n    },\n    // AC Element 2 Control\n    'ac_2': {\n        'ON': 0xCB,\n        'OFF': 0xC3\n    },\n    // Engine Pre-heat Control\n    'engine': {\n        'ON': 0x7F,\n        'OFF': 0x3F\n    }\n};\n\n// 1. Get instance and command from the input message\nconst instance = msg.instance; // Expects \"burner\", \"ac_1\", \"ac_2\", or \"engine\"\nconst command = msg.command;   // Expects \"ON\" or \"OFF\"\n\n// 2. Determine the byte value based on instance and command\nconst dataByte2 = COMMAND_MAP[instance][command];\n\n// 3. Build the 8-byte data payload\nconst dataBytes = new Array(8).fill(0xFF);\ndataBytes[0] = CONTROL_BYTE; // AB\ndataBytes[1] = dataByte2;    // The specific command byte\n\nconst dataHex = dataBytes.map(byte => byte.toString(16).padStart(2, '0')).join('');\n\n// 4. Construct the CAN ID using the standard bitwise method\n// PGN EF64 is a PDU1 format (PF < 240) so the destination address (0x9F) goes in the last byte\nconst canIdInt = (PRIORITY << 26) | (PGN_INT << 8) | DESTINATION_ADDRESS;\nconst canIdHex = canIdInt.toString(16).padStart(8, '0');\n\n// 5. Construct the final output message\nmsg.topic = \"can/send\";\nmsg.payload = `${canIdHex.toUpperCase()}#${dataHex.toUpperCase()}`;\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -1110,7 +1121,8 @@
         "y": 360,
         "wires": [
             [
-                "c19a749621bffe0c"
+                "c19a749621bffe0c",
+                "6aa079d768e1571c"
             ]
         ]
     },
@@ -1198,7 +1210,7 @@
         "z": "3470febb2cd6e952",
         "g": "e2dc4d711cc9dc94",
         "name": "Create dc_dimmer",
-        "func": "// create_dc_dimmer_3.js\n\n// Validate input structure\nif (!msg.payload || typeof msg.payload !== 'object') {\n    node.error(\"Input payload must be an object.\", msg);\n    return null;\n}\n\nconst instance = msg.payload.instance;\n\n// Validate required fields\nif (typeof instance !== 'number') {\n    node.error(\"Input missing 'instance' (number).\", msg);\n    return null;\n}\n\nif (instance < 1 || instance > 250) {\n    if (instance >= 251 && instance <= 255) {\n        return null;\n    }\n    node.warn(`Instance ${instance} is outside the valid RV-C instance range (1-250) for a switch. Entity will not be created.`);\n    return null;\n}\n\n// Device configuration\nconst prefix = \"switch\";\nconst displayPrefix = \"Switch\";\nconst icon = 'mdi:light-recessed';\n\n// Generate entity identifiers\nconst entityId = `${prefix}_${instance}`;\nconst displayName = `${displayPrefix} ${instance}`;\n\n// MQTT topics\nconst discoveryTopic = `homeassistant/light/${entityId}/config`;\nconst stateTopic = `homeassistant/light/${entityId}/state`;\nconst commandTopic = `homeassistant/light/${entityId}/set`;\n\n// MQTT Discovery payload\nconst payload = {\n    name: displayName,\n    unique_id: entityId,\n    icon: icon,\n    command_topic: commandTopic,\n    state_topic: stateTopic,\n    payload_on: \"ON\",\n    payload_off: \"OFF\"\n};\n\n// Prepare the final message for the MQTT Out node\nmsg.topic = discoveryTopic;\nmsg.payload = payload;\nmsg.retain = true;\n\nmsg.stateTopic = stateTopic;\nmsg.commandTopic = commandTopic;\nmsg.entityId = entityId;\n\nreturn msg;",
+        "func": "// create_dc_dimmer_3.js\n\n// Validate input structure\nif (!msg.payload || typeof msg.payload !== 'object') {\n    node.error(\"Input payload must be an object.\", msg);\n    return null;\n}\n\nconst instance = msg.payload.instance;\n\n// Validate required fields\nif (typeof instance !== 'number') {\n    node.error(\"Input missing 'instance' (number).\", msg);\n    return null;\n}\n\nif (instance < 1 || instance > 250) {\n    if (instance >= 251 && instance <= 255) {\n        return null;\n    }\n    node.warn(`Instance ${instance} is outside the valid RV-C instance range (1-250) for a switch. Entity will not be created.`);\n    return null;\n}\n\n// Device configuration\nconst prefix = \"switch\";\nconst displayPrefix = \"Switch\";\nconst icon = 'mdi:light-recessed';\n\n// Generate entity identifiers\nconst entityId = `${prefix}_${instance}`;\nconst displayName = `${displayPrefix} ${instance}`;\n\n// MQTT topics\nconst discoveryTopic = `homeassistant/light/${entityId}/config`;\nconst stateTopic = `homeassistant/light/${entityId}/state`;\nconst commandTopic = `homeassistant/light/${entityId}/set`;\n\n// MQTT Discovery payload\nconst payload = {\n    name: displayName,\n    unique_id: entityId,\n    icon: icon,\n    command_topic: commandTopic,\n    state_topic: stateTopic,\n    payload_on: \"ON\",\n    payload_off: \"OFF\",\n\n    // Link entities to a common device for better HA grouping\n    device: {\n        identifiers: [\"rv-link-switches\"],\n        name: \"RV Link: Switches\"\n    }\n};\n\n// Prepare the final message for the MQTT Out node\nmsg.topic = discoveryTopic;\nmsg.payload = payload;\nmsg.retain = true;\n\nmsg.stateTopic = stateTopic;\nmsg.commandTopic = commandTopic;\nmsg.entityId = entityId;\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -1287,7 +1299,7 @@
         "z": "3470febb2cd6e952",
         "g": "97615854748deb3d",
         "name": "Create Lock",
-        "func": "/***********************************************************\n * Lock MQTT Discovery for Home Assistant\n * Creates a lock entity for each lock instance\n * Expects input msg.payload to be an object with:\n * - msg.payload.instance (Number): The lock instance ID (1-250)\n * - msg.payload.device_type (String): Device type (\"lock\")\n ***********************************************************/\n\n// Validate input structure\nif (!msg.payload || typeof msg.payload !== 'object') {\n    node.error(\"Input payload must be an object.\", msg);\n    return null;\n}\n\nconst instance = msg.payload.instance;\nconst deviceType = msg.payload.device_type;\n\n// Validate required fields\nif (typeof instance !== 'number') {\n    node.error(\"Input missing 'instance' (number).\", msg);\n    return null;\n}\n\nif (typeof deviceType !== 'string') {\n    node.error(\"Input missing 'device_type' (string).\", msg);\n    return null;\n}\n\n// Verify device type is lock\nif (deviceType !== 'lock') {\n    node.error(`Expected device_type 'lock', got '${deviceType}'.`, msg);\n    return null;\n}\n\n// RV-C valid instance range: 0-250\n// Instance 0 = \"All Locks\" broadcast entity per RV-C spec section 6.40.1\n// Instances 1-250 = Individual locks\n// Special values: 251=Error, 252=Not Supported, 253=Out of Range, 254=Reserved, 255=Not Available\nif (instance < 0 || instance > 250) {\n    // Silently ignore special RV-C status values - these aren't real devices\n    if (instance >= 251 && instance <= 255) {\n        return null;\n    }\n    node.warn(`Instance ${instance} is outside the valid RV-C instance range (0-250) for a lock. Entity will not be created.`);\n    return null;\n}\n\nconst prefix = \"lock\";\nconst displayPrefix = \"Lock\";\nconst componentType = \"lock\";\n\n// Generate entity identifiers\nconst entityId = `${prefix}_${instance}`;\n// Special name for Instance 0 (broadcast to all locks)\nconst displayName = instance === 0 ? \"All Locks\" : `${displayPrefix} ${instance}`;\n\n// MQTT topics\nconst discoveryTopic = `homeassistant/${componentType}/${entityId}/config`;\nconst stateTopic = `homeassistant/${componentType}/${entityId}/state`;\nconst commandTopic = `homeassistant/${componentType}/${entityId}/set`;\n\n// MQTT Discovery payload\nconst payload = {\n    // Basic entity information\n    name: displayName,\n    unique_id: entityId,\n    default_entity_id: `${componentType}.${entityId}`,\n    icon: \"mdi:lock\",\n\n    // Topics for Home Assistant to use\n    command_topic: commandTopic,\n    state_topic: stateTopic,\n\n    // Define what \"LOCK\" and \"UNLOCK\" commands look like (simple strings)\n    payload_lock: \"LOCK\",\n    payload_unlock: \"UNLOCK\",\n\n    // State values that will be received from status updates\n    state_locked: \"LOCKED\",\n    state_unlocked: \"UNLOCKED\",\n\n    // Instance 0 (All Locks) uses optimistic mode since it's broadcast-only (no status feedback)\n    // Instances 1-250 use non-optimistic mode to show real status from RV-C bus\n    optimistic: instance === 0\n\n};\n\n// Prepare the final message for the MQTT Out node\nmsg.topic = discoveryTopic;\nmsg.payload = payload;\nmsg.retain = true; // IMPORTANT: Ensures HA rediscovers on restart\n\n// (Optional) Add helper properties for debugging or downstream use\nmsg.stateTopic = stateTopic;\nmsg.commandTopic = commandTopic;\nmsg.entityId = entityId;\nmsg.deviceType = deviceType;\n\nreturn msg;\n",
+        "func": "/***********************************************************\n * Lock MQTT Discovery for Home Assistant\n * Creates a lock entity for each lock instance\n * Expects input msg.payload to be an object with:\n * - msg.payload.instance (Number): The lock instance ID (1-250)\n * - msg.payload.device_type (String): Device type (\"lock\")\n ***********************************************************/\n\n// Validate input structure\nif (!msg.payload || typeof msg.payload !== 'object') {\n    node.error(\"Input payload must be an object.\", msg);\n    return null;\n}\n\nconst instance = msg.payload.instance;\nconst deviceType = msg.payload.device_type;\n\n// Validate required fields\nif (typeof instance !== 'number') {\n    node.error(\"Input missing 'instance' (number).\", msg);\n    return null;\n}\n\nif (typeof deviceType !== 'string') {\n    node.error(\"Input missing 'device_type' (string).\", msg);\n    return null;\n}\n\n// Verify device type is lock\nif (deviceType !== 'lock') {\n    node.error(`Expected device_type 'lock', got '${deviceType}'.`, msg);\n    return null;\n}\n\n// RV-C valid instance range: 0-250\n// Instance 0 = \"All Locks\" broadcast entity per RV-C spec section 6.40.1\n// Instances 1-250 = Individual locks\n// Special values: 251=Error, 252=Not Supported, 253=Out of Range, 254=Reserved, 255=Not Available\nif (instance < 0 || instance > 250) {\n    // Silently ignore special RV-C status values - these aren't real devices\n    if (instance >= 251 && instance <= 255) {\n        return null;\n    }\n    node.warn(`Instance ${instance} is outside the valid RV-C instance range (0-250) for a lock. Entity will not be created.`);\n    return null;\n}\n\nconst prefix = \"lock\";\nconst displayPrefix = \"Lock\";\nconst componentType = \"lock\";\n\n// Generate entity identifiers\nconst entityId = `${prefix}_${instance}`;\n// Special name for Instance 0 (broadcast to all locks)\nconst displayName = instance === 0 ? \"All Locks\" : `${displayPrefix} ${instance}`;\n\n// MQTT topics\nconst discoveryTopic = `homeassistant/${componentType}/${entityId}/config`;\nconst stateTopic = `homeassistant/${componentType}/${entityId}/state`;\nconst commandTopic = `homeassistant/${componentType}/${entityId}/set`;\n\n// MQTT Discovery payload\nconst payload = {\n    // Basic entity information\n    name: displayName,\n    unique_id: entityId,\n    default_entity_id: `${componentType}.${entityId}`,\n    icon: \"mdi:lock\",\n\n    // Topics for Home Assistant to use\n    command_topic: commandTopic,\n    state_topic: stateTopic,\n\n    // Define what \"LOCK\" and \"UNLOCK\" commands look like (simple strings)\n    payload_lock: \"LOCK\",\n    payload_unlock: \"UNLOCK\",\n\n    // State values that will be received from status updates\n    state_locked: \"LOCKED\",\n    state_unlocked: \"UNLOCKED\",\n\n    // Instance 0 (All Locks) uses optimistic mode since it's broadcast-only (no status feedback)\n    // Instances 1-250 use non-optimistic mode to show real status from RV-C bus\n    optimistic: instance === 0,\n\n    // Link entities to a common device for better HA grouping\n    device: {\n        identifiers: [\"rv-link-locks\"],\n        name: \"RV Link: Locks\"\n    }\n\n};\n\n// Prepare the final message for the MQTT Out node\nmsg.topic = discoveryTopic;\nmsg.payload = payload;\nmsg.retain = true; // IMPORTANT: Ensures HA rediscovers on restart\n\n// (Optional) Add helper properties for debugging or downstream use\nmsg.stateTopic = stateTopic;\nmsg.commandTopic = commandTopic;\nmsg.entityId = entityId;\nmsg.deviceType = deviceType;\n\nreturn msg;\n",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -1595,7 +1607,7 @@
         "z": "3470febb2cd6e952",
         "g": "da39e5020d511fa6",
         "name": "Create Shade",
-        "func": "/***********************************************************\n * Create Home Assistant MQTT Discovery for RV-C Shades\n * Creates a dedicated 'cover' entity for each shade instance.\n *\n * Expects input msg.payload to be an object with:\n * - msg.payload.instance (Number): The shade instance ID (1-250)\n ***********************************************************/\n\n// Validate input structure\nif (!msg.payload || typeof msg.payload !== 'object' || typeof msg.payload.instance !== 'number') {\n    node.error(\"Input payload must be an object with a numeric 'instance' property.\", msg);\n    return null;\n}\n\nconst instance = msg.payload.instance;\n\n// RV-C valid instance range: 1-250\n// Silently ignore special RV-C status/error values (251-255)\nif (instance < 1 || instance > 250) {\n    if (instance < 251) { // Only warn for invalid user-range instances\n        node.warn(`Instance ${instance} is outside the valid RV-C range (1-250). Cover will not be created.`);\n    }\n    return null;\n}\n\n// --- MQTT Discovery Configuration for a Cover Entity ---\n\nconst entityId = `shade_${instance}`;\nconst discoveryTopic = `homeassistant/cover/${entityId}/config`;\nconst commandTopic = `homeassistant/cover/${entityId}/set`; // Topic HA will send commands to\n\nconst stateTopic = `homeassistant/cover/${entityId}/state`;\n\nconst discoveryPayload = {\n    name: `Shade ${instance}`,\n    unique_id: `shade_${instance}`,\n    default_entity_id: `cover.${entityId}`,\n    icon: \"mdi:window-shutter\",\n    command_topic: commandTopic,\n    payload_open: \"OPEN\",\n    payload_close: \"CLOSE\",\n    payload_stop: \"STOP\",\n    state_topic: stateTopic,\n    position_topic: stateTopic,\n    // Cover entity states\n    state_opening: \"opening\",\n    state_closing: \"closing\",\n    state_open: \"open\",\n    state_closed: \"closed\",\n    // Position support (keeps both buttons enabled)\n    value_template: \"{{ value_json.state }}\",\n    position_template: \"{{ value_json.position | int }}\",\n    optimistic: false\n};\n\n// Return the discovery message\nmsg.topic = discoveryTopic;\nmsg.payload = JSON.stringify(discoveryPayload);\nmsg.retain = true;\n\nreturn msg;",
+        "func": "/***********************************************************\n * Create Home Assistant MQTT Discovery for RV-C Shades\n * Creates a dedicated 'cover' entity for each shade instance.\n *\n * Expects input msg.payload to be an object with:\n * - msg.payload.instance (Number): The shade instance ID (1-250)\n ***********************************************************/\n\n// Validate input structure\nif (!msg.payload || typeof msg.payload !== 'object' || typeof msg.payload.instance !== 'number') {\n    node.error(\"Input payload must be an object with a numeric 'instance' property.\", msg);\n    return null;\n}\n\nconst instance = msg.payload.instance;\n\n// RV-C valid instance range: 1-250\n// Silently ignore special RV-C status/error values (251-255)\nif (instance < 1 || instance > 250) {\n    if (instance < 251) { // Only warn for invalid user-range instances\n        node.warn(`Instance ${instance} is outside the valid RV-C range (1-250). Cover will not be created.`);\n    }\n    return null;\n}\n\n// --- MQTT Discovery Configuration for a Cover Entity ---\n\nconst entityId = `shade_${instance}`;\nconst discoveryTopic = `homeassistant/cover/${entityId}/config`;\nconst commandTopic = `homeassistant/cover/${entityId}/set`; // Topic HA will send commands to\n\nconst stateTopic = `homeassistant/cover/${entityId}/state`;\n\nconst discoveryPayload = {\n    name: `Shade ${instance}`,\n    unique_id: `shade_${instance}`,\n    default_entity_id: `cover.${entityId}`,\n    icon: \"mdi:window-shutter\",\n    command_topic: commandTopic,\n    payload_open: \"OPEN\",\n    payload_close: \"CLOSE\",\n    payload_stop: \"STOP\",\n    state_topic: stateTopic,\n    position_topic: stateTopic,\n    // Cover entity states\n    state_opening: \"opening\",\n    state_closing: \"closing\",\n    state_open: \"open\",\n    state_closed: \"closed\",\n    // Position support (keeps both buttons enabled)\n    value_template: \"{{ value_json.state }}\",\n    position_template: \"{{ value_json.position | int }}\",\n    optimistic: false,\n\n    // Link entities to a common device for better HA grouping\n    device: {\n        identifiers: [\"rv-link-shades\"],\n        name: \"RV Link: Shades\"\n    }\n};\n\n// Return the discovery message\nmsg.topic = discoveryTopic;\nmsg.payload = JSON.stringify(discoveryPayload);\nmsg.retain = true;\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -1672,7 +1684,7 @@
         "z": "3470febb2cd6e952",
         "g": "067069104a82b459",
         "name": "Create Tank",
-        "func": "/***********************************************************\n * Tank MQTT Discovery for Home Assistant\n * Creates a sensor entity based on tank type input.\n * Expects msg.payload to be a tank type string (e.g., \"fresh\", \"gray\", \"black\", \"lpg\").\n * Example Input: msg.payload = \"fresh\"\n * Resulting Entity ID: tank_fresh\n ***********************************************************/\n\n// Validate input structure\nif (!msg.payload || typeof msg.payload !== 'object') {\n    node.error(\"Input payload must be an object.\", msg);\n    return null;\n}\n\nconst instance = msg.payload.instance;\n\n// Validate required fields\nif (typeof instance !== 'number') {\n    node.error(\"Input missing 'instance' (number).\", msg);\n    return null;\n}\n\n// Map instance ID to single-word tank type and display name\nconst tankTypeMap = {\n    0: { type: \"fresh\", name: \"Fresh Water\" },\n    1: { type: \"gray\", name: \"Gray Water\" },\n    2: { type: \"black\", name: \"Black Water\" },\n    3: { type: \"lpg\", name: \"LPG\" },\n    4: { type: \"fuel\", name: \"Fuel\" },\n    5: { type: \"hot\", name: \"Hot Water\" },\n    6: { type: \"hydraulic\", name: \"Hydraulic Fluid\" },\n    7: { type: \"livewell\", name: \"Live Well\" },\n    8: { type: \"ballast\", name: \"Ballast\" },\n    9: { type: \"oil\", name: \"Oil\" },\n    10: { type: \"coolant\", name: \"Coolant\" },\n    11: { type: \"def\", name: \"DEF\" },\n    12: { type: \"air\", name: \"Air\" },\n    13: { type: \"fresh2\", name: \"Fresh Water 2\" },\n    14: { type: \"gray2\", name: \"Gray Water 2\" },\n    15: { type: \"black2\", name: \"Black Water 2\" },\n    251: { type: \"error\", name: \"Error\" },\n    252: { type: \"notsupported\", name: \"Not Supported\" },\n    253: { type: \"outofrange\", name: \"Out of Range\" },\n    254: { type: \"reserved\", name: \"Reserved\" },\n    255: { type: \"notavailable\", name: \"Not Available\" }\n};\n\nconst tankInfo = tankTypeMap[instance] || { type: \"other\", name: `Unknown Tank ${instance}` };\nconst tankType = tankInfo.type;\nconst displayName = tankInfo.name;\n\nconst entityId = `tank_${tankType}`;\nconst componentType = \"sensor\";\n\nconst discoveryTopic = `homeassistant/${componentType}/${entityId}/config`;\nconst stateTopic = `homeassistant/${componentType}/${entityId}/state`;\n\nconst payload = {\n    // Basic entity information\n    name: displayName,\n    unique_id: entityId,\n    default_entity_id: `sensor.${entityId}`,\n    icon: \"mdi:water-percent\",\n\n    // Topics for Home Assistant to use\n    state_topic: stateTopic,\n\n    // Sensor configuration\n    unit_of_measurement: \"%\",\n    value_template: \"{{ value | float }}\" // Ensure it's parsed as a number\n\n};\n\n// Prepare the final message for the MQTT Out node\nmsg.topic = discoveryTopic;\nmsg.payload = payload;\nmsg.retain = true; // IMPORTANT: Ensures HA rediscovers on restart\n\n// (Optional) Add helper properties for debugging or downstream use\nmsg.stateTopic = stateTopic;\n\nreturn msg;",
+        "func": "/***********************************************************\n * Tank MQTT Discovery for Home Assistant\n * Creates a sensor entity based on tank type input.\n * Expects msg.payload to be a tank type string (e.g., \"fresh\", \"gray\", \"black\", \"lpg\").\n * Example Input: msg.payload = \"fresh\"\n * Resulting Entity ID: tank_fresh\n ***********************************************************/\n\n// Validate input structure\nif (!msg.payload || typeof msg.payload !== 'object') {\n    node.error(\"Input payload must be an object.\", msg);\n    return null;\n}\n\nconst instance = msg.payload.instance;\n\n// Validate required fields\nif (typeof instance !== 'number') {\n    node.error(\"Input missing 'instance' (number).\", msg);\n    return null;\n}\n\n// Map instance ID to single-word tank type and display name\nconst tankTypeMap = {\n    0: { type: \"fresh\", name: \"Fresh Water\" },\n    1: { type: \"gray\", name: \"Gray Water\" },\n    2: { type: \"black\", name: \"Black Water\" },\n    3: { type: \"lpg\", name: \"LPG\" },\n    4: { type: \"fuel\", name: \"Fuel\" },\n    5: { type: \"hot\", name: \"Hot Water\" },\n    6: { type: \"hydraulic\", name: \"Hydraulic Fluid\" },\n    7: { type: \"livewell\", name: \"Live Well\" },\n    8: { type: \"ballast\", name: \"Ballast\" },\n    9: { type: \"oil\", name: \"Oil\" },\n    10: { type: \"coolant\", name: \"Coolant\" },\n    11: { type: \"def\", name: \"DEF\" },\n    12: { type: \"air\", name: \"Air\" },\n    13: { type: \"fresh2\", name: \"Fresh Water 2\" },\n    14: { type: \"gray2\", name: \"Gray Water 2\" },\n    15: { type: \"black2\", name: \"Black Water 2\" },\n    251: { type: \"error\", name: \"Error\" },\n    252: { type: \"notsupported\", name: \"Not Supported\" },\n    253: { type: \"outofrange\", name: \"Out of Range\" },\n    254: { type: \"reserved\", name: \"Reserved\" },\n    255: { type: \"notavailable\", name: \"Not Available\" }\n};\n\nconst tankInfo = tankTypeMap[instance] || { type: \"other\", name: `Unknown Tank ${instance}` };\nconst tankType = tankInfo.type;\nconst displayName = tankInfo.name;\n\nconst entityId = `tank_${tankType}`;\nconst componentType = \"sensor\";\n\nconst discoveryTopic = `homeassistant/${componentType}/${entityId}/config`;\nconst stateTopic = `homeassistant/${componentType}/${entityId}/state`;\n\nconst payload = {\n    // Basic entity information\n    name: displayName,\n    unique_id: entityId,\n    default_entity_id: `sensor.${entityId}`,\n    icon: \"mdi:water-percent\",\n\n    // Topics for Home Assistant to use\n    state_topic: stateTopic,\n\n    // Sensor configuration\n    unit_of_measurement: \"%\",\n    value_template: \"{{ value | float }}\", // Ensure it's parsed as a number\n\n    // Link entities to a common device for better HA grouping\n    device: {\n        identifiers: [\"rv-link-water\"],\n        name: \"RV Link: Water\"\n    }\n\n};\n\n// Prepare the final message for the MQTT Out node\nmsg.topic = discoveryTopic;\nmsg.payload = payload;\nmsg.retain = true; // IMPORTANT: Ensures HA rediscovers on restart\n\n// (Optional) Add helper properties for debugging or downstream use\nmsg.stateTopic = stateTopic;\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -1881,7 +1893,7 @@
         "d": true,
         "g": "5d1ecae7ac09586c",
         "name": "Create Battery",
-        "func": "/***********************************************************\n * Battery MQTT Discovery for Home Assistant\n * Creates a sensor entity based on battery instance input.\n * Expects msg.payload to be a number (e.g., 1) or DC instance string (e.g., \"Main House Battery Bank\").\n * Example Input: msg.payload = 1 or msg.payload = \"Main House Battery Bank\"\n * Resulting Entity ID: battery_1, battery_2, etc.\n ***********************************************************/\n\n// Accept numeric instance ID from unique_batteries.js\nif (typeof msg.payload !== 'number') {\n    node.error(\"Input payload must be a number (instance ID).\", msg);\n    return null;\n}\n\nconst instanceId = msg.payload;\n\n// Map instance ID to entity suffix and display name per RV-C specification\nconst batteryMap = {\n    0: { suffix: \"0\", name: \"Invalid\" },\n    1: { suffix: \"house\", name: \"Main House Battery\" },\n    2: { suffix: \"chassis\", name: \"Chassis Battery\" },\n    3: { suffix: \"house2\", name: \"Secondary House Battery\" },\n    4: { suffix: \"generator\", name: \"Generator Battery\" }\n};\n\n// For instances 5-250, use generic \"battery_X\" naming\nlet entitySuffix;\nlet displayName;\nif (instanceId >= 5 && instanceId <= 250) {\n    entitySuffix = instanceId.toString();\n    displayName = `Battery ${instanceId}`;\n} else {\n    const batteryInfo = batteryMap[instanceId] || { suffix: instanceId.toString(), name: `Unknown Battery ${instanceId}` };\n    entitySuffix = batteryInfo.suffix;\n    displayName = batteryInfo.name;\n}\n\nconst entityId = `battery_${entitySuffix}`;\nconst componentType = \"sensor\";\n\nconst discoveryTopic = `homeassistant/${componentType}/${entityId}/config`;\nconst stateTopic = `homeassistant/${componentType}/${entityId}/state`;\n\nconst payload = {\n    // Basic entity information\n    name: displayName,\n    unique_id: entityId,\n    default_entity_id: `sensor.${entityId}`,\n    icon: \"mdi:home-battery-outline\",\n\n    // Topics for Home Assistant to use\n    state_topic: stateTopic,\n\n    // Sensor configuration\n    unit_of_measurement: \"V\",\n    device_class: \"voltage\",\n    value_template: \"{{ value | float | round(2) }}\"\n};\n\n// Prepare the final message for the MQTT Out node\nmsg.topic = discoveryTopic;\nmsg.payload = payload;\nmsg.retain = true; // IMPORTANT: Ensures HA rediscovers on restart\n\n// (Optional) Add helper properties for debugging or downstream use\nmsg.stateTopic = stateTopic;\n\nreturn msg;",
+        "func": "/***********************************************************\n * Battery MQTT Discovery for Home Assistant\n * Creates a sensor entity based on battery instance input.\n * Expects msg.payload to be a number (e.g., 1) or DC instance string (e.g., \"Main House Battery Bank\").\n * Example Input: msg.payload = 1 or msg.payload = \"Main House Battery Bank\"\n * Resulting Entity ID: battery_1, battery_2, etc.\n ***********************************************************/\n\n// Accept numeric instance ID from unique_batteries.js\nif (typeof msg.payload !== 'number') {\n    node.error(\"Input payload must be a number (instance ID).\", msg);\n    return null;\n}\n\nconst instanceId = msg.payload;\n\n// Map instance ID to entity suffix and display name per RV-C specification\nconst batteryMap = {\n    0: { suffix: \"0\", name: \"Invalid\" },\n    1: { suffix: \"house\", name: \"Main House Battery\" },\n    2: { suffix: \"chassis\", name: \"Chassis Battery\" },\n    3: { suffix: \"house2\", name: \"Secondary House Battery\" },\n    4: { suffix: \"generator\", name: \"Generator Battery\" }\n};\n\n// For instances 5-250, use generic \"battery_X\" naming\nlet entitySuffix;\nlet displayName;\nif (instanceId >= 5 && instanceId <= 250) {\n    entitySuffix = instanceId.toString();\n    displayName = `Battery ${instanceId}`;\n} else {\n    const batteryInfo = batteryMap[instanceId] || { suffix: instanceId.toString(), name: `Unknown Battery ${instanceId}` };\n    entitySuffix = batteryInfo.suffix;\n    displayName = batteryInfo.name;\n}\n\nconst entityId = `battery_${entitySuffix}`;\nconst componentType = \"sensor\";\n\nconst discoveryTopic = `homeassistant/${componentType}/${entityId}/config`;\nconst stateTopic = `homeassistant/${componentType}/${entityId}/state`;\n\nconst payload = {\n    // Basic entity information\n    name: displayName,\n    unique_id: entityId,\n    default_entity_id: `sensor.${entityId}`,\n    icon: \"mdi:home-battery-outline\",\n\n    // Topics for Home Assistant to use\n    state_topic: stateTopic,\n\n    // Sensor configuration\n    unit_of_measurement: \"V\",\n    device_class: \"voltage\",\n    value_template: \"{{ value | float | round(2) }}\",\n\n    // Link entities to a common device for better HA grouping\n    device: {\n        identifiers: [\"rv-link-energy\"],\n        name: \"RV Link: Energy\"\n    }\n};\n\n// Prepare the final message for the MQTT Out node\nmsg.topic = discoveryTopic;\nmsg.payload = payload;\nmsg.retain = true; // IMPORTANT: Ensures HA rediscovers on restart\n\n// (Optional) Add helper properties for debugging or downstream use\nmsg.stateTopic = stateTopic;\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -2132,7 +2144,7 @@
         "z": "3470febb2cd6e952",
         "g": "84183171172657f8",
         "name": "Create water pump",
-        "func": "/***********************************************************\n * MQTT Discovery for Water Pump\n * Creates a switch entity based on a string instance name.\n *\n * Expects input msg.payload with:\n * - msg.payload.instance (String): The device instance name (e.g., \"water_pump\")\n ***********************************************************/\n\nif (!msg.payload || typeof msg.payload.instance !== 'string') {\n    node.error(\"Input must be an object with a string 'instance' property.\", msg);\n    return null;\n}\n\nconst instance = msg.payload.instance; // e.g., \"water_pump\"\n\n// Device configuration\nconst displayName = \"Water Pump\"; // Simplified display name\nconst icon = \"mdi:water-pump\";\nconst componentType = \"switch\";\n\n// Generate entity identifiers directly from the instance string\nconst entityId = instance;\n\n// MQTT topics\nconst discoveryTopic = `homeassistant/${componentType}/${entityId}/config`;\nconst stateTopic = `homeassistant/${componentType}/${entityId}/state`;\nconst commandTopic = `homeassistant/${componentType}/${entityId}/set`;\n\n// MQTT Discovery payload for Home Assistant\nconst payload = {\n    name: displayName,\n    unique_id: entityId,\n    icon: icon,\n    command_topic: commandTopic,\n    state_topic: stateTopic,\n    payload_on: \"ON\",\n    payload_off: \"OFF\"\n};\n\n// Prepare the final message for the MQTT Out node\nmsg.topic = discoveryTopic;\nmsg.payload = payload;\nmsg.retain = true;\n\nreturn msg;",
+        "func": "/***********************************************************\n * MQTT Discovery for Water Pump\n * Creates a switch entity based on a string instance name.\n *\n * Expects input msg.payload with:\n * - msg.payload.instance (String): The device instance name (e.g., \"water_pump\")\n ***********************************************************/\n\nif (!msg.payload || typeof msg.payload.instance !== 'string') {\n    node.error(\"Input must be an object with a string 'instance' property.\", msg);\n    return null;\n}\n\nconst instance = msg.payload.instance; // e.g., \"water_pump\"\n\n// Device configuration\nconst displayName = \"Water Pump\"; // Simplified display name\nconst icon = \"mdi:water-pump\";\nconst componentType = \"switch\";\n\n// Generate entity identifiers directly from the instance string\nconst entityId = instance;\n\n// MQTT topics\nconst discoveryTopic = `homeassistant/${componentType}/${entityId}/config`;\nconst stateTopic = `homeassistant/${componentType}/${entityId}/state`;\nconst commandTopic = `homeassistant/${componentType}/${entityId}/set`;\n\n// MQTT Discovery payload for Home Assistant\nconst payload = {\n    name: displayName,\n    unique_id: entityId,\n    icon: icon,\n    command_topic: commandTopic,\n    state_topic: stateTopic,\n    payload_on: \"ON\",\n    payload_off: \"OFF\",\n    // Link entities to a common device for better HA grouping\n    device: {\n        identifiers: [\"rv-link-water\"],\n        name: \"RV Link: Water\"\n    }\n};\n\n// Prepare the final message for the MQTT Out node\nmsg.topic = discoveryTopic;\nmsg.payload = payload;\nmsg.retain = true;\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -2297,7 +2309,7 @@
         "z": "3470febb2cd6e952",
         "g": "ad77b71440e42dc4",
         "name": "Create autofill",
-        "func": "/***********************************************************\n * MQTT Discovery for AutoFill\n * Creates a switch entity based on the string instance \"autofill\".\n ***********************************************************/\nif (!msg.payload || typeof msg.payload.instance !== 'string') {\n    node.error(\"Input must be an object with a string 'instance' property.\", msg);\n    return null;\n}\n\nconst instance = msg.payload.instance; // e.g., \"autofill\"\n\n// Device configuration\nconst displayName = \"Autofill\";\nconst icon = \"mdi:water-plus-outline\";\nconst componentType = \"switch\";\n\n// Generate entity identifiers directly from the instance string\nconst entityId = instance;\n\n// MQTT topics\nconst discoveryTopic = `homeassistant/${componentType}/${entityId}/config`;\nconst stateTopic = `homeassistant/${componentType}/${entityId}/state`;\nconst commandTopic = `homeassistant/${componentType}/${entityId}/set`;\n\n// MQTT Discovery payload\nconst payload = {\n    name: displayName,\n    unique_id: entityId,\n    icon: icon,\n    command_topic: commandTopic,\n    state_topic: stateTopic,\n    payload_on: \"ON\",\n    payload_off: \"OFF\"\n};\n\n// Prepare the final message for the MQTT Out node\nmsg.topic = discoveryTopic;\nmsg.payload = payload;\nmsg.retain = true;\nreturn msg;",
+        "func": "/***********************************************************\n * MQTT Discovery for AutoFill\n * Creates a switch entity based on the string instance \"autofill\".\n ***********************************************************/\nif (!msg.payload || typeof msg.payload.instance !== 'string') {\n    node.error(\"Input must be an object with a string 'instance' property.\", msg);\n    return null;\n}\n\nconst instance = msg.payload.instance; // e.g., \"autofill\"\n\n// Device configuration\nconst displayName = \"Autofill\";\nconst icon = \"mdi:water-plus-outline\";\nconst componentType = \"switch\";\n\n// Generate entity identifiers directly from the instance string\nconst entityId = instance;\n\n// MQTT topics\nconst discoveryTopic = `homeassistant/${componentType}/${entityId}/config`;\nconst stateTopic = `homeassistant/${componentType}/${entityId}/state`;\nconst commandTopic = `homeassistant/${componentType}/${entityId}/set`;\n\n// MQTT Discovery payload\nconst payload = {\n    name: displayName,\n    unique_id: entityId,\n    icon: icon,\n    command_topic: commandTopic,\n    state_topic: stateTopic,\n    payload_on: \"ON\",\n    payload_off: \"OFF\",\n    // Link entities to a common device for better HA grouping\n    device: {\n        identifiers: [\"rv-link-water\"],\n        name: \"RV Link: Water\"\n    }\n};\n\n// Prepare the final message for the MQTT Out node\nmsg.topic = discoveryTopic;\nmsg.payload = payload;\nmsg.retain = true;\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -2635,7 +2647,7 @@
         "z": "3470febb2cd6e952",
         "g": "daeff1de077d7dbb",
         "name": "Create floor heat",
-        "func": "// create_floor_heat.js\n//\n// Creates ONLY the climate entity.\n\nconst instance = msg.payload.instance;\nif (typeof instance !== 'number') {\n    node.error(\"Input missing 'instance' (number).\", msg);\n    return null;\n}\n\n// --- Get Discovered Levels ---\nconst levelsKey = \"uniqueFloorHeatLevels\";\nconst levels = global.get(levelsKey, \"file\") || [];\n\n// --- Build Preset List and Map ---\nlet levelMap = {};\nlet presetList = [];\nlet levelCounter = 1;\n\n// The 'unique' node sorts the list, so the lowest value is always first.\n// Get the lowest level (\"Store\").\nconst lowestLevelRaw = levels.length > 0 ? levels[0] : null;\n\n// Helper to decode RVC raw value to Fahrenheit (assuming it's available or implemented elsewhere)\nconst decodeTempFromRaw = (rawValue) => {\n    if (rawValue === 0 || rawValue > 65530) return 0;\n    const tempK = rawValue * 0.03125;\n    const tempC = tempK - 273.15;\n    return parseFloat(((tempC * 9 / 5) + 32).toFixed(1));\n};\n\nfor (const rawVal of levels) {\n    let name;\n    let tempF = decodeTempFromRaw(rawVal);\n\n    // Check if the current value is the lowest one we found\n    if (rawVal === lowestLevelRaw) {\n        name = \"store\"; // Dynamically assigned to the lowest value\n    } else {\n        name = `level_${levelCounter++}`;\n    }\n\n    // Store both directions of the map for easier lookups\n    const levelInfo = { preset: name, rawValue: rawVal, temp: tempF };\n\n    presetList.push(name);\n    levelMap[name] = levelInfo; // Map preset name to all info\n    levelMap[rawVal] = levelInfo; // Map raw value to all info (for status script)\n}\nglobal.set(\"floorHeatLevelMap\", levelMap, \"file\");\n\n// --- Entity 1: Climate ---\nconst climateEntityId = `floor_heat_${instance}`;\nconst climateStateTopic = `homeassistant/climate/${climateEntityId}/state`;\nconst climateDiscoveryTopic = `homeassistant/climate/${climateEntityId}/config`;\n\nconst climatePayload = {\n    name: `Floor Heat ${instance}`,\n    unique_id: climateEntityId,\n    icon: \"mdi:heating-coil\",\n\n    current_temperature_topic: climateStateTopic,\n    current_temperature_template: \"{{ value_json.measured_temperature }}\",\n\n    mode_state_topic: climateStateTopic,\n    mode_state_template: \"{{ value_json.mode }}\",\n\n    preset_mode_state_topic: climateStateTopic,\n    preset_mode_value_template: \"{{ value_json.preset_mode }}\",\n\n    mode_command_topic: `homeassistant/climate/${climateEntityId}/set_mode`,\n    modes: [\"off\", \"heat\", \"auto\"], // \"auto\" is for schedule ON\n\n    preset_mode_command_topic: `homeassistant/climate/${climateEntityId}/set_preset_mode`,\n    preset_modes: presetList,\n\n    temperature_unit: \"F\"\n};\n\n// --- Prepare Output Message ---\nconst climateMsg = {\n    topic: climateDiscoveryTopic,\n    payload: climatePayload\n};\n\n// Return only the climate discovery message\nreturn [[climateMsg]];",
+        "func": "// create_floor_heat.js\n//\n// Creates ONLY the climate entity.\n\nconst instance = msg.payload.instance;\nif (typeof instance !== 'number') {\n    node.error(\"Input missing 'instance' (number).\", msg);\n    return null;\n}\n\n// --- Get Discovered Levels ---\nconst levelsKey = \"uniqueFloorHeatLevels\";\nconst levels = global.get(levelsKey, \"file\") || [];\n\n// --- Build Preset List and Map ---\nlet levelMap = {};\nlet presetList = [];\nlet levelCounter = 1;\n\n// The 'unique' node sorts the list, so the lowest value is always first.\n// Get the lowest level (\"Store\").\nconst lowestLevelRaw = levels.length > 0 ? levels[0] : null;\n\n// Helper to decode RVC raw value to Fahrenheit (assuming it's available or implemented elsewhere)\nconst decodeTempFromRaw = (rawValue) => {\n    if (rawValue === 0 || rawValue > 65530) return 0;\n    const tempK = rawValue * 0.03125;\n    const tempC = tempK - 273.15;\n    return parseFloat(((tempC * 9 / 5) + 32).toFixed(1));\n};\n\nfor (const rawVal of levels) {\n    let name;\n    let tempF = decodeTempFromRaw(rawVal);\n\n    // Check if the current value is the lowest one we found\n    if (rawVal === lowestLevelRaw) {\n        name = \"store\"; // Dynamically assigned to the lowest value\n    } else {\n        name = `level_${levelCounter++}`;\n    }\n\n    // Store both directions of the map for easier lookups\n    const levelInfo = { preset: name, rawValue: rawVal, temp: tempF };\n\n    presetList.push(name);\n    levelMap[name] = levelInfo; // Map preset name to all info\n    levelMap[rawVal] = levelInfo; // Map raw value to all info (for status script)\n}\nglobal.set(\"floorHeatLevelMap\", levelMap, \"file\");\n\n// --- Entity 1: Climate ---\nconst climateEntityId = `floor_heat_${instance}`;\nconst climateStateTopic = `homeassistant/climate/${climateEntityId}/state`;\nconst climateDiscoveryTopic = `homeassistant/climate/${climateEntityId}/config`;\n\nconst climatePayload = {\n    name: `Floor Heat ${instance}`,\n    unique_id: climateEntityId,\n    icon: \"mdi:heating-coil\",\n\n    current_temperature_topic: climateStateTopic,\n    current_temperature_template: \"{{ value_json.measured_temperature }}\",\n\n    mode_state_topic: climateStateTopic,\n    mode_state_template: \"{{ value_json.mode }}\",\n\n    preset_mode_state_topic: climateStateTopic,\n    preset_mode_value_template: \"{{ value_json.preset_mode }}\",\n\n    mode_command_topic: `homeassistant/climate/${climateEntityId}/set_mode`,\n    modes: [\"off\", \"heat\", \"auto\"], // \"auto\" is for schedule ON\n\n    preset_mode_command_topic: `homeassistant/climate/${climateEntityId}/set_preset_mode`,\n    preset_modes: presetList,\n\n    temperature_unit: \"F\",\n\n    // Link entities to a common device for better HA grouping\n    device: {\n        identifiers: [\"rv-link-floor-heat\"],\n        name: \"RV Link: Floor Heat\"\n    }\n};\n\n// --- Prepare Output Message ---\nconst climateMsg = {\n    topic: climateDiscoveryTopic,\n    payload: climatePayload\n};\n\n// Return only the climate discovery message\nreturn [[climateMsg]];",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -2789,7 +2801,6 @@
         "id": "1c1403c14b577fb4",
         "type": "link out",
         "z": "3470febb2cd6e952",
-        "d": true,
         "g": "9c7621e8a8850053",
         "name": "MQTT out: Retain TRUE",
         "mode": "link",
@@ -2815,7 +2826,8 @@
         "wires": [
             [
                 "6841e5cff3b5e0e1",
-                "43cd836c21f66b26"
+                "43cd836c21f66b26",
+                "8e14c79fdeec919c"
             ]
         ],
         "l": true
@@ -2868,7 +2880,7 @@
         "z": "3470febb2cd6e952",
         "g": "9c7621e8a8850053",
         "name": "Create Aqua-Hot",
-        "func": "// create_aquahot.js\n// Creates light entities for burner, AC elements, and engine pre-heat\n\n// Validate input structure\nif (!msg.payload || typeof msg.payload.instance !== 'string') {\n    node.error(\"Input must be an object with a string 'instance' property.\", msg);\n    return null;\n}\n\nconst instance = msg.payload.instance; // Expecting \"burner\", \"ac_1\", \"ac_2\", or \"engine\"\n\n// Validate instance is one of the expected values\nconst validInstances = ['burner', 'ac_1', 'ac_2', 'engine'];\nif (!validInstances.includes(instance)) {\n    node.error(`Invalid instance: ${instance}. Expected: burner, ac_1, ac_2, or engine.`, msg);\n    return null;\n}\n\n// Device configuration\nconst componentType = \"light\";\nconst prefix = \"aquahot\";\n\n// Configure display name and icon based on instance\nlet displayName, icon;\nswitch (instance) {\n    case 'burner':\n        displayName = \"Aqua-Hot Diesel Burner\";\n        icon = 'mdi:fire';\n        break;\n    case 'ac_1':\n        displayName = \"Aqua-Hot AC Element 1\";\n        icon = 'mdi:water-boiler';\n        break;\n    case 'ac_2':\n        displayName = \"Aqua-Hot AC Element 2\";\n        icon = 'mdi:water-boiler-alert';\n        break;\n    case 'engine':\n        displayName = \"Aqua-Hot Engine Pre-heat\";\n        icon = 'mdi:engine';\n        break;\n}\n\n// Generate entity identifiers\nconst entityId = `${prefix}_${instance}`;\n\n// MQTT topics\nconst discoveryTopic = `homeassistant/${componentType}/${entityId}/config`;\nconst stateTopic = `homeassistant/${componentType}/${entityId}/state`;\nconst commandTopic = `homeassistant/${componentType}/${entityId}/set`;\n\n// MQTT Discovery payload\nconst payload = {\n    name: displayName,\n    unique_id: entityId,\n    icon: icon,\n    command_topic: commandTopic,\n    state_topic: stateTopic,\n    payload_on: \"ON\",\n    payload_off: \"OFF\",\n    // Link entities to a common device for better HA grouping\n    device: {\n        identifiers: [\"aquahot\"],\n        name: \"Aqua-Hot\",\n        model: \"Aqua-Hot Heating System\",\n        manufacturer: \"Aqua-Hot\"\n    }\n};\n\n// Prepare the final message for the MQTT Out node\nmsg.topic = discoveryTopic;\nmsg.payload = payload;\nmsg.retain = true;\n\nreturn msg;",
+        "func": "// create_aquahot.js\n// Creates light entities for burner, AC elements, and engine pre-heat\n\n// Validate input structure\nif (!msg.payload || typeof msg.payload.instance !== 'string') {\n    node.error(\"Input must be an object with a string 'instance' property.\", msg);\n    return null;\n}\n\nconst instance = msg.payload.instance; // Expecting \"burner\", \"ac_1\", \"ac_2\", or \"engine\"\n\n// Validate instance is one of the expected values\nconst validInstances = ['burner', 'ac_1', 'ac_2', 'engine'];\nif (!validInstances.includes(instance)) {\n    node.error(`Invalid instance: ${instance}. Expected: burner, ac_1, ac_2, or engine.`, msg);\n    return null;\n}\n\n// Device configuration\nconst componentType = \"light\";\nconst prefix = \"aquahot\";\n\n// Configure display name and icon based on instance\nlet displayName, icon;\nswitch (instance) {\n    case 'burner':\n        displayName = \"Diesel Burner\";\n        icon = 'mdi:fire';\n        break;\n    case 'ac_1':\n        displayName = \"AC Element 1\";\n        icon = 'mdi:lightning-bolt';\n        break;\n    case 'ac_2':\n        displayName = \"AC Element 2\";\n        icon = 'mdi:lightning-bolt';\n        break;\n    case 'engine':\n        displayName = \"Engine Pre-heat\";\n        icon = 'mdi:engine';\n        break;\n}\n\n// Generate entity identifiers\nconst entityId = `${prefix}_${instance}`;\n\n// MQTT topics\nconst discoveryTopic = `homeassistant/${componentType}/${entityId}/config`;\nconst stateTopic = `homeassistant/${componentType}/${entityId}/state`;\nconst commandTopic = `homeassistant/${componentType}/${entityId}/set`;\n\n// MQTT Discovery payload\nconst payload = {\n    name: displayName,\n    unique_id: entityId,\n    icon: icon,\n    command_topic: commandTopic,\n    state_topic: stateTopic,\n    payload_on: \"ON\",\n    payload_off: \"OFF\",\n    // Link entities to a common device for better HA grouping\n    device: {\n        identifiers: [\"rv-link-aquahot\"],\n        name: \"RV Link: Aqua-Hot\"\n    }\n};\n\n// Prepare the final message for the MQTT Out node\nmsg.topic = discoveryTopic;\nmsg.payload = payload;\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -2967,6 +2979,231 @@
         "statusType": "auto",
         "x": 1050,
         "y": 2040,
+        "wires": []
+    },
+    {
+        "id": "8e14c79fdeec919c",
+        "type": "switch",
+        "z": "3470febb2cd6e952",
+        "g": "9c7621e8a8850053",
+        "name": "",
+        "property": "payload.instance",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "burner",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "ac_1",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "ac_2",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "engine",
+                "vt": "str"
+            },
+            {
+                "t": "else"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 5,
+        "x": 220,
+        "y": 2180,
+        "wires": [
+            [
+                "97e39646a29a8c55"
+            ],
+            [
+                "f8f8ab87f8e56976"
+            ],
+            [
+                "200991401297fc91"
+            ],
+            [
+                "bde0564e43c0c68f"
+            ],
+            [
+                "13bcd21ae463ef4b"
+            ]
+        ]
+    },
+    {
+        "id": "97e39646a29a8c55",
+        "type": "rbe",
+        "z": "3470febb2cd6e952",
+        "g": "9c7621e8a8850053",
+        "name": "",
+        "func": "rbe",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "septopics": true,
+        "property": "payload",
+        "topi": "topic",
+        "x": 370,
+        "y": 2160,
+        "wires": [
+            [
+                "555850888ece5c2e"
+            ]
+        ]
+    },
+    {
+        "id": "555850888ece5c2e",
+        "type": "debug",
+        "z": "3470febb2cd6e952",
+        "g": "9c7621e8a8850053",
+        "name": "debug 5",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 500,
+        "y": 2160,
+        "wires": []
+    },
+    {
+        "id": "f8f8ab87f8e56976",
+        "type": "rbe",
+        "z": "3470febb2cd6e952",
+        "g": "9c7621e8a8850053",
+        "name": "",
+        "func": "rbe",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "septopics": true,
+        "property": "payload",
+        "topi": "topic",
+        "x": 370,
+        "y": 2200,
+        "wires": [
+            [
+                "1a54fd912ec1457b"
+            ]
+        ]
+    },
+    {
+        "id": "1a54fd912ec1457b",
+        "type": "debug",
+        "z": "3470febb2cd6e952",
+        "g": "9c7621e8a8850053",
+        "name": "debug 6",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 490,
+        "y": 2200,
+        "wires": []
+    },
+    {
+        "id": "200991401297fc91",
+        "type": "rbe",
+        "z": "3470febb2cd6e952",
+        "g": "9c7621e8a8850053",
+        "name": "",
+        "func": "rbe",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "septopics": true,
+        "property": "payload",
+        "topi": "topic",
+        "x": 370,
+        "y": 2240,
+        "wires": [
+            [
+                "e85f1a65658e35b8"
+            ]
+        ]
+    },
+    {
+        "id": "e85f1a65658e35b8",
+        "type": "debug",
+        "z": "3470febb2cd6e952",
+        "g": "9c7621e8a8850053",
+        "name": "debug 7",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 490,
+        "y": 2240,
+        "wires": []
+    },
+    {
+        "id": "bde0564e43c0c68f",
+        "type": "rbe",
+        "z": "3470febb2cd6e952",
+        "g": "9c7621e8a8850053",
+        "name": "",
+        "func": "rbe",
+        "gap": "",
+        "start": "",
+        "inout": "out",
+        "septopics": true,
+        "property": "payload",
+        "topi": "topic",
+        "x": 370,
+        "y": 2280,
+        "wires": [
+            [
+                "fd53207a07863f6c"
+            ]
+        ]
+    },
+    {
+        "id": "fd53207a07863f6c",
+        "type": "debug",
+        "z": "3470febb2cd6e952",
+        "g": "9c7621e8a8850053",
+        "name": "debug 8",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 490,
+        "y": 2280,
+        "wires": []
+    },
+    {
+        "id": "13bcd21ae463ef4b",
+        "type": "debug",
+        "z": "3470febb2cd6e952",
+        "g": "9c7621e8a8850053",
+        "name": "debug 4",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 480,
+        "y": 2320,
         "wires": []
     },
     {
@@ -3123,12 +3360,17 @@
                 "vt": "str"
             },
             {
+                "t": "eq",
+                "v": "AQUAHOT_THERMOSTAT_STATUS",
+                "vt": "str"
+            },
+            {
                 "t": "else"
             }
         ],
         "checkall": "false",
         "repair": false,
-        "outputs": 30,
+        "outputs": 31,
         "x": 420,
         "y": 260,
         "wires": [
@@ -3216,6 +3458,9 @@
             ],
             [
                 "40bc1ec5180b6589"
+            ],
+            [
+                "7a5c6ea317e733bf"
             ],
             [
                 "b797e5a52b6db5b4"
@@ -3836,7 +4081,7 @@
         "finalize": "",
         "libs": [],
         "x": 880,
-        "y": 760,
+        "y": 700,
         "wires": [
             [
                 "9d90b7163a12d5ed"
@@ -3857,7 +4102,7 @@
         "statusVal": "",
         "statusType": "auto",
         "x": 1320,
-        "y": 760,
+        "y": 700,
         "wires": []
     },
     {
@@ -4227,7 +4472,7 @@
         "type": "function",
         "z": "3e5f038a4f5a8b9a",
         "name": "Decode AQUAHOT_STATUS",
-        "func": "// decode_aquahot_status.js\n// Decodes the proprietary AQUAHOT status byte (Byte 2) into individual status messages.\n// PGN: EF9F - AQUAHOT_STATUS\n\nconst DISCRIMINATOR = 0xA9; // The expected first data byte (Byte 1)\n\n// Maps the bit position to the instance name\nconst BIT_MAP = {\n    0: 'burner',     // Burner Status (Bit 0)\n    2: 'ac_1',       // AC Element 1 Status (Bit 2)\n    3: 'ac_2',       // AC Element 2 Status (Bit 3)\n    6: 'engine'      // Engine Pre-heat Status (Bit 6)\n};\n\nconst dataPayload = msg.payload.dataPayload;\n\n// 1. Validate the discriminator byte (Byte 1)\nconst discriminator = parseInt(dataPayload.substring(0, 2), 16);\nif (discriminator !== DISCRIMINATOR) {\n    node.warn(`[decode_aquahot_status] EF9F: Unexpected discriminator byte: ${discriminator.toString(16)}. Expected A9.`);\n    return null;\n}\n\n// 2. Extract the status byte (Byte 2 of the data payload)\nconst statusByte = parseInt(dataPayload.substring(2, 4), 16);\n\nlet outputMessages = [];\n\n// 3. Decode the individual status bits\nfor (const bit in BIT_MAP) {\n    const bitIndex = Number(bit);\n    const instance = BIT_MAP[bitIndex];\n\n    // Check if the bit is set (Bit = 1 for ON)\n    const isBitSet = (statusByte >> bitIndex) & 1;\n    const status = isBitSet ? \"ON\" : \"OFF\";\n\n    // Prepare the message following the standard pattern\n    const statusMsg = {\n        payload: {\n            instance,\n            status\n        }\n    };\n\n    outputMessages.push(statusMsg);\n}\n\n// Send all four status updates simultaneously\nreturn [outputMessages];",
+        "func": "// decode_aquahot_status.js\n// Decodes the proprietary AQUAHOT status byte (Byte 2) into individual status messages.\n// PGN: EF9F - AQUAHOT_STATUS\n\nconst DISCRIMINATOR = 0xA9; // The expected first data byte (Byte 1)\n\n// Maps the bit position to the instance name\nconst BIT_MAP = {\n    0: 'burner',     // Burner Status (Bit 0)\n    2: 'ac_1',       // AC Element 1 Status (Bit 2)\n    3: 'ac_2',       // AC Element 2 Status (Bit 3)\n    6: 'engine'      // Engine Pre-heat Status (Bit 6)\n};\n\nconst dataPayload = msg.payload.dataPayload;\n\n// 1. Extract the status byte (Byte 2 of the data payload)\nconst statusByte = parseInt(dataPayload.substring(2, 4), 16);\n\nlet outputMessages = [];\n\n// 2. Decode the individual status bits\nfor (const bit in BIT_MAP) {\n    const bitIndex = Number(bit);\n    const instance = BIT_MAP[bitIndex];\n\n    // Check if the bit is set (Bit = 1 for ON)\n    const isBitSet = (statusByte >> bitIndex) & 1;\n    const status = isBitSet ? \"ON\" : \"OFF\";\n\n    // Prepare the message following the standard pattern\n    const statusMsg = {\n        payload: {\n            instance,\n            status\n        }\n    };\n\n    outputMessages.push(statusMsg);\n}\n\n// Send all four status updates simultaneously\nreturn [outputMessages];",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
@@ -4235,7 +4480,7 @@
         "finalize": "",
         "libs": [],
         "x": 880,
-        "y": 700,
+        "y": 760,
         "wires": [
             [
                 "b6c72de91f6e7ec7"
@@ -4252,9 +4497,26 @@
             "2ee0ed60af1beb40"
         ],
         "x": 1320,
-        "y": 700,
+        "y": 760,
         "wires": [],
         "l": true
+    },
+    {
+        "id": "7a5c6ea317e733bf",
+        "type": "debug",
+        "z": "3e5f038a4f5a8b9a",
+        "name": "AQUAHOT_THERMOSTAT_STATUS",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 910,
+        "y": 1720,
+        "wires": []
     },
     {
         "id": "7e609140970f546c",
@@ -4887,7 +5149,7 @@
         "payload": "",
         "payloadType": "date",
         "x": 300,
-        "y": 1120,
+        "y": 1060,
         "wires": [
             [
                 "b846bc1605dae821"
@@ -4908,7 +5170,7 @@
         "finalize": "",
         "libs": [],
         "x": 700,
-        "y": 1120,
+        "y": 1060,
         "wires": [
             [
                 "55071115a3fe7c2c",
@@ -4935,7 +5197,7 @@
         "allowrate": false,
         "outputs": 1,
         "x": 850,
-        "y": 1200,
+        "y": 1140,
         "wires": [
             [
                 "6423c433e099d2a5"
@@ -4956,7 +5218,7 @@
         "finalize": "",
         "libs": [],
         "x": 500,
-        "y": 1200,
+        "y": 1140,
         "wires": [
             [
                 "b846bc1605dae821"
@@ -4991,7 +5253,7 @@
             "45414bacecada477"
         ],
         "x": 260,
-        "y": 1200,
+        "y": 1140,
         "wires": [
             [
                 "4e46ba83df00a31b"
@@ -5010,7 +5272,7 @@
             "74329f13cbbc528a"
         ],
         "x": 1650,
-        "y": 1120,
+        "y": 1060,
         "wires": [],
         "l": true
     },
@@ -5028,7 +5290,7 @@
         "finalize": "",
         "libs": [],
         "x": 1080,
-        "y": 1200,
+        "y": 1140,
         "wires": [
             [
                 "a2334b77d3764815",
@@ -5092,7 +5354,7 @@
         "finalize": "",
         "libs": [],
         "x": 1390,
-        "y": 1200,
+        "y": 1140,
         "wires": [
             [
                 "a2334b77d3764815"
@@ -5113,7 +5375,7 @@
         "finalize": "",
         "libs": [],
         "x": 1360,
-        "y": 1240,
+        "y": 1180,
         "wires": [
             [
                 "a2334b77d3764815"
@@ -5134,7 +5396,7 @@
         "finalize": "",
         "libs": [],
         "x": 1370,
-        "y": 1280,
+        "y": 1220,
         "wires": [
             [
                 "a2334b77d3764815"
@@ -5160,7 +5422,7 @@
             "aa12f93df2087d62"
         ],
         "x": 1400,
-        "y": 1400,
+        "y": 1380,
         "wires": [],
         "l": true
     },
@@ -5187,7 +5449,7 @@
         "payload": "",
         "payloadType": "date",
         "x": 1110,
-        "y": 1300,
+        "y": 1240,
         "wires": [
             [
                 "73abad3deeed31e8",
@@ -5195,7 +5457,8 @@
                 "3f5eb271f702c8f3",
                 "1e244bad0304bb74",
                 "d3cc901dd2fbd359",
-                "ba0c52ff61838986"
+                "ba0c52ff61838986",
+                "922f2738c2000150"
             ]
         ]
     },
@@ -5319,7 +5582,7 @@
         "finalize": "",
         "libs": [],
         "x": 1380,
-        "y": 1320,
+        "y": 1260,
         "wires": [
             [
                 "a2334b77d3764815"
@@ -5340,7 +5603,7 @@
         "finalize": "",
         "libs": [],
         "x": 1370,
-        "y": 1360,
+        "y": 1300,
         "wires": [
             [
                 "a2334b77d3764815"
@@ -5602,7 +5865,7 @@
         "z": "292e70a6ba25b323",
         "g": "54c9dde7767b8935",
         "name": "New DC_DIMMER cmd",
-        "active": false,
+        "active": true,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -5632,6 +5895,27 @@
         "wires": [
             [
                 "0f09356f283bfae7"
+            ]
+        ]
+    },
+    {
+        "id": "922f2738c2000150",
+        "type": "function",
+        "z": "292e70a6ba25b323",
+        "g": "8ef86a1c4b59d8e1",
+        "name": "Poll Aqua-Hot",
+        "func": "// I wasn't able to get an Aqua-Hot polling message to work so sending Engine OFF command to force repsonse.\n\nconst PGN_INT = 0xEF64;\nconst DA = 0x9F;\nconst PRIORITY = 6;\nconst CONTROL_BYTE = 0xAB;\nconst ENGINE_OFF_BYTE = 0x3F;\n\n// 1. Calculate CAN ID (Results in 1AEF649F)\n// (P << 26) | (PGN << 8) | DA \nconst canIdInt = (PRIORITY << 26) | (PGN_INT << 8) | DA;\nconst canIdHex = canIdInt.toString(16).toUpperCase().padStart(8, '0');\n\n// 2. Build Payload (AB3FFFFFFFFFFFFF)\nconst dataBytes = new Array(8).fill(0xFF);\ndataBytes[0] = CONTROL_BYTE;\ndataBytes[1] = ENGINE_OFF_BYTE;\nconst dataHex = dataBytes.map(b => b.toString(16).toUpperCase().padStart(2, '0')).join('');\n\n// 3. Set Message\nmsg.topic = \"can/send\";\nmsg.payload = `${canIdHex}#${dataHex}`;\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1380,
+        "y": 1340,
+        "wires": [
+            [
+                "a2334b77d3764815"
             ]
         ]
     },
