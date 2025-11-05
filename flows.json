@@ -459,6 +459,66 @@
         "h": 422
     },
     {
+        "id": "081183d6c363e792",
+        "type": "group",
+        "z": "7ecdba18640c1184",
+        "name": "Rest unique list",
+        "style": {
+            "stroke": "#ffffff",
+            "label": true
+        },
+        "nodes": [
+            "b2cbbdbaab1fc227",
+            "f96e5b3b013a2b8f",
+            "bc59e15bf069f17d",
+            "03744ec33f2e6776"
+        ],
+        "x": 674,
+        "y": 519,
+        "w": 532,
+        "h": 142
+    },
+    {
+        "id": "54c9dde7767b8935",
+        "type": "group",
+        "z": "7ecdba18640c1184",
+        "name": "Rest unique list",
+        "style": {
+            "stroke": "#ffffff",
+            "label": true
+        },
+        "nodes": [
+            "86dc00dfc2dbcd9e",
+            "4f86998be2551032",
+            "0f09356f283bfae7",
+            "54bee06f72b5c1f5"
+        ],
+        "x": 674,
+        "y": 159,
+        "w": 572,
+        "h": 142
+    },
+    {
+        "id": "ea5519f0372a650f",
+        "type": "group",
+        "z": "7ecdba18640c1184",
+        "name": "Rest unique list",
+        "style": {
+            "stroke": "#ffffff",
+            "label": true
+        },
+        "nodes": [
+            "738e5a8857696209",
+            "dc9f6facce21379f",
+            "d825c1e1a2850fa5",
+            "c95a503942e20c78"
+        ],
+        "x": 674,
+        "y": 339,
+        "w": 552,
+        "h": 142
+    },
+    {
         "id": "9dd6a98018824be9",
         "type": "group",
         "z": "292e70a6ba25b323",
@@ -697,66 +757,6 @@
         "x": 694,
         "y": 2119,
         "w": 472,
-        "h": 142
-    },
-    {
-        "id": "081183d6c363e792",
-        "type": "group",
-        "z": "7ecdba18640c1184",
-        "name": "Rest unique list",
-        "style": {
-            "stroke": "#ffffff",
-            "label": true
-        },
-        "nodes": [
-            "b2cbbdbaab1fc227",
-            "f96e5b3b013a2b8f",
-            "bc59e15bf069f17d",
-            "03744ec33f2e6776"
-        ],
-        "x": 674,
-        "y": 519,
-        "w": 532,
-        "h": 142
-    },
-    {
-        "id": "54c9dde7767b8935",
-        "type": "group",
-        "z": "7ecdba18640c1184",
-        "name": "Rest unique list",
-        "style": {
-            "stroke": "#ffffff",
-            "label": true
-        },
-        "nodes": [
-            "86dc00dfc2dbcd9e",
-            "4f86998be2551032",
-            "0f09356f283bfae7",
-            "54bee06f72b5c1f5"
-        ],
-        "x": 674,
-        "y": 159,
-        "w": 572,
-        "h": 142
-    },
-    {
-        "id": "ea5519f0372a650f",
-        "type": "group",
-        "z": "7ecdba18640c1184",
-        "name": "Rest unique list",
-        "style": {
-            "stroke": "#ffffff",
-            "label": true
-        },
-        "nodes": [
-            "738e5a8857696209",
-            "dc9f6facce21379f",
-            "d825c1e1a2850fa5",
-            "c95a503942e20c78"
-        ],
-        "x": 674,
-        "y": 339,
-        "w": 552,
         "h": 142
     },
     {
@@ -1989,7 +1989,7 @@
         "d": true,
         "g": "5d1ecae7ac09586c",
         "name": "Create Battery",
-        "func": "/***********************************************************\n * Battery MQTT Discovery for Home Assistant\n * Creates a sensor entity based on battery instance input.\n * Expects msg.payload to be a number (e.g., 1) or DC instance string (e.g., \"Main House Battery Bank\").\n * Example Input: msg.payload = 1 or msg.payload = \"Main House Battery Bank\"\n * Resulting Entity ID: battery_1, battery_2, etc.\n ***********************************************************/\n\n// Accept numeric instance ID from unique_batteries.js\nif (typeof msg.payload !== 'number') {\n    node.error(\"Input payload must be a number (instance ID).\", msg);\n    return null;\n}\n\nconst instanceId = msg.payload;\n\n// Map instance ID to entity suffix and display name per RV-C specification\nconst batteryMap = {\n    0: { suffix: \"0\", name: \"Invalid\" },\n    1: { suffix: \"house\", name: \"Main House Battery\" },\n    2: { suffix: \"chassis\", name: \"Chassis Battery\" },\n    3: { suffix: \"house2\", name: \"Secondary House Battery\" },\n    4: { suffix: \"generator\", name: \"Generator Battery\" }\n};\n\n// For instances 5-250, use generic \"battery_X\" naming\nlet entitySuffix;\nlet displayName;\nif (instanceId >= 5 && instanceId <= 250) {\n    entitySuffix = instanceId.toString();\n    displayName = `Battery ${instanceId}`;\n} else {\n    const batteryInfo = batteryMap[instanceId] || { suffix: instanceId.toString(), name: `Unknown Battery ${instanceId}` };\n    entitySuffix = batteryInfo.suffix;\n    displayName = batteryInfo.name;\n}\n\nconst entityId = `battery_${entitySuffix}`;\nconst componentType = \"sensor\";\n\nconst discoveryTopic = `homeassistant/${componentType}/${entityId}/config`;\nconst stateTopic = `homeassistant/${componentType}/${entityId}/state`;\n\nconst payload = {\n    // Basic entity information\n    name: displayName,\n    unique_id: entityId,\n    default_entity_id: `sensor.${entityId}`,\n    icon: \"mdi:home-battery-outline\",\n\n    // Topics for Home Assistant to use\n    state_topic: stateTopic,\n\n    // Sensor configuration\n    unit_of_measurement: \"V\",\n    device_class: \"voltage\",\n    value_template: \"{{ value | float | round(2) }}\",\n\n    // Link entities to a common device for better HA grouping\n    device: {\n        identifiers: [\"rv-link-energy\"],\n        name: \"RV Link: Energy\"\n    }\n};\n\n// Prepare the final message for the MQTT Out node\nmsg.topic = discoveryTopic;\nmsg.payload = payload;\nmsg.retain = true; // IMPORTANT: Ensures HA rediscovers on restart\n\n// (Optional) Add helper properties for debugging or downstream use\nmsg.stateTopic = stateTopic;\n\nreturn msg;",
+        "func": "/***********************************************************\n * Battery MQTT Discovery for Home Assistant\n * Creates a sensor entity based on battery instance input.\n * Expects msg.payload to be a number (e.g., 1) or DC instance string (e.g., \"Main House Battery Bank\").\n * Example Input: msg.payload = 1 or msg.payload = \"Main House Battery Bank\"\n * Resulting Entity ID: battery_1, battery_2, etc.\n ***********************************************************/\n\n// Accept numeric instance ID from unique_batteries.js\nif (typeof msg.payload !== 'number') {\n    node.error(\"Input payload must be a number (instance ID).\", msg);\n    return null;\n}\n\nconst instanceId = msg.payload;\n\n// Map instance ID to entity suffix and display name per RV-C specification\nconst batteryMap = {\n    0: { suffix: \"0\", name: \"Invalid\" },\n    1: { suffix: \"house\", name: \"Main House Battery\" },\n    2: { suffix: \"chassis\", name: \"Chassis Battery\" },\n    3: { suffix: \"house2\", name: \"Secondary House Battery\" },\n    4: { suffix: \"generator\", name: \"Generator Battery\" }\n};\n\n// For instances 5-250, use generic \"battery_X\" naming\nlet entitySuffix;\nlet displayName;\nif (instanceId >= 5 && instanceId <= 250) {\n    entitySuffix = instanceId.toString();\n    displayName = `Battery ${instanceId}`;\n} else {\n    const batteryInfo = batteryMap[instanceId] || { suffix: instanceId.toString(), name: `Unknown Battery ${instanceId}` };\n    entitySuffix = batteryInfo.suffix;\n    displayName = batteryInfo.name;\n}\n\nconst entityId = `battery_${entitySuffix}`;\nconst componentType = \"sensor\";\n\nconst discoveryTopic = `homeassistant/${componentType}/${entityId}/config`;\nconst stateTopic = `homeassistant/${componentType}/${entityId}/state`;\n\nconst payload = {\n    // Basic entity information\n    name: displayName,\n    unique_id: entityId,\n    default_entity_id: `sensor.${entityId}`,\n    icon: \"mdi:car-battery\",\n\n    // Topics for Home Assistant to use\n    state_topic: stateTopic,\n\n    // Sensor configuration\n    unit_of_measurement: \"V\",\n    device_class: \"voltage\",\n    value_template: \"{{ value | float | round(2) }}\",\n\n    // Link entities to a common device for better HA grouping\n    device: {\n        identifiers: [\"rv-link-energy\"],\n        name: \"RV Link: Energy\"\n    }\n};\n\n// Prepare the final message for the MQTT Out node\nmsg.topic = discoveryTopic;\nmsg.payload = payload;\nmsg.retain = true; // IMPORTANT: Ensures HA rediscovers on restart\n\n// (Optional) Add helper properties for debugging or downstream use\nmsg.stateTopic = stateTopic;\n\nreturn msg;",
         "outputs": 1,
         "timeout": 0,
         "noerr": 0,
