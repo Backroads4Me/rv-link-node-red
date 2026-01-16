@@ -1,6 +1,6 @@
 {
-    "name": "RV-Link",
-    "description": "A Node-Project for controlling and monitoring RV systems.",
+    "name": "Libre-Coach",
+    "description": "A Node-RED project for controlling and monitoring RV systems. Visit LibreCoach.com for more information.",
     "version": "0.0.1",
     "dependencies": {},
     "node-red": {
