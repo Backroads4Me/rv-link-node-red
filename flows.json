@@ -177,8 +177,8 @@
             "b797e5a52b6db5b4",
             "48e6dda2b2d9575e"
         ],
-        "x": 734,
-        "y": 1819,
+        "x": 754,
+        "y": 1959,
         "w": 492,
         "h": 142
     },
@@ -3571,12 +3571,27 @@
                 "vt": "str"
             },
             {
+                "t": "eq",
+                "v": "CIRCULATION_PUMP_STATUS",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "AIR_CONDITIONER_STATUS",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "WATERHEATER_STATUS_2",
+                "vt": "str"
+            },
+            {
                 "t": "else"
             }
         ],
         "checkall": "false",
         "repair": false,
-        "outputs": 31,
+        "outputs": 34,
         "x": 420,
         "y": 780,
         "wires": [
@@ -3667,6 +3682,15 @@
             ],
             [
                 "40bc1ec5180b6589"
+            ],
+            [
+                "be1c2b9fdc3dd714"
+            ],
+            [
+                "54c7344ace5b029a"
+            ],
+            [
+                "4a7ebb2b6a783a13"
             ],
             [
                 "b797e5a52b6db5b4"
@@ -4350,8 +4374,8 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 860,
-        "y": 1860,
+        "x": 880,
+        "y": 2000,
         "wires": [
             [
                 "09640adb1fd08fbb"
@@ -4371,8 +4395,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 1080,
-        "y": 1860,
+        "x": 1100,
+        "y": 2000,
         "wires": [
             []
         ]
@@ -4390,8 +4414,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 840,
-        "y": 1920,
+        "x": 860,
+        "y": 2060,
         "wires": [
             [
                 "48e6dda2b2d9575e"
@@ -4412,8 +4436,8 @@
         "targetType": "msg",
         "statusVal": "",
         "statusType": "auto",
-        "x": 1090,
-        "y": 1920,
+        "x": 1110,
+        "y": 2060,
         "wires": []
     },
     {
@@ -4722,6 +4746,57 @@
         "statusType": "auto",
         "x": 910,
         "y": 580,
+        "wires": []
+    },
+    {
+        "id": "be1c2b9fdc3dd714",
+        "type": "debug",
+        "z": "3e5f038a4f5a8b9a",
+        "name": "CIRCULATION_PUMP_STATUS",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 890,
+        "y": 1780,
+        "wires": []
+    },
+    {
+        "id": "54c7344ace5b029a",
+        "type": "debug",
+        "z": "3e5f038a4f5a8b9a",
+        "name": "AIR_CONDITIONER_STATUS",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 890,
+        "y": 1840,
+        "wires": []
+    },
+    {
+        "id": "4a7ebb2b6a783a13",
+        "type": "debug",
+        "z": "3e5f038a4f5a8b9a",
+        "name": "WATERHEATER_STATUS_2",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 880,
+        "y": 1900,
         "wires": []
     },
     {
