@@ -6608,5 +6608,511 @@
                 "a2d2ed96ff4615f9"
             ]
         ]
+    },
+    {
+        "id": "export_config_group_001",
+        "type": "group",
+        "z": "292e70a6ba25b323",
+        "name": "Export Configuration",
+        "style": {
+            "stroke": "#3d85c6",
+            "label": true
+        },
+        "nodes": [
+            "export_inject_startup_001",
+            "export_func_button_001",
+            "export_func_rv_helpers_001",
+            "export_func_url_sensor_001",
+            "export_split_helpers_001",
+            "export_mqtt_out_discovery_001",
+            "export_mqtt_in_trigger_001",
+            "export_mqtt_in_rv_info_001",
+            "export_func_store_rv_001",
+            "export_mqtt_out_rv_state_001",
+            "export_func_read_rv_001",
+            "export_http_states_001",
+            "export_func_store_states_001",
+            "export_http_entity_reg_001",
+            "export_func_store_entity_001",
+            "export_http_area_reg_001",
+            "export_func_store_area_001",
+            "export_func_build_001",
+            "export_file_write_001",
+            "export_func_publish_url_001",
+            "export_mqtt_out_url_001",
+            "export_debug_001"
+        ],
+        "x": 154,
+        "y": 1839,
+        "w": 1652,
+        "h": 462
+    },
+    {
+        "id": "export_inject_startup_001",
+        "type": "inject",
+        "z": "292e70a6ba25b323",
+        "g": "export_config_group_001",
+        "name": "Startup: Create export entities",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "5",
+        "topic": "",
+        "x": 290,
+        "y": 1900,
+        "wires": [
+            [
+                "export_func_button_001",
+                "export_func_rv_helpers_001",
+                "export_func_url_sensor_001"
+            ]
+        ]
+    },
+    {
+        "id": "export_func_button_001",
+        "type": "function",
+        "z": "292e70a6ba25b323",
+        "g": "export_config_group_001",
+        "name": "Create Export Button",
+        "func": "// Creates Export Configuration button entity via MQTT Discovery\n\nconst componentType = \"button\";\nconst entityId = \"librecoach_export_config\";\nconst displayName = \"Export LibreCoach Configuration\";\nconst icon = \"mdi:download\";\n\nconst discoveryTopic = `homeassistant/${componentType}/${entityId}/config`;\nconst commandTopic = \"librecoach/export/trigger\";\n\nconst payload = {\n  name: displayName,\n  unique_id: entityId,\n  icon: icon,\n  command_topic: commandTopic,\n  device: {\n    identifiers: [\"librecoach-system\"],\n    name: \"LibreCoach System\",\n    manufacturer: \"LibreCoach\",\n  },\n};\n\nmsg.topic = discoveryTopic;\nmsg.payload = payload;\n\nnode.status({ fill: \"green\", shape: \"dot\", text: \"Export button\" });\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 1880,
+        "wires": [
+            [
+                "export_mqtt_out_discovery_001"
+            ]
+        ]
+    },
+    {
+        "id": "export_func_rv_helpers_001",
+        "type": "function",
+        "z": "292e70a6ba25b323",
+        "g": "export_config_group_001",
+        "name": "Create RV Info Helpers",
+        "func": "// Creates RV Info input helper entities via MQTT Discovery\n\nconst helpers = [\n  { id: \"rv_manufacturer\", name: \"RV Manufacturer\", icon: \"mdi:factory\", max: 50 },\n  { id: \"rv_model\", name: \"RV Model\", icon: \"mdi:rv-truck\", max: 50 },\n  { id: \"rv_year\", name: \"RV Year\", icon: \"mdi:calendar\", max: 4 },\n  { id: \"rv_vin\", name: \"RV VIN\", icon: \"mdi:identifier\", max: 17 },\n];\n\nconst messages = [];\n\nfor (const helper of helpers) {\n  const componentType = \"text\";\n  const entityId = helper.id;\n  const discoveryTopic = `homeassistant/${componentType}/${entityId}/config`;\n  const stateTopic = `librecoach/rv_info/${entityId}/state`;\n  const commandTopic = `librecoach/rv_info/${entityId}/set`;\n\n  const payload = {\n    name: helper.name,\n    unique_id: entityId,\n    icon: helper.icon,\n    state_topic: stateTopic,\n    command_topic: commandTopic,\n    max: helper.max,\n    device: {\n      identifiers: [\"librecoach-system\"],\n      name: \"LibreCoach System\",\n      manufacturer: \"LibreCoach\",\n    },\n  };\n\n  messages.push({\n    topic: discoveryTopic,\n    payload: payload,\n  });\n}\n\nnode.status({ fill: \"green\", shape: \"dot\", text: `${helpers.length} helpers` });\n\nreturn [messages];",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 590,
+        "y": 1920,
+        "wires": [
+            [
+                "export_split_helpers_001"
+            ]
+        ]
+    },
+    {
+        "id": "export_func_url_sensor_001",
+        "type": "function",
+        "z": "292e70a6ba25b323",
+        "g": "export_config_group_001",
+        "name": "Create URL Sensor",
+        "func": "// Creates Config Download URL sensor entity via MQTT Discovery\n\nconst componentType = \"sensor\";\nconst entityId = \"librecoach_config_url\";\nconst displayName = \"LibreCoach Config Download\";\nconst icon = \"mdi:file-download\";\n\nconst discoveryTopic = `homeassistant/${componentType}/${entityId}/config`;\nconst stateTopic = \"librecoach/export/url\";\n\nconst payload = {\n  name: displayName,\n  unique_id: entityId,\n  icon: icon,\n  state_topic: stateTopic,\n  device: {\n    identifiers: [\"librecoach-system\"],\n    name: \"LibreCoach System\",\n    manufacturer: \"LibreCoach\",\n  },\n};\n\nmsg.topic = discoveryTopic;\nmsg.payload = payload;\n\nnode.status({ fill: \"green\", shape: \"dot\", text: \"URL sensor\" });\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 1960,
+        "wires": [
+            [
+                "export_mqtt_out_discovery_001"
+            ]
+        ]
+    },
+    {
+        "id": "export_split_helpers_001",
+        "type": "split",
+        "z": "292e70a6ba25b323",
+        "g": "export_config_group_001",
+        "name": "Split helpers",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "property": "payload",
+        "x": 810,
+        "y": 1920,
+        "wires": [
+            [
+                "export_mqtt_out_discovery_001"
+            ]
+        ]
+    },
+    {
+        "id": "export_mqtt_out_discovery_001",
+        "type": "mqtt out",
+        "z": "292e70a6ba25b323",
+        "g": "export_config_group_001",
+        "name": "MQTT Discovery",
+        "topic": "",
+        "qos": "0",
+        "retain": "true",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "80727e60a251c36c",
+        "x": 1040,
+        "y": 1900,
+        "wires": []
+    },
+    {
+        "id": "export_mqtt_in_trigger_001",
+        "type": "mqtt in",
+        "z": "292e70a6ba25b323",
+        "g": "export_config_group_001",
+        "name": "Export Trigger",
+        "topic": "librecoach/export/trigger",
+        "qos": "1",
+        "datatype": "utf8",
+        "broker": "80727e60a251c36c",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 260,
+        "y": 2020,
+        "wires": [
+            [
+                "export_func_read_rv_001"
+            ]
+        ]
+    },
+    {
+        "id": "export_mqtt_in_rv_info_001",
+        "type": "mqtt in",
+        "z": "292e70a6ba25b323",
+        "g": "export_config_group_001",
+        "name": "RV Info Input",
+        "topic": "librecoach/rv_info/+/set",
+        "qos": "1",
+        "datatype": "utf8",
+        "broker": "80727e60a251c36c",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 260,
+        "y": 2080,
+        "wires": [
+            [
+                "export_func_store_rv_001"
+            ]
+        ]
+    },
+    {
+        "id": "export_func_store_rv_001",
+        "type": "function",
+        "z": "292e70a6ba25b323",
+        "g": "export_config_group_001",
+        "name": "Store RV Info",
+        "func": "// Stores RV info values to flow context\n\nconst topicMatch = msg.topic.match(/^librecoach\\/rv_info\\/(\\w+)\\/set$/);\nif (!topicMatch) {\n  node.warn(`Unexpected topic format: ${msg.topic}`);\n  return null;\n}\n\nconst field = topicMatch[1];\nconst value = String(msg.payload).trim();\n\nconst validFields = [\"rv_manufacturer\", \"rv_model\", \"rv_year\", \"rv_vin\"];\nif (!validFields.includes(field)) {\n  node.warn(`Unknown RV info field: ${field}`);\n  return null;\n}\n\nlet rvInfo = flow.get(\"rvInfo\") || {\n  rv_manufacturer: \"\",\n  rv_model: \"\",\n  rv_year: \"\",\n  rv_vin: \"\",\n};\n\nrvInfo[field] = value;\nflow.set(\"rvInfo\", rvInfo);\n\nmsg.topic = `librecoach/rv_info/${field}/state`;\nmsg.payload = value;\n\nnode.status({ fill: \"green\", shape: \"dot\", text: `${field}: ${value}` });\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 2080,
+        "wires": [
+            [
+                "export_mqtt_out_rv_state_001"
+            ]
+        ]
+    },
+    {
+        "id": "export_mqtt_out_rv_state_001",
+        "type": "mqtt out",
+        "z": "292e70a6ba25b323",
+        "g": "export_config_group_001",
+        "name": "RV Info State",
+        "topic": "",
+        "qos": "0",
+        "retain": "true",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "80727e60a251c36c",
+        "x": 680,
+        "y": 2080,
+        "wires": []
+    },
+    {
+        "id": "export_func_read_rv_001",
+        "type": "function",
+        "z": "292e70a6ba25b323",
+        "g": "export_config_group_001",
+        "name": "Read RV Info & Setup",
+        "func": "// Reads RV info and sets up HA API request configuration\n\n// Get HA configuration from environment or use defaults\nconst haBaseUrl = env.get(\"HA_BASE_URL\") || \"http://homeassistant.local:8123\";\nconst haToken = env.get(\"HA_TOKEN\") || flow.get(\"haToken\");\n\nif (!haToken) {\n  node.error(\"HA_TOKEN not configured. Set it in Node-RED environment variables or flow context.\", msg);\n  node.status({ fill: \"red\", shape: \"ring\", text: \"No HA token\" });\n  return null;\n}\n\n// Store base URL and headers for subsequent HTTP requests\nmsg.haBaseUrl = haBaseUrl;\nmsg.headers = {\n  \"Authorization\": `Bearer ${haToken}`,\n  \"Content-Type\": \"application/json\"\n};\n\n// Set URL for first API call\nmsg.url = `${haBaseUrl}/api/states`;\n\n// Read RV info from flow context\nconst rvInfo = flow.get(\"rvInfo\") || {};\nmsg.rvInfo = {\n  manufacturer: rvInfo.rv_manufacturer || null,\n  model: rvInfo.rv_model || null,\n  year: rvInfo.rv_year || null,\n  vin: rvInfo.rv_vin || null,\n};\n\nnode.status({ fill: \"blue\", shape: \"dot\", text: \"Starting export\" });\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 470,
+        "y": 2020,
+        "wires": [
+            [
+                "export_http_states_001"
+            ]
+        ]
+    },
+    {
+        "id": "export_http_states_001",
+        "type": "http request",
+        "z": "292e70a6ba25b323",
+        "g": "export_config_group_001",
+        "name": "GET /api/states",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 680,
+        "y": 2020,
+        "wires": [
+            [
+                "export_func_store_states_001"
+            ]
+        ]
+    },
+    {
+        "id": "export_func_store_states_001",
+        "type": "function",
+        "z": "292e70a6ba25b323",
+        "g": "export_config_group_001",
+        "name": "Store States",
+        "func": "// Stores HA states response and sets up next request\n\nif (!msg.payload || !Array.isArray(msg.payload)) {\n  node.error(\"Invalid response from /api/states\", msg);\n  return null;\n}\n\nmsg.states = msg.payload;\n\n// Set URL for next API call (entity registry)\nmsg.url = `${msg.haBaseUrl}/api/config/entity_registry/list`;\n\nnode.status({ fill: \"blue\", shape: \"dot\", text: `${msg.states.length} entities` });\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 870,
+        "y": 2020,
+        "wires": [
+            [
+                "export_http_entity_reg_001"
+            ]
+        ]
+    },
+    {
+        "id": "export_http_entity_reg_001",
+        "type": "http request",
+        "z": "292e70a6ba25b323",
+        "g": "export_config_group_001",
+        "name": "GET entity_registry",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1090,
+        "y": 2020,
+        "wires": [
+            [
+                "export_func_store_entity_001"
+            ]
+        ]
+    },
+    {
+        "id": "export_func_store_entity_001",
+        "type": "function",
+        "z": "292e70a6ba25b323",
+        "g": "export_config_group_001",
+        "name": "Store Entity Registry",
+        "func": "// Stores HA entity registry response and sets up next request\n\nif (!msg.payload || !Array.isArray(msg.payload)) {\n  node.error(\"Invalid response from entity_registry/list\", msg);\n  return null;\n}\n\nmsg.entityRegistry = msg.payload;\n\n// Set URL for next API call (area registry)\nmsg.url = `${msg.haBaseUrl}/api/config/area_registry/list`;\n\nnode.status({ fill: \"blue\", shape: \"dot\", text: `${msg.entityRegistry.length} entries` });\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1310,
+        "y": 2020,
+        "wires": [
+            [
+                "export_http_area_reg_001"
+            ]
+        ]
+    },
+    {
+        "id": "export_http_area_reg_001",
+        "type": "http request",
+        "z": "292e70a6ba25b323",
+        "g": "export_config_group_001",
+        "name": "GET area_registry",
+        "method": "GET",
+        "ret": "obj",
+        "paytoqs": "ignore",
+        "url": "",
+        "tls": "",
+        "persist": false,
+        "proxy": "",
+        "insecureHTTPParser": false,
+        "authType": "",
+        "senderr": false,
+        "headers": [],
+        "x": 1530,
+        "y": 2020,
+        "wires": [
+            [
+                "export_func_store_area_001"
+            ]
+        ]
+    },
+    {
+        "id": "export_func_store_area_001",
+        "type": "function",
+        "z": "292e70a6ba25b323",
+        "g": "export_config_group_001",
+        "name": "Store Area Registry",
+        "func": "// Stores HA area registry response\n\nif (!msg.payload || !Array.isArray(msg.payload)) {\n  node.error(\"Invalid response from area_registry/list\", msg);\n  return null;\n}\n\nmsg.areaRegistry = msg.payload;\n\nnode.status({ fill: \"blue\", shape: \"dot\", text: `${msg.areaRegistry.length} areas` });\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 250,
+        "y": 2160,
+        "wires": [
+            [
+                "export_func_build_001"
+            ]
+        ]
+    },
+    {
+        "id": "export_func_build_001",
+        "type": "function",
+        "z": "292e70a6ba25b323",
+        "g": "export_config_group_001",
+        "name": "Build Export Config",
+        "func": "// Merges HA API responses and builds export configuration\n\nconst ENTITY_PATTERNS = [\n  /^light\\.switch_\\d+$/,\n  /^cover\\.shade_\\d+$/,\n  /^lock\\.lock_\\d+$/,\n  /^switch\\.water_pump$/,\n  /^switch\\.autofill$/,\n  /^sensor\\.\\w+_tank$/,\n  /^sensor\\.\\w+_battery$/,\n  /^climate\\.floor_heat_\\d+$/,\n  /^light\\.aquahot_(burner|ac_1|ac_2|engine)$/,\n];\n\nif (!msg.states || !Array.isArray(msg.states)) {\n  node.error(\"Missing states array\", msg);\n  return null;\n}\n\nif (!msg.entityRegistry || !Array.isArray(msg.entityRegistry)) {\n  node.error(\"Missing entityRegistry array\", msg);\n  return null;\n}\n\nif (!msg.areaRegistry || !Array.isArray(msg.areaRegistry)) {\n  node.error(\"Missing areaRegistry array\", msg);\n  return null;\n}\n\n// Build area lookup map\nconst areaMap = {};\nfor (const area of msg.areaRegistry) {\n  if (area.area_id && area.name) {\n    areaMap[area.area_id] = area.name;\n  }\n}\n\n// Build entity registry lookup map\nconst registryMap = {};\nfor (const entry of msg.entityRegistry) {\n  if (entry.entity_id) {\n    registryMap[entry.entity_id] = entry;\n  }\n}\n\n// Filter and process LibreCoach entities\nconst entities = {};\n\nfor (const state of msg.states) {\n  const entityId = state.entity_id;\n\n  const isLibreCoachEntity = ENTITY_PATTERNS.some((pattern) =>\n    pattern.test(entityId)\n  );\n\n  if (!isLibreCoachEntity) {\n    continue;\n  }\n\n  const registryEntry = registryMap[entityId] || {};\n  const attributes = state.attributes || {};\n  const friendlyName = attributes.friendly_name || entityId;\n\n  const areaId = registryEntry.area_id || null;\n  const areaName = areaId ? areaMap[areaId] || null : null;\n\n  const parts = entityId.split(\".\");\n  const domain = parts[0];\n  const entityName = parts[1];\n\n  let instance = null;\n  const instanceMatch = entityName.match(/_(\\d+)$/);\n  if (instanceMatch) {\n    instance = parseInt(instanceMatch[1], 10);\n  } else if (entityName === \"water_pump\" || entityName === \"autofill\") {\n    instance = entityName;\n  } else {\n    const aquahotMatch = entityName.match(/^aquahot_(burner|ac_1|ac_2|engine)$/);\n    if (aquahotMatch) {\n      instance = aquahotMatch[1];\n    }\n  }\n\n  let originalName = entityName\n    .replace(/_/g, \" \")\n    .replace(/\\b\\w/g, (c) => c.toUpperCase());\n\n  entities[entityId] = {\n    entity_id: entityId,\n    original_name: originalName,\n    friendly_name: friendlyName,\n    area: areaName,\n    device_class: domain,\n    instance: instance,\n  };\n}\n\nconst exportConfig = {\n  export_date: new Date().toISOString(),\n  rv_info: msg.rvInfo || {\n    manufacturer: null,\n    model: null,\n    year: null,\n    vin: null,\n  },\n  entities: entities,\n};\n\nmsg.payload = JSON.stringify(exportConfig, null, 2);\nmsg.filename = \"/config/www/librecoach_config.json\";\n\nconst entityCount = Object.keys(entities).length;\nnode.status({ fill: \"green\", shape: \"dot\", text: `${entityCount} entities` });\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 2160,
+        "wires": [
+            [
+                "export_file_write_001"
+            ]
+        ]
+    },
+    {
+        "id": "export_file_write_001",
+        "type": "file",
+        "z": "292e70a6ba25b323",
+        "g": "export_config_group_001",
+        "name": "Write Config File",
+        "filename": "/config/www/librecoach_config.json",
+        "filenameType": "str",
+        "appendNewline": false,
+        "createDir": true,
+        "overwriteFile": "true",
+        "encoding": "utf8",
+        "x": 720,
+        "y": 2160,
+        "wires": [
+            [
+                "export_func_publish_url_001",
+                "export_debug_001"
+            ]
+        ]
+    },
+    {
+        "id": "export_func_publish_url_001",
+        "type": "function",
+        "z": "292e70a6ba25b323",
+        "g": "export_config_group_001",
+        "name": "Publish Export URL",
+        "func": "// Publishes the export download URL\n\nconst haBaseUrl = env.get(\"HA_BASE_URL\") || \"http://homeassistant.local:8123\";\nconst downloadUrl = `${haBaseUrl}/local/librecoach_config.json`;\n\nmsg.topic = \"librecoach/export/url\";\nmsg.payload = downloadUrl;\n\nnode.status({ fill: \"green\", shape: \"dot\", text: \"URL published\" });\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 970,
+        "y": 2160,
+        "wires": [
+            [
+                "export_mqtt_out_url_001"
+            ]
+        ]
+    },
+    {
+        "id": "export_mqtt_out_url_001",
+        "type": "mqtt out",
+        "z": "292e70a6ba25b323",
+        "g": "export_config_group_001",
+        "name": "Publish URL",
+        "topic": "",
+        "qos": "0",
+        "retain": "true",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "80727e60a251c36c",
+        "x": 1200,
+        "y": 2160,
+        "wires": []
+    },
+    {
+        "id": "export_debug_001",
+        "type": "debug",
+        "z": "292e70a6ba25b323",
+        "g": "export_config_group_001",
+        "name": "Export Complete",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 960,
+        "y": 2220,
+        "wires": []
     }
 ]
